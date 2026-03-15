@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;// See https://aka.ms/new-console-template for more information
-
-using QuizAI.Api.Data;Console.WriteLine("Hello, World!");
-
+﻿using Microsoft.EntityFrameworkCore;
+using QuizAI.Api.Data;
 using QuizAI.Api.Services;
 
 var builder = WebApplicationBuilder.CreateBuilder(args);

@@ -22,5 +22,6 @@
     <PkgMicrosoft_Extensions_ApiDescription_Server Condition=" '$(PkgMicrosoft_Extensions_ApiDescription_Server)' == '' ">/home/thang/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5</PkgMicrosoft_Extensions_ApiDescription_Server>
     <PkgAvalonia_BuildServices Condition=" '$(PkgAvalonia_BuildServices)' == '' ">/home/thang/.nuget/packages/avalonia.buildservices/11.3.2</PkgAvalonia_BuildServices>
     <PkgAvalonia Condition=" '$(PkgAvalonia)' == '' ">/home/thang/.nuget/packages/avalonia/11.3.11</PkgAvalonia>
+    <PkgMicrosoft_CodeAnalysis_Analyzers Condition=" '$(PkgMicrosoft_CodeAnalysis_Analyzers)' == '' ">/home/thang/.nuget/packages/microsoft.codeanalysis.analyzers/3.3.3</PkgMicrosoft_CodeAnalysis_Analyzers>
   </PropertyGroup>
 </Project>
