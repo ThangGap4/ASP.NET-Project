@@ -5,10 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using QuizAI.Api.Data;
 using QuizAI.Api.Services;
 
-// Render sets PORT env var; respect it
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+// Render injects ASPNETCORE_URLS or PORT — let ASP.NET Core handle it automatically
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls($"http://+:{port}");
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(opt =>
