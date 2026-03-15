@@ -13,14 +13,27 @@ public partial class CreateQuizViewModel : ObservableObject
     [ObservableProperty] private ObservableCollection<DocumentDto> _documents = new();
     [ObservableProperty] private ObservableCollection<QuizDto> _quizzes = new();
     [ObservableProperty] private DocumentDto? _selectedDocument;
-    [ObservableProperty] private int _questionCount = 5;
+    [ObservableProperty] private int _questionCount = 10;
     [ObservableProperty] private string _selectedDifficulty = "medium";
+    [ObservableProperty] private string _selectedQuestionType = "mcq";
     [ObservableProperty] private string _quizTitle = string.Empty;
     [ObservableProperty] private string _statusMessage = string.Empty;
     [ObservableProperty] private bool _isBusy = false;
 
-    public List<int> QuestionCountOptions { get; } = new() { 5, 10, 15, 20 };
     public List<string> DifficultyOptions { get; } = new() { "easy", "medium", "hard" };
+    public List<string> QuestionTypeOptions { get; } = new() { "mcq", "true_false", "fill_blank", "mixed" };
+    public List<string> QuestionTypeLabels { get; } = new() { "Multiple Choice", "True / False", "Fill in the Blank", "Mixed" };
+
+    private int _selectedQuestionTypeIndex = 0;
+    public int SelectedQuestionTypeIndex
+    {
+        get => _selectedQuestionTypeIndex;
+        set
+        {
+            if (SetProperty(ref _selectedQuestionTypeIndex, value))
+                SelectedQuestionType = QuestionTypeOptions[value];
+        }
+    }
 
     public CreateQuizViewModel(ApiClient api, MainWindowViewModel main)
     {
@@ -61,14 +74,21 @@ public partial class CreateQuizViewModel : ObservableObject
             return;
         }
 
+        if (QuestionCount < 5 || QuestionCount > 30)
+        {
+            StatusMessage = "Question count must be between 5 and 30";
+            return;
+        }
+
         IsBusy = true;
-        StatusMessage = $"Generating {QuestionCount} questions... This may take 10-30 seconds";
+        StatusMessage = $"Generating {QuestionCount} questions ({SelectedQuestionType})... This may take 10-30 seconds";
         try
         {
             var quiz = await _api.GenerateQuizAsync(
                 SelectedDocument.Id,
                 QuestionCount,
                 SelectedDifficulty,
+                SelectedQuestionType,
                 string.IsNullOrWhiteSpace(QuizTitle) ? null : QuizTitle
             );
 

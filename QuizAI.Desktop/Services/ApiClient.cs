@@ -91,6 +91,19 @@ public class ApiClient
         return await res.Content.ReadFromJsonAsync<DocumentDto>(JsonOptions);
     }
 
+    public async Task<DocumentDto?> UploadTextAsync(string content, string? title = null)
+    {
+        var res = await _http.PostAsJsonAsync("documents/upload-text", new { content, title });
+        res.EnsureSuccessStatusCode();
+        return await res.Content.ReadFromJsonAsync<DocumentDto>(JsonOptions);
+    }
+
+    public async Task UpdateDocumentAsync(Guid id, string? fileName, string? content)
+    {
+        var res = await _http.PatchAsJsonAsync($"documents/{id}", new { fileName, content });
+        res.EnsureSuccessStatusCode();
+    }
+
     public async Task DeleteDocumentAsync(Guid id)
     {
         var res = await _http.DeleteAsync($"documents/{id}");
@@ -115,13 +128,14 @@ public class ApiClient
         return await _http.GetFromJsonAsync<QuizDetailDto>($"quizzes/{id}", JsonOptions);
     }
 
-    public async Task<QuizDto?> GenerateQuizAsync(Guid documentId, int questionCount, string difficulty, string? title = null)
+    public async Task<QuizDto?> GenerateQuizAsync(Guid documentId, int questionCount, string difficulty, string questionType = "mcq", string? title = null)
     {
         var res = await _http.PostAsJsonAsync("quizzes/generate", new
         {
             documentId,
             questionCount,
             difficulty,
+            questionType,
             title
         });
         res.EnsureSuccessStatusCode();

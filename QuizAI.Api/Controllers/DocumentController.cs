@@ -219,7 +219,6 @@ public class DocumentController : ControllerBase
             .FirstOrDefaultAsync(d => d.Id == id && d.OwnerId == userId);
         if (doc == null) return NotFound(new { message = "Document not found" });
 
-        // Delete physical file if it's a local file
         if (!doc.StorageUrl.StartsWith("http"))
         {
             if (System.IO.File.Exists(doc.StorageUrl))
@@ -231,6 +230,99 @@ public class DocumentController : ControllerBase
         return NoContent();
     }
 
+    // POST /api/documents/upload-text – Paste nội dung trực tiếp
+    [HttpPost("upload-text")]
+    public async Task<IActionResult> UploadText([FromBody] UploadTextDto dto)
+    {
+        if (string.IsNullOrWhiteSpace(dto.Content))
+            return BadRequest(new { message = "Content is required" });
+
+        var userId = GetUserId();
+        var uploadsDir = Path.Combine(_env.ContentRootPath, "uploads", userId.ToString());
+        Directory.CreateDirectory(uploadsDir);
+
+        var fileName = string.IsNullOrWhiteSpace(dto.Title) ? "pasted-text.txt" : $"{dto.Title.Trim()}.txt";
+        var uniqueName = $"{Guid.NewGuid()}.txt";
+        var filePath = Path.Combine(uploadsDir, uniqueName);
+
+        await System.IO.File.WriteAllTextAsync(filePath, dto.Content, System.Text.Encoding.UTF8);
+
+        var document = new Document
+        {
+            FileName = fileName,
+            MimeType = "text/plain",
+            FileSize = System.Text.Encoding.UTF8.GetByteCount(dto.Content),
+            StorageUrl = filePath,
+            OwnerId = userId,
+            Processed = false
+        };
+
+        _context.Documents.Add(document);
+        await _context.SaveChangesAsync();
+
+        var docId = document.Id;
+        _ = Task.Run(async () =>
+        {
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            var processor = scope.ServiceProvider.GetRequiredService<DocumentProcessorService>();
+            try { await processor.ProcessDocumentAsync(docId); }
+            catch { }
+        });
+
+        return CreatedAtAction(nameof(GetDocument), new { id = document.Id }, new
+        {
+            document.Id,
+            document.FileName,
+            document.MimeType,
+            document.Processed,
+            document.UploadedAt,
+            message = "Text saved. Processing in background..."
+        });
+    }
+
+    // PATCH /api/documents/{id} – Đổi tên hoặc cập nhật nội dung
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> UpdateDocument(Guid id, [FromBody] UpdateDocumentDto dto)
+    {
+        var userId = GetUserId();
+        var doc = await _context.Documents
+            .FirstOrDefaultAsync(d => d.Id == id && d.OwnerId == userId);
+        if (doc == null) return NotFound(new { message = "Document not found" });
+
+        if (!string.IsNullOrWhiteSpace(dto.FileName))
+            doc.FileName = dto.FileName.Trim();
+
+        bool reprocess = false;
+        if (!string.IsNullOrWhiteSpace(dto.Content))
+        {
+            if (doc.StorageUrl.StartsWith("http"))
+                return BadRequest(new { message = "Cannot edit content of URL documents" });
+
+            await System.IO.File.WriteAllTextAsync(doc.StorageUrl, dto.Content, System.Text.Encoding.UTF8);
+            doc.FileSize = System.Text.Encoding.UTF8.GetByteCount(dto.Content);
+            doc.Processed = false;
+
+            var existingChunks = _context.DocumentChunks.Where(c => c.DocumentId == id);
+            _context.DocumentChunks.RemoveRange(existingChunks);
+            reprocess = true;
+        }
+
+        await _context.SaveChangesAsync();
+
+        if (reprocess)
+        {
+            _ = Task.Run(async () =>
+            {
+                await using var scope = _scopeFactory.CreateAsyncScope();
+                var processor = scope.ServiceProvider.GetRequiredService<DocumentProcessorService>();
+                try { await processor.ProcessDocumentAsync(id); }
+                catch { }
+            });
+        }
+
+        return Ok(new { doc.Id, doc.FileName, doc.Processed, message = reprocess ? "Content updated. Re-processing..." : "Updated." });
+    }
+
     private Guid GetUserId()
     {
         var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -239,6 +331,8 @@ public class DocumentController : ControllerBase
 }
 
 public record UploadUrlDto(string Url, string? Title);
+public record UploadTextDto(string Content, string? Title);
+public record UpdateDocumentDto(string? FileName, string? Content);
 
 public class UploadFileDto
 {

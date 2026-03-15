@@ -5,25 +5,23 @@
              x:Class="QuizAI.Desktop.Views.LibraryView"
              x:DataType="vm:LibraryViewModel">
 
-  <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="20" RowSpacing="16">
+  <Grid RowDefinitions="Auto,Auto,*" Margin="20" RowSpacing="14">
 
     <!-- Header -->
     <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
       <StackPanel Grid.Column="0">
-        <TextBlock Text="📚 Document Library"
-                   FontSize="24" FontWeight="Bold"
-                   Foreground="#2c3e50"/>
-        <TextBlock Text="{Binding StatusMessage}"
-                   Foreground="#7f8c8d" FontSize="13"/>
+        <TextBlock Text="Document Library"
+                   FontSize="24" FontWeight="Bold" Foreground="#2c3e50"/>
+        <TextBlock Text="{Binding StatusMessage}" Foreground="#7f8c8d" FontSize="13"/>
       </StackPanel>
       <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
         <Button Command="{Binding LoadDocumentsCommand}"
-                Content="↻ Refresh"
+                Content="Refresh"
                 IsEnabled="{Binding !IsBusy}"
                 Padding="12,8" CornerRadius="6"
                 Background="#ecf0f1" Foreground="#2c3e50"/>
         <Button Command="{Binding GoToCreateQuizCommand}"
-                Content="➡ Create Quiz"
+                Content="Create Quiz"
                 Padding="12,8" CornerRadius="6"
                 Background="#3498db" Foreground="White"/>
         <Button Command="{Binding LogoutCommand}"
@@ -33,101 +31,185 @@
       </StackPanel>
     </Grid>
 
-    <!-- Upload Controls -->
+    <!-- Upload Controls: File + URL + Paste Text -->
     <Border Grid.Row="1" Background="#f8f9fa" CornerRadius="10" Padding="16">
-      <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" RowSpacing="10">
+      <StackPanel Spacing="10">
 
-        <!-- File upload -->
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="📄 File:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-        <TextBlock Grid.Row="0" Grid.Column="1"
-                   Text="Use the button to pick a file (.txt, .pdf, .docx)"
-                   VerticalAlignment="Center"
-                   Foreground="#95a5a6" FontSize="13"/>
-        <Button Grid.Row="0" Grid.Column="2"
-                Name="PickFileBtn"
-                Content="Browse File..."
-                IsEnabled="{Binding !IsBusy}"
-                Padding="12,8" CornerRadius="6"
-                Background="#27ae60" Foreground="White"
-                Click="OnPickFile"/>
+        <!-- File upload row -->
+        <Grid ColumnDefinitions="70,*,Auto">
+          <TextBlock Grid.Column="0" Text="File:" VerticalAlignment="Center" Foreground="#555"/>
+          <TextBlock Grid.Column="1"
+                     Text="Pick a .txt / .pdf / .docx file"
+                     VerticalAlignment="Center" Foreground="#95a5a6" FontSize="13"/>
+          <Button Grid.Column="2"
+                  Content="Browse File..."
+                  IsEnabled="{Binding !IsBusy}"
+                  Padding="12,8" CornerRadius="6"
+                  Background="#27ae60" Foreground="White"
+                  Click="OnPickFile"/>
+        </Grid>
 
-        <!-- URL import -->
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="🌐 URL:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-        <TextBox Grid.Row="1" Grid.Column="1"
-                 Text="{Binding UrlInput}"
-                 Watermark="https://example.com/article"
-                 CornerRadius="6" Padding="10,8"/>
-        <Button Grid.Row="1" Grid.Column="2"
-                Command="{Binding UploadUrlCommand}"
-                Content="Import URL"
-                IsEnabled="{Binding !IsBusy}"
-                Padding="12,8" CornerRadius="6"
-                Background="#9b59b6" Foreground="White"/>
-      </Grid>
-    </Border>
+        <!-- URL import row -->
+        <Grid ColumnDefinitions="70,*,Auto">
+          <TextBlock Grid.Column="0" Text="URL:" VerticalAlignment="Center" Foreground="#555"/>
+          <TextBox Grid.Column="1"
+                   Text="{Binding UrlInput}"
+                   Watermark="https://example.com/article"
+                   CornerRadius="6" Padding="10,8" Margin="0,0,8,0"/>
+          <Button Grid.Column="2"
+                  Command="{Binding UploadUrlCommand}"
+                  Content="Import URL"
+                  IsEnabled="{Binding !IsBusy}"
+                  Padding="12,8" CornerRadius="6"
+                  Background="#9b59b6" Foreground="White"/>
+        </Grid>
 
-    <!-- Document List -->
-    <ScrollViewer Grid.Row="2">
-      <ItemsControl ItemsSource="{Binding Documents}">
-        <ItemsControl.ItemTemplate>
-          <DataTemplate x:DataType="svc:DocumentDto">
-            <Border Background="White" CornerRadius="8" Padding="16,12"
-                    Margin="0,0,0,8"
-                    BoxShadow="0 1 4 0 #15000000">
-              <Grid ColumnDefinitions="*,Auto,Auto">
+        <!-- Paste Text row -->
+        <Grid ColumnDefinitions="70,*,Auto">
+          <TextBlock Grid.Column="0" Text="Paste:" VerticalAlignment="Top"
+                     Foreground="#555" Margin="0,8,0,0"/>
+          <StackPanel Grid.Column="1" Spacing="6" Margin="0,0,8,0">
+            <TextBox Text="{Binding PasteTitle}"
+                     Watermark="Title (optional)"
+                     CornerRadius="6" Padding="10,8"/>
+            <TextBox Text="{Binding PasteText}"
+                     Watermark="Paste your content here..."
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     Height="90"
+                     CornerRadius="6" Padding="10,8"
+                     VerticalContentAlignment="Top"/>
+          </StackPanel>
+          <Button Grid.Column="2"
+                  Command="{Binding SavePasteTextCommand}"
+                  Content="Save as Doc"
+                  IsEnabled="{Binding !IsBusy}"
+                  Padding="12,8" CornerRadius="6"
+                  VerticalAlignment="Top"
+                  Background="#e67e22" Foreground="White"/>
+        </Grid>
 
-                <StackPanel Grid.Column="0" Spacing="4">
-                  <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="{Binding FileName}"
-                               FontWeight="SemiBold" FontSize="15"
-                               Foreground="#2c3e50"/>
-                    <TextBlock Text="✓ Ready"
-                               FontSize="11" Foreground="#1e8449"
-                               IsVisible="{Binding Processed}"/>
-                    <TextBlock Text="⏳ Processing"
-                               FontSize="11" Foreground="#d35400"
-                               IsVisible="{Binding !Processed}"/>
-                  </StackPanel>
-                  <TextBlock FontSize="12" Foreground="#95a5a6">
-                    <Run Text="{Binding ChunkCount}"/><Run Text=" chunks · "/><Run Text="{Binding UploadedAt, StringFormat='{}{0:MMM dd, yyyy}'}"/>
-                  </TextBlock>
-                </StackPanel>
-
-                <TextBlock Grid.Column="1" VerticalAlignment="Center"
-                           Text="{Binding MimeType}" Foreground="#bdc3c7"
-                           FontSize="12" Margin="0,0,16,0"/>
-
-                <Button Grid.Column="2"
-                        CommandParameter="{Binding Id}"
-                        Content="🗑"
-                        ToolTip.Tip="Delete"
-                        Padding="8,6" CornerRadius="6"
-                        Background="#fdecea" Foreground="#e74c3c"
-                        Click="OnDeleteDocument"/>
-              </Grid>
-            </Border>
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
-    </ScrollViewer>
-
-    <!-- Empty state -->
-    <StackPanel Grid.Row="2"
-                IsVisible="{Binding Documents.Count, Converter={x:Static ObjectConverters.IsNull}}"
-                VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="8">
-      <TextBlock Text="📭" FontSize="48" HorizontalAlignment="Center"/>
-      <TextBlock Text="No documents yet. Upload a file or import a URL to get started."
-                 Foreground="#95a5a6" HorizontalAlignment="Center"/>
-    </StackPanel>
-
-    <!-- Loading overlay -->
-    <Border Grid.Row="2" IsVisible="{Binding IsBusy}"
-            Background="#80FFFFFF">
-      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
-        <ProgressBar IsIndeterminate="True" Width="200"/>
-        <TextBlock Text="{Binding StatusMessage}" HorizontalAlignment="Center"/>
       </StackPanel>
     </Border>
+
+    <!-- Main content: list or edit panel -->
+    <Grid Grid.Row="2">
+
+      <!-- Document List (hidden when editing) -->
+      <ScrollViewer IsVisible="{Binding !IsEditMode}">
+        <StackPanel Spacing="0">
+          <ItemsControl ItemsSource="{Binding Documents}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="svc:DocumentDto">
+                <Border Background="White" CornerRadius="8" Padding="14,12"
+                        Margin="0,0,0,8"
+                        BoxShadow="0 1 4 0 #15000000">
+                  <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+
+                    <StackPanel Grid.Column="0" Spacing="3">
+                      <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="{Binding FileName}"
+                                   FontWeight="SemiBold" FontSize="15"
+                                   Foreground="#2c3e50"/>
+                        <Border CornerRadius="4" Padding="6,2"
+                                Background="#e8f8f5"
+                                IsVisible="{Binding Processed}">
+                          <TextBlock Text="Ready" FontSize="11" Foreground="#1e8449"/>
+                        </Border>
+                        <Border CornerRadius="4" Padding="6,2"
+                                Background="#fef9e7"
+                                IsVisible="{Binding !Processed}">
+                          <TextBlock Text="Processing" FontSize="11" Foreground="#d35400"/>
+                        </Border>
+                      </StackPanel>
+                      <TextBlock FontSize="12" Foreground="#95a5a6">
+                        <Run Text="{Binding ChunkCount}"/>
+                        <Run Text=" chunks  "/>
+                        <Run Text="{Binding UploadedAt, StringFormat='{}{0:MMM dd, yyyy}'}"/>
+                      </TextBlock>
+                    </StackPanel>
+
+                    <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                               Text="{Binding MimeType}" Foreground="#bdc3c7"
+                               FontSize="12" Margin="0,0,12,0"/>
+
+                    <Button Grid.Column="2"
+                            Content="Edit"
+                            ToolTip.Tip="Edit document"
+                            Padding="10,6" CornerRadius="6" Margin="0,0,6,0"
+                            Background="#ebf5fb" Foreground="#2980b9"
+                            Click="OnEditDocument"/>
+
+                    <Button Grid.Column="3"
+                            Content="Delete"
+                            ToolTip.Tip="Delete"
+                            Padding="10,6" CornerRadius="6"
+                            Background="#fdecea" Foreground="#e74c3c"
+                            Click="OnDeleteDocument"/>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <!-- Empty state -->
+          <StackPanel IsVisible="{Binding IsEmpty}"
+                      VerticalAlignment="Center" HorizontalAlignment="Center"
+                      Spacing="8" Margin="0,60,0,0">
+            <TextBlock Text="No documents yet."
+                       FontSize="16" Foreground="#95a5a6" HorizontalAlignment="Center"/>
+            <TextBlock Text="Upload a file, import a URL, or paste text above to get started."
+                       Foreground="#bdc3c7" HorizontalAlignment="Center"/>
+          </StackPanel>
+        </StackPanel>
+      </ScrollViewer>
+
+      <!-- Edit Panel (shown when editing) -->
+      <Border IsVisible="{Binding IsEditMode}"
+              Background="White" CornerRadius="10" Padding="20"
+              BoxShadow="0 2 8 0 #15000000">
+        <StackPanel Spacing="14">
+          <TextBlock Text="Edit Document" FontSize="18" FontWeight="Bold" Foreground="#2c3e50"/>
+
+          <StackPanel Spacing="6">
+            <TextBlock Text="File Name" Foreground="#7f8c8d" FontSize="13"/>
+            <TextBox Text="{Binding EditFileName}" CornerRadius="6" Padding="10,8"/>
+          </StackPanel>
+
+          <StackPanel Spacing="6">
+            <TextBlock Text="Content (leave empty to keep existing)" Foreground="#7f8c8d" FontSize="13"/>
+            <TextBox Text="{Binding EditContent}"
+                     Watermark="Paste new content here to replace existing..."
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     Height="200"
+                     CornerRadius="6" Padding="10,8"
+                     VerticalContentAlignment="Top"/>
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <Button Command="{Binding SaveEditCommand}"
+                    Content="Save Changes"
+                    IsEnabled="{Binding !IsBusy}"
+                    Padding="14,10" CornerRadius="6"
+                    Background="#27ae60" Foreground="White"/>
+            <Button Command="{Binding CancelEditCommand}"
+                    Content="Cancel"
+                    Padding="14,10" CornerRadius="6"
+                    Background="#95a5a6" Foreground="White"/>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <!-- Loading overlay -->
+      <Border IsVisible="{Binding IsBusy}" Background="#80FFFFFF">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+          <ProgressBar IsIndeterminate="True" Width="200"/>
+          <TextBlock Text="{Binding StatusMessage}" HorizontalAlignment="Center"/>
+        </StackPanel>
+      </Border>
+
+    </Grid>
 
   </Grid>
 </UserControl>

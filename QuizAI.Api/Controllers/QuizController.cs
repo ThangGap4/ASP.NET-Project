@@ -121,7 +121,7 @@ public class QuizController : ControllerBase
         string rawJson;
         try
         {
-            rawJson = await _openAIService.GenerateQuizJson(context, dto.QuestionCount, dto.Difficulty);
+            rawJson = await _openAIService.GenerateQuizJson(context, dto.QuestionCount, dto.Difficulty, dto.QuestionType ?? "mcq");
         }
         catch (Exception ex)
         {
@@ -244,7 +244,8 @@ public record GenerateQuizDto(
     int QuestionCount,
     string Difficulty,
     string? Title,
-    string? Description
+    string? Description,
+    string? QuestionType
 );
 public record PublishDto(bool Published);
 

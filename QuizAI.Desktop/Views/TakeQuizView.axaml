@@ -10,7 +10,7 @@
     <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
       <Button Grid.Column="0"
               Command="{Binding GoBackCommand}"
-              Content="← Back"
+              Content="Back"
               Padding="10,8" CornerRadius="6"
               Background="#ecf0f1" Foreground="#2c3e50"/>
       <StackPanel Grid.Column="1" HorizontalAlignment="Center">
@@ -41,7 +41,7 @@
                      FontSize="18" FontWeight="SemiBold"
                      TextWrapping="Wrap" Foreground="#2c3e50"/>
 
-          <ItemsControl IsVisible="{Binding !IsEssayQuestion}"
+          <ItemsControl IsVisible="{Binding IsMcqQuestion}"
                         ItemsSource="{Binding CurrentOptions}">
             <ItemsControl.ItemTemplate>
               <DataTemplate x:DataType="vm:OptionViewModel">
@@ -74,6 +74,29 @@
             </ItemsControl.ItemTemplate>
           </ItemsControl>
 
+          <!-- True / False buttons -->
+          <StackPanel IsVisible="{Binding IsTrueFalseQuestion}"
+                      Orientation="Horizontal" Spacing="16" HorizontalAlignment="Center">
+            <Button Content="True"
+                    FontSize="16" FontWeight="SemiBold"
+                    Padding="40,16" CornerRadius="8"
+                    Background="#ebf5fb" Foreground="#2980b9"
+                    Click="OnTrueClick"/>
+            <Button Content="False"
+                    FontSize="16" FontWeight="SemiBold"
+                    Padding="40,16" CornerRadius="8"
+                    Background="#fdedec" Foreground="#c0392b"
+                    Click="OnFalseClick"/>
+          </StackPanel>
+
+          <!-- Fill in the blank -->
+          <StackPanel IsVisible="{Binding IsFillBlankQuestion}" Spacing="8">
+            <TextBlock Text="Fill in the blank:" FontWeight="SemiBold" Foreground="#2c3e50"/>
+            <TextBox Text="{Binding EssayAnswer}"
+                     Watermark="Type your answer here..."
+                     CornerRadius="8" Padding="12"/>
+          </StackPanel>
+
           <!-- Essay answer -->
           <StackPanel IsVisible="{Binding IsEssayQuestion}" Spacing="8">
             <TextBlock Text="Your answer:" FontWeight="SemiBold" Foreground="#2c3e50"/>
@@ -94,7 +117,7 @@
       <Button Grid.Column="0"
               Command="{Binding PreviousQuestionCommand}"
               IsEnabled="{Binding HasPrevious}"
-              Content="← Previous"
+              Content="Previous"
               Padding="16,10" CornerRadius="8"
               Background="#ecf0f1" Foreground="#2c3e50"/>
 
@@ -108,7 +131,7 @@
       <Button Grid.Column="2"
               Command="{Binding NextQuestionCommand}"
               IsVisible="{Binding HasNext}"
-              Content="Next →"
+              Content="Next"
               Padding="16,10" Margin="0,0,10,0" CornerRadius="8"
               Background="#3498db" Foreground="White"/>
 
@@ -119,7 +142,7 @@
               Padding="16,10" CornerRadius="8"
               Background="#27ae60" Foreground="White" FontWeight="SemiBold">
         <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="✓ Submit Quiz" VerticalAlignment="Center"/>
+          <TextBlock Text="Submit Quiz" VerticalAlignment="Center"/>
           <ProgressBar IsIndeterminate="True" Width="50" Height="4" IsVisible="{Binding IsBusy}"/>
         </StackPanel>
       </Button>

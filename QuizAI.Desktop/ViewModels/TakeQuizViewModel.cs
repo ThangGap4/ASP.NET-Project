@@ -31,7 +31,10 @@ public partial class TakeQuizViewModel : ObservableObject
     public bool HasPrevious => CurrentQuestionIndex > 0;
     public bool HasNext => CurrentQuestionIndex < _questions.Count - 1;
     public bool IsLastQuestion => CurrentQuestionIndex == _questions.Count - 1;
-    public bool IsEssayQuestion => CurrentQuestion?.Type is "short_answer" or "long_answer";
+    public bool IsEssayQuestion => CurrentQuestion?.Type is "short_answer" or "long_answer" or "essay";
+    public bool IsMcqQuestion => CurrentQuestion?.Type is "mcq" or null;
+    public bool IsTrueFalseQuestion => CurrentQuestion?.Type == "true_false";
+    public bool IsFillBlankQuestion => CurrentQuestion?.Type == "fill_blank";
 
     public TakeQuizViewModel(ApiClient api, MainWindowViewModel main, Guid quizId, string quizTitle)
     {
@@ -112,6 +115,9 @@ public partial class TakeQuizViewModel : ObservableObject
         OnPropertyChanged(nameof(HasNext));
         OnPropertyChanged(nameof(IsLastQuestion));
         OnPropertyChanged(nameof(IsEssayQuestion));
+        OnPropertyChanged(nameof(IsMcqQuestion));
+        OnPropertyChanged(nameof(IsTrueFalseQuestion));
+        OnPropertyChanged(nameof(IsFillBlankQuestion));
     }
 
     private void SaveCurrentAnswer()
@@ -127,6 +133,18 @@ public partial class TakeQuizViewModel : ObservableObject
     {
         foreach (var o in CurrentOptions) o.IsSelected = false;
         opt.IsSelected = true;
+    }
+
+    public void SelectTrueFalse(bool value)
+    {
+        EssayAnswer = value ? "True" : "False";
+        var match = CurrentOptions.FirstOrDefault(o =>
+            o.Content.Equals(value ? "True" : "False", StringComparison.OrdinalIgnoreCase));
+        if (match != null)
+        {
+            foreach (var o in CurrentOptions) o.IsSelected = false;
+            match.IsSelected = true;
+        }
     }
 
     [RelayCommand]

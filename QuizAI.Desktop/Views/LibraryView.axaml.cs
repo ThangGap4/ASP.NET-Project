@@ -43,8 +43,19 @@ public partial class LibraryView : UserControl
     {
         if (sender is Button btn && DataContext is LibraryViewModel vm)
         {
-            if (btn.CommandParameter is Guid id)
-                vm.DeleteDocumentCommand.Execute(id);
+            var doc = btn.DataContext as QuizAI.Desktop.Services.DocumentDto;
+            if (doc != null)
+                vm.DeleteDocumentCommand.Execute(doc.Id);
+        }
+    }
+
+    private void OnEditDocument(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && DataContext is LibraryViewModel vm)
+        {
+            var doc = btn.DataContext as QuizAI.Desktop.Services.DocumentDto;
+            if (doc != null)
+                vm.StartEditCommand.Execute(doc);
         }
     }
 }
