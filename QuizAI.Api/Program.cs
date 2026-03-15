@@ -5,7 +5,10 @@ using Microsoft.IdentityModel.Tokens;
 using QuizAI.Api.Data;
 using QuizAI.Api.Services;
 
+// Render sets PORT env var; respect it
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls($"http://+:{port}");
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(opt =>
@@ -45,11 +48,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Local"))
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Enable Swagger always (useful for API testing on Render)
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors("AllowAll");
 app.UseAuthentication();

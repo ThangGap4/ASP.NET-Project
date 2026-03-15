@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: quizai-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false          # set manually in Render dashboard
+      - key: OpenAI__ApiKey
+        sync: false          # set manually in Render dashboard
+      - key: Jwt__Secret
+        sync: false          # set manually in Render dashboard
+      - key: OpenAI__Model
+        value: gpt-4o-mini
+      - key: Jwt__ExpireMinutes
+        value: "1440"
+      - key: Jwt__Issuer
+        value: QuizAI.Api
+      - key: Jwt__Audience
+        value: QuizAI.Desktop
+    healthCheckPath: /swagger/index.html
+    autoDeploy: true

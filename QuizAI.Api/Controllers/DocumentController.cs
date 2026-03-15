@@ -16,15 +16,18 @@ public class DocumentController : ControllerBase
     private readonly AppDbContext _context;
     private readonly IWebHostEnvironment _env;
     private readonly DocumentProcessorService _processor;
+    private readonly IServiceScopeFactory _scopeFactory;
 
     public DocumentController(
         AppDbContext context,
         IWebHostEnvironment env,
-        DocumentProcessorService processor)
+        DocumentProcessorService processor,
+        IServiceScopeFactory scopeFactory)
     {
         _context = context;
         _env = env;
         _processor = processor;
+        _scopeFactory = scopeFactory;
     }
 
     // GET /api/documents – Lấy danh sách documents của user hiện tại
@@ -112,10 +115,13 @@ public class DocumentController : ControllerBase
         _context.Documents.Add(document);
         await _context.SaveChangesAsync();
 
-        // Process in background (don't await — respond immediately)
+        // Process in background using a new DI scope (DocumentProcessorService is Scoped)
+        var docId = document.Id;
         _ = Task.Run(async () =>
         {
-            try { await _processor.ProcessDocumentAsync(document.Id); }
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            var processor = scope.ServiceProvider.GetRequiredService<DocumentProcessorService>();
+            try { await processor.ProcessDocumentAsync(docId); }
             catch { /* logged inside service */ }
         });
 
@@ -157,10 +163,13 @@ public class DocumentController : ControllerBase
         _context.Documents.Add(document);
         await _context.SaveChangesAsync();
 
-        // Process in background
+        // Process in background using a new DI scope
+        var docId2 = document.Id;
         _ = Task.Run(async () =>
         {
-            try { await _processor.ProcessDocumentAsync(document.Id); }
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            var processor = scope.ServiceProvider.GetRequiredService<DocumentProcessorService>();
+            try { await processor.ProcessDocumentAsync(docId2); }
             catch { /* logged inside service */ }
         });
 
