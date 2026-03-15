@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QuizAI.Api.Data;
 using QuizAI.Api.Models;
 
@@ -16,18 +17,54 @@ public class QuizController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Quiz>>> GetQuizzes()
+    public async Task<ActionResult<IEnumerable<object>>> GetQuizzes()
     {
-        return await System.Threading.Tasks.Task.FromResult(_context.Quizzes.ToList());
+        var quizzes = await _context.Quizzes
+            .Select(q => new
+            {
+                q.Id,
+                q.Title,
+                q.Description,
+                q.Published,
+                q.CreatedAt,
+                QuestionCount = q.Questions.Count
+            })
+            .ToListAsync();
+        return Ok(quizzes);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Quiz>> GetQuiz(System.Guid id)
+    public async Task<ActionResult<object>> GetQuiz(Guid id)
     {
-        var quiz = await System.Threading.Tasks.Task.FromResult(_context.Quizzes.FirstOrDefault(q => q.Id == id));
-        if (quiz == null)
-            return NotFound();
-        return quiz;
+        var quiz = await _context.Quizzes
+            .Include(q => q.Questions)
+                .ThenInclude(q => q.Options)
+            .FirstOrDefaultAsync(q => q.Id == id);
+
+        if (quiz == null) return NotFound();
+
+        return Ok(new
+        {
+            quiz.Id,
+            quiz.Title,
+            quiz.Description,
+            quiz.Published,
+            quiz.CreatedAt,
+            Questions = quiz.Questions.OrderBy(q => q.Seq).Select(q => new
+            {
+                q.Id,
+                q.Seq,
+                q.Type,
+                q.Prompt,
+                q.MaxScore,
+                Options = q.Options.OrderBy(o => o.OptIndex).Select(o => new
+                {
+                    o.Id,
+                    o.OptIndex,
+                    o.Content
+                })
+            })
+        });
     }
 
     [HttpPost]
@@ -37,8 +74,8 @@ public class QuizController : ControllerBase
         {
             Title = dto.Title,
             Description = dto.Description,
-            UserId = System.Guid.NewGuid(),
-            DocumentId = dto.DocumentId
+            SourceDocumentId = dto.SourceDocumentId,
+            CreatorId = null
         };
 
         _context.Quizzes.Add(quiz);
@@ -48,11 +85,10 @@ public class QuizController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteQuiz(System.Guid id)
+    public async Task<IActionResult> DeleteQuiz(Guid id)
     {
-        var quiz = await System.Threading.Tasks.Task.FromResult(_context.Quizzes.FirstOrDefault(q => q.Id == id));
-        if (quiz == null)
-            return NotFound();
+        var quiz = await _context.Quizzes.FindAsync(id);
+        if (quiz == null) return NotFound();
 
         _context.Quizzes.Remove(quiz);
         await _context.SaveChangesAsync();
@@ -60,4 +96,4 @@ public class QuizController : ControllerBase
     }
 }
 
-public record CreateQuizDto(string Title, string Description, System.Guid DocumentId);
+public record CreateQuizDto(string Title, string? Description, Guid? SourceDocumentId);
