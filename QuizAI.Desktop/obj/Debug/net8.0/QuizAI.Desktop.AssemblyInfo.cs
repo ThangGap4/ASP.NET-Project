@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("QuizAI.Desktop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+017dde7f36b4ebeeb1d38a9d74b8754d04f50e9b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b0ebce9e28142a8e179b2b9f93508dc9df6c9c79")]
 [assembly: System.Reflection.AssemblyProductAttribute("QuizAI.Desktop")]
 [assembly: System.Reflection.AssemblyTitleAttribute("QuizAI.Desktop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

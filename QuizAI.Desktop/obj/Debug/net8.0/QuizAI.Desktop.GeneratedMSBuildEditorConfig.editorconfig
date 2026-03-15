@@ -19,5 +19,8 @@ build_property.ProjectDir = /home/thang/Documents/ASP.NET-Project/QuizAI.Desktop
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 
+[/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/App.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/MainWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

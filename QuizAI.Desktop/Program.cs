@@ -1,24 +1,20 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using QuizAI.Desktop.Services;
 
 namespace QuizAI.Desktop;
 
-public partial class App : Application
+internal class Program
 {
-    public override void Initialize()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
+    [System.STAThread]
+    public static void Main(string[] args) => BuildAvaloniaApp()
+        .StartWithClassicDesktopLifetime(args);
 
-    public override void OnFrameworkInitializationCompleted()
-    {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            desktop.MainWindow = new MainWindow();
-        }
-
-        base.OnFrameworkInitializationCompleted();
-    }
+    public static AppBuilder BuildAvaloniaApp()
+        => AppBuilder
+            .Configure<App>()
+            .UsePlatformDetect()
+            .UseSkia()
+            .LogToTrace();
 }
+
