@@ -1,11 +1,10 @@
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 
 namespace QuizAI.Desktop.Views;
 
-public partial class LoginView : UserControl
+public partial class ProfileView : UserControl
 {
-    public LoginView()
+    public ProfileView()
     {
         InitializeComponent();
     }

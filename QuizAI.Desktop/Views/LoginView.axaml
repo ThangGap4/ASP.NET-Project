@@ -92,12 +92,17 @@
 
         <!-- Toggle mode -->
         <Button Command="{Binding ToggleModeCommand}"
-                Content="{Binding IsRegisterMode, Converter={x:Static StringConverters.IsNotNullOrEmpty}, ConverterParameter='Already have account? Login'}"
                 HorizontalAlignment="Center"
                 Background="Transparent"
                 Foreground="#3498db"
-                Padding="0"
-                Click="OnToggleMode"/>
+                Padding="0">
+          <StackPanel>
+            <TextBlock Text="Don't have an account? Register"
+                       IsVisible="{Binding !IsRegisterMode}"/>
+            <TextBlock Text="Already have an account? Login"
+                       IsVisible="{Binding IsRegisterMode}"/>
+          </StackPanel>
+        </Button>
 
       </StackPanel>
     </Border>

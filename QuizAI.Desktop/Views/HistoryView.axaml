@@ -1,0 +1,96 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:QuizAI.Desktop.ViewModels"
+             xmlns:svc="using:QuizAI.Desktop.Services"
+             x:Class="QuizAI.Desktop.Views.HistoryView"
+             x:DataType="vm:HistoryViewModel">
+
+  <DockPanel Margin="24">
+
+    <!-- Header -->
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="12" Margin="0,0,0,20">
+      <TextBlock Text="Attempt History"
+                 FontSize="26" FontWeight="Bold"
+                 Foreground="#2c3e50"
+                 VerticalAlignment="Center"/>
+      <Button Command="{Binding LoadCommand}"
+              Content="Refresh"
+              Background="#ecf0f1" Foreground="#2c3e50"
+              CornerRadius="6" Padding="12,6"
+              VerticalAlignment="Center"/>
+      <Button Command="{Binding GoBackCommand}"
+              Content="Back to Library"
+              Background="#95a5a6" Foreground="White"
+              CornerRadius="6" Padding="12,6"
+              VerticalAlignment="Center"/>
+    </StackPanel>
+
+    <!-- Status / Loading -->
+    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+      <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" Height="4"/>
+      <TextBlock Text="{Binding StatusMessage}"
+                 Foreground="#7f8c8d" FontSize="13"
+                 IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+    </StackPanel>
+
+    <!-- List -->
+    <ScrollViewer>
+      <ItemsControl ItemsSource="{Binding Attempts}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="svc:AttemptSummaryDto">
+            <Border Background="White" CornerRadius="8" Padding="16" Margin="0,0,0,10"
+                    BoxShadow="0 2 8 0 #15000000">
+              <Grid ColumnDefinitions="*,Auto">
+
+                <StackPanel Grid.Column="0" Spacing="4">
+                  <TextBlock Text="{Binding QuizTitle}"
+                             FontSize="16" FontWeight="SemiBold" Foreground="#2c3e50"/>
+                  <StackPanel Orientation="Horizontal" Spacing="16">
+                    <TextBlock FontSize="12" Foreground="#7f8c8d">
+                      <TextBlock.Text>
+                        <MultiBinding StringFormat="Date: {0:dd/MM/yyyy HH:mm}">
+                          <Binding Path="StartedAt"/>
+                        </MultiBinding>
+                      </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock FontSize="12" Foreground="#7f8c8d">
+                      <TextBlock.Text>
+                        <MultiBinding StringFormat="Status: {0}">
+                          <Binding Path="Status"/>
+                        </MultiBinding>
+                      </TextBlock.Text>
+                    </TextBlock>
+                  </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right"
+                            VerticalAlignment="Center" Spacing="6">
+                  <TextBlock FontSize="22" FontWeight="Bold"
+                             HorizontalAlignment="Right">
+                    <TextBlock.Text>
+                      <MultiBinding StringFormat="{}{0}/{1}">
+                        <Binding Path="TotalScore"/>
+                        <Binding Path="MaxTotalScore"/>
+                      </MultiBinding>
+                    </TextBlock.Text>
+                    <TextBlock.Foreground>
+                      <SolidColorBrush Color="#27ae60"/>
+                    </TextBlock.Foreground>
+                  </TextBlock>
+                  <Button Command="{Binding $parent[ItemsControl].((vm:HistoryViewModel)DataContext).ViewResultCommand}"
+                          CommandParameter="{Binding}"
+                          Content="View Result"
+                          Background="#3498db" Foreground="White"
+                          CornerRadius="6" Padding="10,5"
+                          FontSize="12"/>
+                </StackPanel>
+
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+
+  </DockPanel>
+</UserControl>

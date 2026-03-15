@@ -342,8 +342,80 @@ attempt_answers >── question_options
 - [x] Dockerfile cho API
 - [x] .dockerignore + render.yaml
 - [x] Build desktop app self-contained (build-desktop.sh)
-- [ ] Set env vars trên Render dashboard và deploy
-- [ ] Test trên Windows + Linux
+- [x] Set env vars trên Render dashboard và deploy
+- [x] API live tại https://asp-net-project-9dm5.onrender.com/swagger
+- [ ] Test end-to-end: upload → generate → làm bài → kết quả
+
+---
+
+## PHASE 6 – UI hoàn thiện (còn thiếu)
+
+**Trạng thái: ❌ Chưa làm**
+
+### Đánh giá giao diện hiện tại vs cần có
+
+| Chức năng | Backend API | Desktop UI | Ghi chú |
+|---|---|---|---|
+| Login / Register | ✅ | ✅ | Đã có toggle mode |
+| Document Library | ✅ | ✅ | List, upload file/URL, delete |
+| Generate Quiz | ✅ | ✅ | Chọn doc, số câu, độ khó |
+| Làm bài (MCQ + Essay) | ✅ | ✅ | Next/Prev/Submit |
+| Xem kết quả | ✅ | ✅ | Score, feedback từng câu |
+| **Lịch sử làm bài** | ✅ `GET /attempts/my` | ❌ Chưa có View | Cần thêm HistoryView |
+| **Profile user** | ❌ Chưa có endpoint | ❌ Chưa có View | Cần thêm cả backend lẫn UI |
+| **Xem lại kết quả cũ** | ✅ `GET /attempts/{id}/result` | ❌ Chưa navigate được | Cần link từ HistoryView |
+| **Lỗi 404 khi load Library** | - | ⚠️ Lỗi hiển thị | Cần debug endpoint |
+
+### 6.1 HistoryView – Lịch sử làm bài
+
+- [ ] Tạo `HistoryViewModel.cs` – gọi `GetMyAttemptsAsync()`
+- [ ] Tạo `HistoryView.axaml` – hiển thị danh sách attempts (quiz title, score, ngày làm)
+- [ ] Từ History → click vào attempt → navigate đến `ResultView` (xem lại kết quả)
+- [ ] Thêm nút "History" vào top bar `MainWindow.axaml`
+- [ ] Thêm `NavigateToHistory()` vào `MainWindowViewModel`
+- [ ] Thêm `DataTemplate` cho `HistoryViewModel` trong `MainWindow.axaml`
+
+### 6.2 ProfileView – Thông tin user
+
+- [ ] Thêm `GET /api/auth/me` endpoint trả về: `displayName`, `email`, `role`, `lastLogin`, tổng số quiz đã làm, điểm trung bình
+- [ ] Tạo `ProfileViewModel.cs`
+- [ ] Tạo `ProfileView.axaml` – hiển thị thông tin + stats cơ bản
+- [ ] Thêm nút "Profile" vào top bar
+
+### 6.3 Fix lỗi 404 Document Library
+
+- [ ] Debug `GET /api/documents` trên Render – xem log tại dashboard
+- [ ] Kiểm tra JWT token có được gửi đúng không trong `GetDocumentsAsync()`
+
+### 6.4 Dashboard / Home View (optional)
+
+- [ ] Sau login hiển thị Dashboard thay vì thẳng vào Library
+- [ ] Dashboard gồm: số document, số quiz, số lần làm bài, điểm TB gần nhất
+- [ ] Quick actions: Upload Document, Generate Quiz, View History
+
+---
+
+## PHASE 7 – Chất lượng & UX
+
+**Trạng thái: ❌ Chưa làm**
+
+### 7.1 Error handling toàn diện
+
+- [ ] Khi API trả 401 → tự động logout, navigate về Login
+- [ ] Khi Render spin down (cold start ~50s) → hiển thị loading spinner với message "Connecting to server..."
+- [ ] Timeout tăng lên 120s cho lần request đầu tiên
+
+### 7.2 Loading states
+
+- [ ] Skeleton loading cho danh sách documents và quiz
+- [ ] Progress indicator khi document đang processing (polling `GET /api/documents/{id}` mỗi 3s)
+- [ ] Disable nút Generate khi document chưa `Processed = true`
+
+### 7.3 Validation
+
+- [ ] Email format validation ở Login/Register
+- [ ] Minimum password length (6 chars)
+- [ ] Không cho submit quiz nếu còn câu chưa trả lời (hoặc warning)
 
 ---
 
@@ -379,3 +451,14 @@ attempt_answers >── question_options
 | `Avalonia` v11.x | UI framework | ✅ Đã có |
 | `Avalonia.Themes.Fluent` | Theme | ✅ Đã có |
 | `CommunityToolkit.Mvvm` | MVVM | ✅ Đã có |
+ 
+
+ ##tính năng cơ bản mà ứng dụng cung cấp
+- Upload tài liệu (tạo 1 vùng text area để người dùng có thể patse nội dung copy vào => sau đó chuyển thành file text,file txt, docx,... hoặc URL), có thể chỉnh sửa tài liệu đã upload
+- có tuỳ chọn tạo bộ quiz có các tuỳ chọn như: độ khó (dễ , trung bình , khó), số lượng câu (từ 5-30 câu), loại câu hỏi (trắc nghiệm, điền từ , đúng/sai)
+ => sinh quiz từ tài liệu (MCQ + Essay)
+- Làm quiz với giao diện thân thiện
+- Chấm điểm tự động (MCQ chấm local, Essay chấm AI)
+- Xem kết quả chi tiết + feedback
+- Lịch sử làm bài + xem lại kết quả cũ
+- Quản lý profile user (display name, stats cơ bản)

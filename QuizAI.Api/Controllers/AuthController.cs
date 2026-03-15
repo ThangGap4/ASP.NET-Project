@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuizAI.Api.Data;
@@ -69,8 +71,57 @@ public class AuthController : ControllerBase
             token
         ));
     }
+
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> GetMe()
+    {
+        var idStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (!Guid.TryParse(idStr, out var userId))
+            return Unauthorized();
+
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return NotFound();
+
+        var totalAttempts = await _context.QuizAttempts
+            .CountAsync(a => a.UserId == userId);
+
+        var gradedAttempts = await _context.QuizAttempts
+            .Where(a => a.UserId == userId && a.Status == "graded" && a.MaxTotalScore > 0)
+            .ToListAsync();
+
+        double avgScore = gradedAttempts.Count == 0 ? 0 :
+            gradedAttempts.Average(a => a.MaxTotalScore > 0
+                ? (double)a.TotalScore / (double)a.MaxTotalScore * 100 : 0);
+
+        var totalDocs = await _context.Documents.CountAsync(d => d.OwnerId == userId);
+        var totalQuizzes = await _context.Quizzes.CountAsync(q => q.CreatorId == userId);
+
+        return Ok(new UserProfileDto(
+            user.Id,
+            user.Email,
+            user.DisplayName,
+            user.Role,
+            user.LastLogin,
+            totalDocs,
+            totalQuizzes,
+            totalAttempts,
+            Math.Round(avgScore, 1)
+        ));
+    }
 }
 
 public record RegisterDto(string Email, string Password, string DisplayName);
 public record LoginDto(string Email, string Password);
 public record AuthResponseDto(Guid Id, string Email, string DisplayName, string Role, string Token);
+public record UserProfileDto(
+    Guid Id,
+    string Email,
+    string DisplayName,
+    string Role,
+    DateTime? LastLogin,
+    int TotalDocuments,
+    int TotalQuizzes,
+    int TotalAttempts,
+    double AverageScorePercent
+);

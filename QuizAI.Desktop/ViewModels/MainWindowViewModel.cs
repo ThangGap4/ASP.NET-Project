@@ -50,6 +50,16 @@ public partial class MainWindowViewModel : ObservableObject
         CurrentView = new ResultViewModel(_api, this, attemptId);
     }
 
+    public void NavigateToHistory()
+    {
+        CurrentView = new HistoryViewModel(_api, this);
+    }
+
+    public void NavigateToProfile()
+    {
+        CurrentView = new ProfileViewModel(_api, this);
+    }
+
     public void OnLoggedIn(string displayName)
     {
         IsLoggedIn = true;
