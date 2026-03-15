@@ -1,30 +1,30 @@
-using OpenAI;
 using OpenAI.Chat;
 
 namespace QuizAI.Api.Services;
 
 public class OpenAIService
 {
-    private readonly IConfiguration _configuration;
-    private readonly OpenAIClient _client;
+    private readonly ChatClient _chatClient;
+    private readonly string _model;
 
     public OpenAIService(IConfiguration configuration)
     {
-        _configuration = configuration;
-        var apiKey = _configuration["OpenAI:ApiKey"];
-        _client = new OpenAIClient(apiKey);
+        var apiKey = configuration["OpenAI:ApiKey"] ?? throw new InvalidOperationException("OpenAI:ApiKey is not configured");
+        _model = configuration["OpenAI:Model"] ?? "gpt-4o-mini";
+        _chatClient = new ChatClient(_model, apiKey);
     }
 
-    public async Task<string> GenerateQuizJson(string documentContent, int questionCount = 5)
+    public async Task<string> GenerateQuizJson(string context, int questionCount = 5, string difficulty = "medium")
     {
         var prompt = $$"""
-        Based on the following document, generate a quiz with {{questionCount}} questions.
-        Return ONLY valid JSON (no markdown, no extra text) with this structure:
+        You are a quiz generator. Create {{questionCount}} multiple-choice questions based ONLY on the provided context.
+        Difficulty: {{difficulty}}
+        Return ONLY valid JSON (no markdown, no extra text) with this exact structure:
         {
           "questions": [
             {
-              "content": "Question text here?",
-              "type": "multiple_choice",
+              "prompt": "Question text here?",
+              "type": "mcq",
               "options": [
                 {"content": "Option A", "isCorrect": true},
                 {"content": "Option B", "isCorrect": false},
@@ -34,47 +34,45 @@ public class OpenAIService
             }
           ]
         }
-        
-        Document:
-        {{documentContent}}
+
+        Context:
+        {{context}}
         """;
 
-        var message = new Message { Content = prompt, Role = "user" };
-        var chatRequest = new CreateChatCompletionRequest
+        var messages = new List<ChatMessage>
         {
-            Model = _configuration["OpenAI:Model"] ?? "gpt-4o-mini",
-            Messages = new List<Message> { message }
+            ChatMessage.CreateUserMessage(prompt)
         };
 
-        var response = await _client.CreateChatCompletionAsync(chatRequest);
-        return response.Choices[0].Message.Content;
+        var response = await _chatClient.CompleteChatAsync(messages);
+        return response.Value.Content[0].Text;
     }
 
     public async Task<string> GradeEssay(string question, string studentAnswer, string rubric)
     {
         var prompt = $$"""
         Grade the following essay answer based on the rubric.
-        Return ONLY valid JSON (no markdown, no extra text) with this structure:
+        Return ONLY valid JSON (no markdown, no extra text) with this exact structure:
         {
-          "score": 85,
-          "feedback": "Your answer is good because...",
-          "strengths": ["Point 1", "Point 2"],
-          "improvements": ["Improvement 1", "Improvement 2"]
+          "score": 8,
+          "maxScore": 10,
+          "feedback": "Your answer covers the main points...",
+          "strengths": ["Clear explanation", "Good examples"],
+          "improvements": ["Could elaborate on X", "Missing Y concept"],
+          "citations": []
         }
-        
+
         Question: {{question}}
         Student Answer: {{studentAnswer}}
         Rubric: {{rubric}}
         """;
 
-        var message = new Message { Content = prompt, Role = "user" };
-        var chatRequest = new CreateChatCompletionRequest
+        var messages = new List<ChatMessage>
         {
-            Model = _configuration["OpenAI:Model"] ?? "gpt-4o-mini",
-            Messages = new List<Message> { message }
+            ChatMessage.CreateUserMessage(prompt)
         };
 
-        var response = await _client.CreateChatCompletionAsync(chatRequest);
-        return response.Choices[0].Message.Content;
+        var response = await _chatClient.CompleteChatAsync(messages);
+        return response.Value.Content[0].Text;
     }
 }
