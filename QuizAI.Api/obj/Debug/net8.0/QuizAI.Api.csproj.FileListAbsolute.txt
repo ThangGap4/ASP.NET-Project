@@ -137,3 +137,4 @@
 /home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/UglyToad.PdfPig.Fonts.dll
 /home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/UglyToad.PdfPig.Tokenization.dll
 /home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/UglyToad.PdfPig.Tokens.dll
+/home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/appsettings.json

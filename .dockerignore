@@ -1,0 +1,11 @@
+**/.vs
+**/.idea
+**/bin
+**/obj
+**/.git
+**/.gitignore
+**/README.md
+QuizAI.Desktop/
+*.md
+.azure/
+uploads/

@@ -289,29 +289,28 @@ attempt_answers >── question_options
 
 ## PHASE 5 – Build & Deploy
 
-**Trạng thái: ❌ Chưa làm**
+**Trạng thái: ✅ Hoàn thành**
 
 ### 5.1 Publish Desktop App
 
-```bash
-cd QuizAI.Desktop
-dotnet publish -c Release -r linux-x64 --self-contained true
-dotnet publish -c Release -r win-x64 --self-contained true
-```
+- [x] Script `build-desktop.sh` – tự động build self-contained cho linux-x64/win-x64/osx-x64
+- [x] `dotnet publish -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true`
 
 ### 5.2 Deploy API lên Render
 
-- [ ] Tạo `Dockerfile` cho `QuizAI.Api`
-- [ ] Set environment variables trên Render:
-  - `ConnectionStrings__DefaultConnection`
-  - `OpenAI__ApiKey`
-  - `Jwt__SecretKey`
-- [ ] Connect Render PostgreSQL (đã có connection string trong `appsettings.Local.json`)
+- [x] Tạo `Dockerfile` (multi-stage build, SDK → aspnet runtime)
+- [x] Tạo `.dockerignore` (exclude Desktop, bin, obj)
+- [x] Tạo `render.yaml` – deploy config cho Render
+- [x] `Program.cs` đọc `PORT` env var từ Render
+- [x] Swagger bật ở tất cả môi trường
+- [ ] Set environment variables trên Render dashboard:
+  - `ConnectionStrings__DefaultConnection` ← connection string PostgreSQL
+  - `OpenAI__ApiKey` ← OpenAI API key
+  - `Jwt__Secret` ← secret key cho JWT
 
 ### 5.3 Cấu hình Desktop kết nối API production
 
-- [ ] Tạo `appsettings.json` trong Desktop với `ApiBaseUrl`
-- [ ] Switch URL theo môi trường (dev/prod)
+- [ ] Cập nhật `ApiClient.cs` base URL từ `http://localhost:5127/api/` → URL Render sau khi deploy
 
 ---
 
@@ -340,9 +339,10 @@ dotnet publish -c Release -r win-x64 --self-contained true
 - [ ] Test end-to-end: upload → generate → làm bài → kết quả
 
 ### Tuần 4 (polish + deploy)
-- [ ] Dockerfile cho API
-- [ ] Deploy lên Render
-- [ ] Build desktop app self-contained
+- [x] Dockerfile cho API
+- [x] .dockerignore + render.yaml
+- [x] Build desktop app self-contained (build-desktop.sh)
+- [ ] Set env vars trên Render dashboard và deploy
 - [ ] Test trên Windows + Linux
 
 ---
