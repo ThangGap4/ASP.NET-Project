@@ -14,11 +14,38 @@ public class OpenAIService
         _chatClient = new ChatClient(_model, apiKey);
     }
 
-    public async Task<string> GenerateQuizJson(string context, int questionCount = 5, string difficulty = "medium")
+    public async Task<string> GenerateQuizJson(string context, int questionCount = 5, string difficulty = "medium", string questionType = "mcq")
     {
+        var typeInstruction = questionType switch
+        {
+            "true_false" => """
+                Generate ONLY True/False questions. Each question must have exactly 2 options:
+                {"content": "True", "isCorrect": true/false} and {"content": "False", "isCorrect": true/false}
+                Set type to "true_false".
+                """,
+            "fill_blank" => """
+                Generate ONLY Fill-in-the-blank questions. The prompt must contain "___" as the blank.
+                Do NOT include options array. Put the correct answer in the "rubric" field.
+                Set type to "fill_blank".
+                """,
+            "mixed" => """
+                Generate a MIX of question types: roughly 1/3 MCQ, 1/3 True/False, 1/3 Fill-in-the-blank.
+                - MCQ: 4 options, type = "mcq"
+                - True/False: 2 options (True/False), type = "true_false"
+                - Fill-in-blank: prompt has "___", no options, answer in rubric, type = "fill_blank"
+                """,
+            _ => """
+                Generate ONLY multiple-choice questions with exactly 4 options each.
+                Set type to "mcq".
+                """
+        };
+
         var prompt = $$"""
-        You are a quiz generator. Create {{questionCount}} multiple-choice questions based ONLY on the provided context.
+        You are a quiz generator. Create exactly {{questionCount}} questions based ONLY on the provided context.
         Difficulty: {{difficulty}}
+
+        {{typeInstruction}}
+
         Return ONLY valid JSON (no markdown, no extra text) with this exact structure:
         {
           "questions": [
@@ -30,7 +57,8 @@ public class OpenAIService
                 {"content": "Option B", "isCorrect": false},
                 {"content": "Option C", "isCorrect": false},
                 {"content": "Option D", "isCorrect": false}
-              ]
+              ],
+              "rubric": null
             }
           ]
         }
@@ -39,11 +67,7 @@ public class OpenAIService
         {{context}}
         """;
 
-        var messages = new List<ChatMessage>
-        {
-            ChatMessage.CreateUserMessage(prompt)
-        };
-
+        var messages = new List<ChatMessage> { ChatMessage.CreateUserMessage(prompt) };
         var response = await _chatClient.CompleteChatAsync(messages);
         return response.Value.Content[0].Text;
     }

@@ -462,3 +462,93 @@ attempt_answers >── question_options
 - Xem kết quả chi tiết + feedback
 - Lịch sử làm bài + xem lại kết quả cũ
 - Quản lý profile user (display name, stats cơ bản)
+
+---
+
+## PHASE 8 – Upload tài liệu bằng Paste Text + Chỉnh sửa tài liệu
+
+**Trạng thái: ❌ Chưa làm**
+
+### Gap so với hiện tại
+- Hiện tại: chỉ upload file (.txt/.pdf/.docx) hoặc URL
+- Cần thêm: paste nội dung trực tiếp vào text area → tạo file .txt tạm → xử lý bình thường
+- Cần thêm: chỉnh sửa nội dung tài liệu đã upload (đổi tên, cập nhật nội dung)
+
+### 8.1 Backend – Paste Text endpoint
+
+- [ ] Thêm `POST /api/documents/upload-text` nhận `{ title, content }` → tạo file .txt → process bình thường
+- [ ] Thêm `PATCH /api/documents/{id}` nhận `{ fileName?, content? }` → cập nhật tên + ghi đè file → re-process chunks
+
+### 8.2 Desktop – LibraryView mở rộng
+
+- [ ] Thêm tab/toggle thứ 3 trong LibraryView: **Paste Text**
+- [ ] TextArea lớn để nhập nội dung, TextBox để nhập tiêu đề
+- [ ] Nút "Save as Document" → gọi `UploadTextAsync`
+- [ ] Thêm nút "Edit" trên mỗi document item → mở `EditDocumentView` (hoặc dialog)
+  - Hiển thị tên file hiện tại + nội dung text (nếu là .txt)
+  - Cho phép đổi tên
+  - Nút "Save" → gọi `UpdateDocumentAsync` → tự re-process
+
+### 8.3 ApiClient mở rộng
+
+- [ ] Thêm `UploadTextAsync(string title, string content)`
+- [ ] Thêm `UpdateDocumentAsync(Guid id, string? fileName, string? content)`
+
+---
+
+## PHASE 9 – Loại câu hỏi mở rộng (True/False + Fill in the Blank)
+
+**Trạng thái: ❌ Chưa làm**
+
+### Gap so với hiện tại
+- Hiện tại: OpenAI prompt chỉ sinh `mcq` (4 lựa chọn)
+- Cần thêm: `true_false` (Đúng/Sai) và `fill_blank` (Điền từ)
+- Số câu hiện tại cố định 5/10/15/20, cần cho nhập tự do 5–30
+
+### 9.1 Backend – Mở rộng OpenAIService
+
+- [ ] Cập nhật `GenerateQuizJson` nhận thêm `questionType: "mcq" | "true_false" | "fill_blank" | "mixed"`
+- [ ] Prompt cho `true_false`: 2 options `{"content": "True", "isCorrect": true/false}` và `{"content": "False", ...}`
+- [ ] Prompt cho `fill_blank`: `prompt` có dạng "The capital of France is ___.", không có options, `rubric` chứa đáp án
+- [ ] Chấm `fill_blank` trong `AttemptController`: so sánh text (lowercase, trim) với `rubric`
+
+### 9.2 Backend – GenerateQuizDto mở rộng
+
+- [ ] Thêm field `QuestionType` vào `GenerateQuizDto`: `"mcq" | "true_false" | "fill_blank" | "mixed"`
+- [ ] Số câu nhận `int` tự do thay vì enum, validate 5–30
+
+### 9.3 Desktop – CreateQuizView mở rộng
+
+- [ ] Thay `QuestionCountOptions = {5,10,15,20}` bằng `NumericUpDown` hoặc `Slider` từ 5–30
+- [ ] Thêm ComboBox **Question Type**: MCQ, True/False, Fill in the Blank, Mixed
+- [ ] Truyền `questionType` vào `GenerateQuizAsync`
+
+### 9.4 Desktop – TakeQuizView mở rộng
+
+- [ ] Loại `true_false`: hiển thị 2 Button "True" / "False" thay vì 4 options
+- [ ] Loại `fill_blank`: hiển thị TextBox (tương tự essay nhưng không cần AI chấm)
+- [ ] Loại `fill_blank` chấm local: so sánh lowercase/trim với rubric trả về từ API result
+
+---
+
+## PHASE 10 – Số câu linh hoạt + Quiz type mixed
+
+**Trạng thái: ❌ Chưa làm**
+
+### Gap so với hiện tại
+- Số câu hiện giới hạn cố định 4 lựa chọn
+- "Mixed" type cần AI mix cả 3 loại câu hỏi
+
+### 10.1 Backend – Mixed quiz generation
+
+- [ ] Khi `questionType = "mixed"`: prompt AI sinh hỗn hợp MCQ + true_false + fill_blank
+- [ ] Mỗi câu hỏi có field `type` riêng trong JSON trả về
+- [ ] `AttemptController.Submit` chấm đúng theo `type` của từng câu
+
+### 10.2 Desktop – Hiển thị số câu linh hoạt
+
+- [ ] `NumericUpDown` min=5, max=30, default=10
+- [ ] `CreateQuizViewModel.QuestionCount` là `int` thay vì chọn từ list
+- [ ] Validate trước khi gọi API nếu < 5 hoặc > 30
+
+---

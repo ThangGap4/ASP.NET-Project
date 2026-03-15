@@ -19,4 +19,16 @@ public partial class TakeQuizView : UserControl
                 vm.SelectOptionCommand.Execute(opt);
         }
     }
+
+    private void OnTrueClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is TakeQuizViewModel vm)
+            vm.SelectTrueFalse(true);
+    }
+
+    private void OnFalseClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is TakeQuizViewModel vm)
+            vm.SelectTrueFalse(false);
+    }
 }

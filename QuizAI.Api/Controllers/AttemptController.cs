@@ -87,7 +87,16 @@ public class AttemptController : ControllerBase
                 var selectedOption = question.Options.FirstOrDefault(o => o.Id == answer.SelectedOptionId);
                 autoScore = selectedOption?.IsCorrect == true ? question.MaxScore : 0;
             }
-            else if ((question.Type == "short_answer" || question.Type == "long_answer") && !string.IsNullOrWhiteSpace(answer.AnswerText))
+            else if (question.Type == "fill_blank" && !string.IsNullOrWhiteSpace(answer.AnswerText))
+            {
+                var correctAnswer = (question.RubricJson ?? string.Empty).Trim().ToLowerInvariant();
+                var studentAnswer = answer.AnswerText.Trim().ToLowerInvariant();
+                autoScore = studentAnswer == correctAnswer ? question.MaxScore : 0;
+                feedbackJson = autoScore > 0
+                    ? "{\"feedback\":\"Correct!\"}"
+                    : $"{{\"feedback\":\"Incorrect. The correct answer is: {question.RubricJson}\"}}";
+            }
+            else if ((question.Type == "essay" || question.Type == "short_answer" || question.Type == "long_answer") && !string.IsNullOrWhiteSpace(answer.AnswerText))
             {
                 var rubric = question.RubricJson ?? "Grade based on accuracy and completeness.";
                 feedbackJson = await _openAIService.GradeEssay(question.Prompt, answer.AnswerText, rubric);

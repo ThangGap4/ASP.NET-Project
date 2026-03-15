@@ -10,7 +10,7 @@
     <!-- Left Panel: Generate -->
     <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="16">
 
-      <TextBlock Grid.Row="0" Text="✨ Generate Quiz"
+      <TextBlock Grid.Row="0" Text="Generate Quiz"
                  FontSize="22" FontWeight="Bold" Foreground="#2c3e50"/>
 
       <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="20"
@@ -44,9 +44,18 @@
 
           <!-- Question count -->
           <StackPanel Spacing="6">
-            <TextBlock Text="Number of Questions" FontWeight="SemiBold" Foreground="#2c3e50"/>
-            <ComboBox ItemsSource="{Binding QuestionCountOptions}"
-                      SelectedItem="{Binding QuestionCount}"
+            <TextBlock Text="Number of Questions (5-30)" FontWeight="SemiBold" Foreground="#2c3e50"/>
+            <NumericUpDown Value="{Binding QuestionCount}"
+                           Minimum="5" Maximum="30" Increment="1"
+                           FormatString="0"
+                           CornerRadius="6"/>
+          </StackPanel>
+
+          <!-- Question type -->
+          <StackPanel Spacing="6">
+            <TextBlock Text="Question Type" FontWeight="SemiBold" Foreground="#2c3e50"/>
+            <ComboBox ItemsSource="{Binding QuestionTypeLabels}"
+                      SelectedIndex="{Binding SelectedQuestionTypeIndex}"
                       HorizontalAlignment="Stretch"/>
           </StackPanel>
 
@@ -72,14 +81,14 @@
                   Padding="0,14" FontSize="15" FontWeight="SemiBold"
                   Background="#3498db" Foreground="White" CornerRadius="8">
             <StackPanel Orientation="Horizontal" Spacing="8">
-              <TextBlock Text="🤖 Generate Quiz" VerticalAlignment="Center"/>
+              <TextBlock Text="Generate Quiz" VerticalAlignment="Center"/>
               <ProgressBar IsIndeterminate="True" Width="60" Height="4"
                            IsVisible="{Binding IsBusy}"/>
             </StackPanel>
           </Button>
 
           <Button Command="{Binding GoToLibraryCommand}"
-                  Content="← Back to Library"
+                  Content="Back to Library"
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Center"
                   Padding="0,10"
@@ -92,7 +101,7 @@
     <!-- Right Panel: Quiz List -->
     <Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="12">
 
-      <TextBlock Grid.Row="0" Text="📋 My Quizzes"
+      <TextBlock Grid.Row="0" Text="My Quizzes"
                  FontSize="22" FontWeight="Bold" Foreground="#2c3e50"/>
 
       <ScrollViewer Grid.Row="1">
@@ -125,14 +134,14 @@
                   </Border>
 
                   <Button Grid.Column="2"
-                          Content="▶ Take Quiz"
+                          Content="Take Quiz"
                           CommandParameter="{Binding}"
                           Padding="10,6" Margin="0,0,8,0" CornerRadius="6"
                           Background="#3498db" Foreground="White"
                           Click="OnTakeQuiz"/>
 
                   <Button Grid.Column="3"
-                          Content="🗑"
+                          Content="Delete"
                           CommandParameter="{Binding Id}"
                           Padding="8,6" CornerRadius="6"
                           Background="#fdecea" Foreground="#e74c3c"
