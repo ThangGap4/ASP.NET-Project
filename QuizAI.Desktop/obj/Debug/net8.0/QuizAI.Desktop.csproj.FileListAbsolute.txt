@@ -1,0 +1,8 @@
+/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/obj/Debug/net8.0/QuizAI.Desktop.csproj.AssemblyReference.cache
+/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/obj/Debug/net8.0/Avalonia/Resources.Inputs.cache
+/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/obj/Debug/net8.0/Avalonia/resources
+/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/obj/Debug/net8.0/QuizAI.Desktop.GeneratedMSBuildEditorConfig.editorconfig
+/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/obj/Debug/net8.0/QuizAI.Desktop.AssemblyInfoInputs.cache
+/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/obj/Debug/net8.0/QuizAI.Desktop.AssemblyInfo.cs
+/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/obj/Debug/net8.0/QuizAI.Desktop.csproj.CoreCompileInputs.cache
+/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/obj/Debug/net8.0/QuizAI.Desktop.sourcelink.json
