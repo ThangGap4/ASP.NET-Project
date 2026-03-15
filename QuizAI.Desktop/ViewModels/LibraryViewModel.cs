@@ -57,7 +57,8 @@ public partial class LibraryViewModel : ObservableObject
             if (doc != null)
             {
                 Documents.Insert(0, doc);
-                StatusMessage = $"Uploaded '{doc.FileName}'. Processing in background...";
+                StatusMessage = $"Uploaded '{doc.FileName}'. Processing...";
+                _ = PollProcessingAsync(doc.Id);
             }
         }
         catch (Exception ex)
@@ -84,7 +85,8 @@ public partial class LibraryViewModel : ObservableObject
             {
                 Documents.Insert(0, doc);
                 UrlInput = string.Empty;
-                StatusMessage = $"URL imported. Processing in background...";
+                StatusMessage = "URL imported. Processing...";
+                _ = PollProcessingAsync(doc.Id);
             }
         }
         catch (Exception ex)
@@ -94,6 +96,29 @@ public partial class LibraryViewModel : ObservableObject
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    private async Task PollProcessingAsync(Guid docId)
+    {
+        for (int i = 0; i < 30; i++)
+        {
+            await Task.Delay(4000);
+            try
+            {
+                var updated = await _api.GetDocumentAsync(docId);
+                if (updated == null) break;
+
+                var idx = Documents.IndexOf(Documents.FirstOrDefault(d => d.Id == docId)!);
+                if (idx >= 0) Documents[idx] = updated;
+
+                if (updated.Processed)
+                {
+                    StatusMessage = $"'{updated.FileName}' is ready.";
+                    break;
+                }
+            }
+            catch { break; }
         }
     }
 

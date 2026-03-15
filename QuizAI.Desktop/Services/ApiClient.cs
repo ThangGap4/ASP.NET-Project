@@ -23,7 +23,7 @@ public class ApiClient
         _http = new HttpClient
         {
             BaseAddress = new Uri(baseUrl),
-            Timeout = TimeSpan.FromSeconds(60)
+            Timeout = TimeSpan.FromSeconds(120)
         };
     }
 
@@ -47,6 +47,8 @@ public class ApiClient
     public async Task<AuthResponseDto?> LoginAsync(string email, string password)
     {
         var res = await _http.PostAsJsonAsync("auth/login", new { email, password });
+        if ((int)res.StatusCode == 401)
+            throw new UnauthorizedAccessException("Invalid email or password");
         res.EnsureSuccessStatusCode();
         return await res.Content.ReadFromJsonAsync<AuthResponseDto>(JsonOptions);
     }
@@ -54,6 +56,8 @@ public class ApiClient
     public async Task<AuthResponseDto?> RegisterAsync(string email, string password, string displayName)
     {
         var res = await _http.PostAsJsonAsync("auth/register", new { email, password, displayName });
+        if ((int)res.StatusCode == 409)
+            throw new InvalidOperationException("Email already registered");
         res.EnsureSuccessStatusCode();
         return await res.Content.ReadFromJsonAsync<AuthResponseDto>(JsonOptions);
     }
@@ -91,6 +95,11 @@ public class ApiClient
     {
         var res = await _http.DeleteAsync($"documents/{id}");
         res.EnsureSuccessStatusCode();
+    }
+
+    public async Task<DocumentDto?> GetDocumentAsync(Guid id)
+    {
+        return await _http.GetFromJsonAsync<DocumentDto>($"documents/{id}", JsonOptions);
     }
 
     // ─── QUIZZES ─────────────────────────────────────────────────────────────

@@ -42,11 +42,17 @@ public partial class LoginViewModel : ObservableObject
                 _main.OnLoggedIn(result.DisplayName);
             }
         }
+        catch (UnauthorizedAccessException ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+        catch (TaskCanceledException)
+        {
+            ErrorMessage = "Server is waking up, please try again in a moment...";
+        }
         catch (Exception ex)
         {
-            ErrorMessage = ex.Message.Contains("401") || ex.Message.Contains("Unauthorized")
-                ? "Invalid email or password"
-                : $"Error: {ex.Message}";
+            ErrorMessage = $"Error: {ex.Message}";
         }
         finally
         {
@@ -63,6 +69,12 @@ public partial class LoginViewModel : ObservableObject
             return;
         }
 
+        if (Password.Length < 6)
+        {
+            ErrorMessage = "Password must be at least 6 characters";
+            return;
+        }
+
         IsBusy = true;
         ErrorMessage = string.Empty;
         try
@@ -74,11 +86,17 @@ public partial class LoginViewModel : ObservableObject
                 _main.OnLoggedIn(result.DisplayName);
             }
         }
+        catch (InvalidOperationException ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+        catch (TaskCanceledException)
+        {
+            ErrorMessage = "Server is waking up, please try again in a moment...";
+        }
         catch (Exception ex)
         {
-            ErrorMessage = ex.Message.Contains("409") || ex.Message.Contains("Conflict")
-                ? "Email already registered"
-                : $"Error: {ex.Message}";
+            ErrorMessage = $"Error: {ex.Message}";
         }
         finally
         {
