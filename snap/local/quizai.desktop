@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=QuizAI
+Comment=AI-powered quiz generator from your documents
+Exec=quizai
+Icon=${SNAP}/usr/share/icons/hicolor/256x256/apps/quizai.png
+Type=Application
+Categories=Education;Science;
+Keywords=quiz;ai;education;study;
+StartupNotify=true
