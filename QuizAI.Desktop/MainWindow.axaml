@@ -1,0 +1,56 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="QuizAI.Desktop.MainWindow"
+        Title="Quiz AI"
+        Width="900"
+        Height="700"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*" Margin="20">
+        <TextBlock Grid.Row="0"
+                   Text="Quiz AI - Ứng dụng trắc nghiệm thông minh"
+                   FontSize="28"
+                   FontWeight="Bold"
+                   Margin="0,0,0,30"
+                   Foreground="#2c3e50"/>
+
+        <StackPanel Grid.Row="1" Spacing="15" VerticalAlignment="Center">
+            <Button Name="ImportBtn"
+                    Content="1. Import Tài liệu"
+                    Padding="20,15"
+                    FontSize="16"
+                    Background="#3498db"
+                    Foreground="White"
+                    Click="OnImportDocument"/>
+
+            <Button Name="CreateBtn"
+                    Content="2. Tạo Quiz từ tài liệu"
+                    Padding="20,15"
+                    FontSize="16"
+                    Background="#27ae60"
+                    Foreground="White"
+                    Click="OnCreateQuiz"/>
+
+            <Button Name="TakeBtn"
+                    Content="3. Làm Quiz"
+                    Padding="20,15"
+                    FontSize="16"
+                    Background="#e74c3c"
+                    Foreground="White"
+                    Click="OnTakeQuiz"/>
+
+            <TextBlock Name="StatusText"
+                       Text="Chào mừng đến Quiz AI"
+                       FontSize="14"
+                       Foreground="#7f8c8d"
+                       Margin="0,20,0,0"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="2"
+                   Text="v1.0.0 - Quiz AI Desktop - Chạy trên Ubuntu"
+                   FontSize="11"
+                   Foreground="#95a5a6"
+                   Margin="0,20,0,0"/>
+    </Grid>
+</Window>
