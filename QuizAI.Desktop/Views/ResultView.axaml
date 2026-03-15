@@ -1,0 +1,137 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:QuizAI.Desktop.ViewModels"
+             x:Class="QuizAI.Desktop.Views.ResultView"
+             x:DataType="vm:ResultViewModel">
+
+  <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="20" RowSpacing="16">
+
+    <!-- Header -->
+    <TextBlock Grid.Row="0" Text="📊 Quiz Result"
+               FontSize="24" FontWeight="Bold" Foreground="#2c3e50"/>
+
+    <!-- Score summary -->
+    <Border Grid.Row="1" IsVisible="{Binding !IsBusy}"
+            Background="White" CornerRadius="12" Padding="24"
+            BoxShadow="0 2 10 0 #15000000">
+      <StackPanel Orientation="Horizontal" Spacing="40" HorizontalAlignment="Center">
+
+        <StackPanel HorizontalAlignment="Center" Spacing="4">
+          <TextBlock Text="{Binding ScorePercentage}"
+                     FontSize="48" FontWeight="Bold"
+                     HorizontalAlignment="Center"
+                     Foreground="#2c3e50"/>
+          <TextBlock Text="Score" FontSize="14"
+                     HorizontalAlignment="Center" Foreground="#7f8c8d"/>
+        </StackPanel>
+
+        <StackPanel HorizontalAlignment="Center" Spacing="4">
+          <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+            <TextBlock Text="{Binding TotalScore}"
+                       FontSize="36" FontWeight="Bold" Foreground="#27ae60"/>
+            <TextBlock Text="/" FontSize="36" Foreground="#95a5a6" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding MaxTotalScore}"
+                       FontSize="36" FontWeight="Bold" Foreground="#7f8c8d"/>
+          </StackPanel>
+          <TextBlock Text="Points" FontSize="14"
+                     HorizontalAlignment="Center" Foreground="#7f8c8d"/>
+        </StackPanel>
+
+      </StackPanel>
+    </Border>
+
+    <!-- Loading -->
+    <StackPanel Grid.Row="2" IsVisible="{Binding IsBusy}"
+                HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+      <ProgressBar IsIndeterminate="True" Width="200"/>
+      <TextBlock Text="{Binding StatusMessage}" HorizontalAlignment="Center" Foreground="#7f8c8d"/>
+    </StackPanel>
+
+    <!-- Answer list -->
+    <ScrollViewer Grid.Row="2" IsVisible="{Binding !IsBusy}">
+      <ItemsControl ItemsSource="{Binding Answers}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:AnswerResultViewModel">
+            <Border Background="White" CornerRadius="8" Padding="16,14"
+                    Margin="0,0,0,10"
+                    BoxShadow="0 1 4 0 #10000000"
+                    BorderBrush="{Binding ScoreColor}"
+                    BorderThickness="0,0,0,3">
+              <StackPanel Spacing="8">
+
+                <!-- Question -->
+                <TextBlock Text="{Binding QuestionPrompt}"
+                           FontWeight="SemiBold" FontSize="14"
+                           TextWrapping="Wrap" Foreground="#2c3e50"/>
+
+                <!-- MCQ result -->
+                <StackPanel IsVisible="{Binding QuestionType, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                            Spacing="4">
+                  <StackPanel IsVisible="{Binding SelectedOptionContent, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                              Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="Your answer:" Foreground="#7f8c8d" FontSize="13"/>
+                    <TextBlock Text="{Binding SelectedOptionContent}"
+                               FontSize="13" Foreground="{Binding ScoreColor}"/>
+                  </StackPanel>
+
+                  <StackPanel IsVisible="{Binding CorrectOptionContent, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                              Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="Correct answer:" Foreground="#7f8c8d" FontSize="13"/>
+                    <TextBlock Text="{Binding CorrectOptionContent}"
+                               FontSize="13" Foreground="#27ae60"/>
+                  </StackPanel>
+
+                  <!-- Essay answer -->
+                  <StackPanel IsVisible="{Binding AnswerText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                              Spacing="4">
+                    <TextBlock Text="Your answer:" Foreground="#7f8c8d" FontSize="13"/>
+                    <Border Background="#f8f9fa" CornerRadius="6" Padding="10,8">
+                      <TextBlock Text="{Binding AnswerText}"
+                                 TextWrapping="Wrap" FontSize="13" Foreground="#2c3e50"/>
+                    </Border>
+                  </StackPanel>
+                </StackPanel>
+
+                <!-- Feedback -->
+                <Border IsVisible="{Binding FeedbackText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                        Background="#f0f3f4" CornerRadius="6" Padding="10,8">
+                  <StackPanel Spacing="4">
+                    <TextBlock Text="💬 Feedback:" FontWeight="SemiBold"
+                               FontSize="12" Foreground="#2c3e50"/>
+                    <TextBlock Text="{Binding FeedbackText}"
+                               TextWrapping="Wrap" FontSize="13" Foreground="#555"/>
+                  </StackPanel>
+                </Border>
+
+                <!-- Score row -->
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBlock Grid.Column="0"
+                             Text="{Binding ResultLabel}"
+                             FontWeight="SemiBold"
+                             Foreground="{Binding ScoreColor}"/>
+                  <TextBlock Grid.Column="1" FontSize="13" Foreground="#7f8c8d">
+                    <Run Text="{Binding FinalScore}"/><Run Text=" / "/><Run Text="{Binding MaxScore}"/><Run Text=" pts"/>
+                  </TextBlock>
+                </Grid>
+
+              </StackPanel>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+
+    <!-- Bottom buttons -->
+    <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="12">
+      <Button Command="{Binding GoToLibraryCommand}"
+              Content="📚 My Library"
+              Padding="16,10" CornerRadius="8"
+              Background="#ecf0f1" Foreground="#2c3e50"/>
+      <Button Command="{Binding GoToCreateQuizCommand}"
+              Content="📋 My Quizzes"
+              Padding="16,10" CornerRadius="8"
+              Background="#3498db" Foreground="White"/>
+    </StackPanel>
+
+  </Grid>
+</UserControl>

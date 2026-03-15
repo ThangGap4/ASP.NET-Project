@@ -1,0 +1,107 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:QuizAI.Desktop.ViewModels"
+             x:Class="QuizAI.Desktop.Views.LoginView"
+             x:DataType="vm:LoginViewModel">
+
+  <Grid ColumnDefinitions="*,400,*" RowDefinitions="*,Auto,*">
+
+    <Border Grid.Column="1" Grid.Row="1"
+            Background="White"
+            CornerRadius="12"
+            Padding="40"
+            BoxShadow="0 4 20 0 #20000000">
+
+      <StackPanel Spacing="20">
+
+        <TextBlock Text="🧠 Quiz AI"
+                   FontSize="32" FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   Foreground="#2c3e50"/>
+
+        <TextBlock Text="AI-powered Quiz Generator"
+                   FontSize="14"
+                   HorizontalAlignment="Center"
+                   Foreground="#7f8c8d"
+                   Margin="0,0,0,10"/>
+
+        <!-- Register-only field -->
+        <StackPanel IsVisible="{Binding IsRegisterMode}" Spacing="6">
+          <TextBlock Text="Display Name" FontWeight="SemiBold" Foreground="#2c3e50"/>
+          <TextBox Text="{Binding DisplayName}"
+                   Watermark="Your name"
+                   CornerRadius="8"
+                   Padding="12,10"/>
+        </StackPanel>
+
+        <!-- Email -->
+        <StackPanel Spacing="6">
+          <TextBlock Text="Email" FontWeight="SemiBold" Foreground="#2c3e50"/>
+          <TextBox Text="{Binding Email}"
+                   Watermark="you@example.com"
+                   CornerRadius="8"
+                   Padding="12,10"/>
+        </StackPanel>
+
+        <!-- Password -->
+        <StackPanel Spacing="6">
+          <TextBlock Text="Password" FontWeight="SemiBold" Foreground="#2c3e50"/>
+          <TextBox Text="{Binding Password}"
+                   PasswordChar="●"
+                   Watermark="Password"
+                   CornerRadius="8"
+                   Padding="12,10"/>
+        </StackPanel>
+
+        <!-- Error message -->
+        <TextBlock Text="{Binding ErrorMessage}"
+                   Foreground="#e74c3c"
+                   TextWrapping="Wrap"
+                   IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+        <!-- Loading indicator -->
+        <ProgressBar IsIndeterminate="True"
+                     IsVisible="{Binding IsBusy}"
+                     Height="4"/>
+
+        <!-- Login Button -->
+        <Button Command="{Binding LoginCommand}"
+                IsVisible="{Binding !IsRegisterMode}"
+                IsEnabled="{Binding !IsBusy}"
+                Content="Login"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Padding="0,14"
+                FontSize="16" FontWeight="SemiBold"
+                Background="#3498db"
+                Foreground="White"
+                CornerRadius="8"/>
+
+        <!-- Register Button -->
+        <Button Command="{Binding RegisterCommand}"
+                IsVisible="{Binding IsRegisterMode}"
+                IsEnabled="{Binding !IsBusy}"
+                Content="Create Account"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Padding="0,14"
+                FontSize="16" FontWeight="SemiBold"
+                Background="#27ae60"
+                Foreground="White"
+                CornerRadius="8"/>
+
+        <!-- Toggle mode -->
+        <Button Command="{Binding ToggleModeCommand}"
+                Content="{Binding IsRegisterMode, Converter={x:Static StringConverters.IsNotNullOrEmpty}, ConverterParameter='Already have account? Login'}"
+                HorizontalAlignment="Center"
+                Background="Transparent"
+                Foreground="#3498db"
+                Padding="0"
+                Click="OnToggleMode"/>
+
+      </StackPanel>
+    </Border>
+
+  </Grid>
+</UserControl>
+

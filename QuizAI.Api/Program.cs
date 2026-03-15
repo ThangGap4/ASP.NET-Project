@@ -26,6 +26,8 @@ builder.Services.AddCors(opt =>
 
 builder.Services.AddScoped<OpenAIService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<EmbeddingService>();
+builder.Services.AddScoped<DocumentProcessorService>();
 
 var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "dev-secret-change-in-production";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

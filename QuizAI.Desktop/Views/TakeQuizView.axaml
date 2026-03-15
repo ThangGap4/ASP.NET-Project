@@ -1,0 +1,129 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:QuizAI.Desktop.ViewModels"
+             x:Class="QuizAI.Desktop.Views.TakeQuizView"
+             x:DataType="vm:TakeQuizViewModel">
+
+  <Grid RowDefinitions="Auto,*,Auto" Margin="20" RowSpacing="16">
+
+    <!-- Header -->
+    <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
+      <Button Grid.Column="0"
+              Command="{Binding GoBackCommand}"
+              Content="← Back"
+              Padding="10,8" CornerRadius="6"
+              Background="#ecf0f1" Foreground="#2c3e50"/>
+      <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+        <TextBlock Text="{Binding QuizTitle}"
+                   FontSize="20" FontWeight="Bold"
+                   HorizontalAlignment="Center" Foreground="#2c3e50"/>
+        <TextBlock Text="{Binding Progress}"
+                   HorizontalAlignment="Center" Foreground="#7f8c8d" FontSize="13"/>
+      </StackPanel>
+    </Grid>
+
+    <!-- Loading -->
+    <StackPanel Grid.Row="1" IsVisible="{Binding !IsLoaded}"
+                HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+      <ProgressBar IsIndeterminate="True" Width="200"/>
+      <TextBlock Text="{Binding StatusMessage}" HorizontalAlignment="Center" Foreground="#7f8c8d"/>
+    </StackPanel>
+
+    <!-- Question card -->
+    <Border Grid.Row="1" IsVisible="{Binding IsLoaded}"
+            Background="White" CornerRadius="12" Padding="30"
+            BoxShadow="0 2 12 0 #20000000">
+      <ScrollViewer>
+        <StackPanel Spacing="20">
+
+          <!-- Question -->
+          <TextBlock Text="{Binding CurrentQuestion.Prompt}"
+                     FontSize="18" FontWeight="SemiBold"
+                     TextWrapping="Wrap" Foreground="#2c3e50"/>
+
+          <ItemsControl IsVisible="{Binding !IsEssayQuestion}"
+                        ItemsSource="{Binding CurrentOptions}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:OptionViewModel">
+                <Button Background="Transparent"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        Padding="0" Margin="0,0,0,8"
+                        CommandParameter="{Binding}"
+                        Click="OnOptionClick">
+                  <Border CornerRadius="8" Padding="16,12"
+                          BorderBrush="#3498db"
+                          BorderThickness="2">
+                    <Grid ColumnDefinitions="Auto,*">
+                      <Border Grid.Column="0" Width="20" Height="20" CornerRadius="10"
+                              BorderThickness="2" Margin="0,0,12,0"
+                              BorderBrush="#bdc3c7">
+                        <Ellipse Width="8" Height="8"
+                                 Fill="#3498db"
+                                 IsVisible="{Binding IsSelected}"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"/>
+                      </Border>
+                      <TextBlock Grid.Column="1" Text="{Binding Content}"
+                                 VerticalAlignment="Center"
+                                 TextWrapping="Wrap" FontSize="15"/>
+                    </Grid>
+                  </Border>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <!-- Essay answer -->
+          <StackPanel IsVisible="{Binding IsEssayQuestion}" Spacing="8">
+            <TextBlock Text="Your answer:" FontWeight="SemiBold" Foreground="#2c3e50"/>
+            <TextBox Text="{Binding EssayAnswer}"
+                     Watermark="Type your answer here..."
+                     MinHeight="150"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     CornerRadius="8" Padding="12"/>
+          </StackPanel>
+
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+
+    <!-- Navigation -->
+    <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto,Auto">
+      <Button Grid.Column="0"
+              Command="{Binding PreviousQuestionCommand}"
+              IsEnabled="{Binding HasPrevious}"
+              Content="← Previous"
+              Padding="16,10" CornerRadius="8"
+              Background="#ecf0f1" Foreground="#2c3e50"/>
+
+      <TextBlock Grid.Column="1" Text="{Binding StatusMessage}"
+                 VerticalAlignment="Center"
+                 HorizontalAlignment="Center"
+                 Foreground="#e74c3c"
+                 TextWrapping="Wrap"
+                 IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+      <Button Grid.Column="2"
+              Command="{Binding NextQuestionCommand}"
+              IsVisible="{Binding HasNext}"
+              Content="Next →"
+              Padding="16,10" Margin="0,0,10,0" CornerRadius="8"
+              Background="#3498db" Foreground="White"/>
+
+      <Button Grid.Column="3"
+              Command="{Binding SubmitCommand}"
+              IsVisible="{Binding IsLastQuestion}"
+              IsEnabled="{Binding !IsBusy}"
+              Padding="16,10" CornerRadius="8"
+              Background="#27ae60" Foreground="White" FontWeight="SemiBold">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="✓ Submit Quiz" VerticalAlignment="Center"/>
+          <ProgressBar IsIndeterminate="True" Width="50" Height="4" IsVisible="{Binding IsBusy}"/>
+        </StackPanel>
+      </Button>
+    </Grid>
+
+  </Grid>
+</UserControl>

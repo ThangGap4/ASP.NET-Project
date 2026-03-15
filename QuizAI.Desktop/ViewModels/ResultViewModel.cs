@@ -1,0 +1,123 @@
+using System.Collections.ObjectModel;
+using System.Text.Json;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using QuizAI.Desktop.Services;
+
+namespace QuizAI.Desktop.ViewModels;
+
+public partial class ResultViewModel : ObservableObject
+{
+    private readonly ApiClient _api;
+    private readonly MainWindowViewModel _main;
+
+    [ObservableProperty] private bool _isBusy = true;
+    [ObservableProperty] private string _statusMessage = string.Empty;
+    [ObservableProperty] private decimal _totalScore;
+    [ObservableProperty] private decimal _maxTotalScore;
+    [ObservableProperty] private string _scorePercentage = string.Empty;
+    [ObservableProperty] private ObservableCollection<AnswerResultViewModel> _answers = new();
+
+    public ResultViewModel(ApiClient api, MainWindowViewModel main, Guid attemptId)
+    {
+        _api = api;
+        _main = main;
+        _ = LoadResultAsync(attemptId);
+    }
+
+    private async Task LoadResultAsync(Guid attemptId)
+    {
+        IsBusy = true;
+        StatusMessage = "Loading results...";
+        try
+        {
+            var result = await _api.GetResultAsync(attemptId);
+            if (result == null)
+            {
+                StatusMessage = "Failed to load result";
+                return;
+            }
+
+            TotalScore = result.TotalScore ?? 0;
+            MaxTotalScore = result.MaxTotalScore ?? 0;
+
+            var pct = MaxTotalScore > 0
+                ? (double)TotalScore / (double)MaxTotalScore * 100
+                : 0;
+            ScorePercentage = $"{pct:F1}%";
+
+            Answers = new ObservableCollection<AnswerResultViewModel>(
+                result.Answers.Select(a => new AnswerResultViewModel(a))
+            );
+            StatusMessage = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private void GoToLibrary()
+    {
+        _main.NavigateToLibrary();
+    }
+
+    [RelayCommand]
+    private void GoToCreateQuiz()
+    {
+        _main.NavigateToCreateQuiz();
+    }
+}
+
+public class AnswerResultViewModel
+{
+    public string QuestionPrompt { get; }
+    public string QuestionType { get; }
+    public string AnswerText { get; }
+    public string SelectedOptionContent { get; }
+    public string CorrectOptionContent { get; }
+    public bool IsCorrect { get; }
+    public decimal FinalScore { get; }
+    public decimal MaxScore { get; }
+    public string FeedbackText { get; }
+    public string ScoreColor => IsCorrect ? "#27ae60" : "#e74c3c";
+    public string ResultLabel => IsCorrect ? "✓ Correct" : "✗ Incorrect";
+
+    public AnswerResultViewModel(AnswerResultDto dto)
+    {
+        QuestionPrompt = dto.QuestionPrompt;
+        QuestionType = dto.QuestionType;
+        AnswerText = dto.AnswerText ?? string.Empty;
+        SelectedOptionContent = dto.SelectedOption?.Content ?? string.Empty;
+        CorrectOptionContent = dto.CorrectOption?.Content ?? string.Empty;
+        FinalScore = dto.FinalScore;
+        MaxScore = dto.MaxScore;
+
+        IsCorrect = dto.QuestionType is "mcq" or "true_false"
+            ? dto.SelectedOption?.IsCorrect == true
+            : dto.FinalScore >= dto.MaxScore * 0.6m;
+
+        // Parse feedback JSON if present
+        if (!string.IsNullOrWhiteSpace(dto.FeedbackJson))
+        {
+            try
+            {
+                var fb = JsonSerializer.Deserialize<JsonElement>(dto.FeedbackJson);
+                FeedbackText = fb.TryGetProperty("feedback", out var f) ? f.GetString() ?? string.Empty : dto.FeedbackJson;
+            }
+            catch
+            {
+                FeedbackText = dto.FeedbackJson;
+            }
+        }
+        else
+        {
+            FeedbackText = string.Empty;
+        }
+    }
+}

@@ -1,0 +1,148 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:QuizAI.Desktop.ViewModels"
+             xmlns:svc="using:QuizAI.Desktop.Services"
+             x:Class="QuizAI.Desktop.Views.CreateQuizView"
+             x:DataType="vm:CreateQuizViewModel">
+
+  <Grid ColumnDefinitions="320,*" Margin="20" ColumnSpacing="20">
+
+    <!-- Left Panel: Generate -->
+    <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="16">
+
+      <TextBlock Grid.Row="0" Text="✨ Generate Quiz"
+                 FontSize="22" FontWeight="Bold" Foreground="#2c3e50"/>
+
+      <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="20"
+              BoxShadow="0 1 8 0 #15000000">
+        <StackPanel Spacing="16">
+
+          <!-- Document picker -->
+          <StackPanel Spacing="6">
+            <TextBlock Text="Select Document" FontWeight="SemiBold" Foreground="#2c3e50"/>
+            <ComboBox ItemsSource="{Binding Documents}"
+                      SelectedItem="{Binding SelectedDocument}"
+                      HorizontalAlignment="Stretch"
+                      PlaceholderText="Choose a document...">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="svc:DocumentDto">
+                  <TextBlock Text="{Binding FileName}"/>
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Text="Only processed documents are shown"
+                       FontSize="11" Foreground="#95a5a6"/>
+          </StackPanel>
+
+          <!-- Quiz title -->
+          <StackPanel Spacing="6">
+            <TextBlock Text="Quiz Title (optional)" FontWeight="SemiBold" Foreground="#2c3e50"/>
+            <TextBox Text="{Binding QuizTitle}"
+                     Watermark="Leave blank for auto-title"
+                     CornerRadius="6" Padding="10,8"/>
+          </StackPanel>
+
+          <!-- Question count -->
+          <StackPanel Spacing="6">
+            <TextBlock Text="Number of Questions" FontWeight="SemiBold" Foreground="#2c3e50"/>
+            <ComboBox ItemsSource="{Binding QuestionCountOptions}"
+                      SelectedItem="{Binding QuestionCount}"
+                      HorizontalAlignment="Stretch"/>
+          </StackPanel>
+
+          <!-- Difficulty -->
+          <StackPanel Spacing="6">
+            <TextBlock Text="Difficulty" FontWeight="SemiBold" Foreground="#2c3e50"/>
+            <ComboBox ItemsSource="{Binding DifficultyOptions}"
+                      SelectedItem="{Binding SelectedDifficulty}"
+                      HorizontalAlignment="Stretch"/>
+          </StackPanel>
+
+          <!-- Status -->
+          <TextBlock Text="{Binding StatusMessage}"
+                     TextWrapping="Wrap"
+                     Foreground="#7f8c8d" FontSize="13"
+                     IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+          <!-- Generate Button -->
+          <Button Command="{Binding GenerateQuizCommand}"
+                  IsEnabled="{Binding !IsBusy}"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Center"
+                  Padding="0,14" FontSize="15" FontWeight="SemiBold"
+                  Background="#3498db" Foreground="White" CornerRadius="8">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="🤖 Generate Quiz" VerticalAlignment="Center"/>
+              <ProgressBar IsIndeterminate="True" Width="60" Height="4"
+                           IsVisible="{Binding IsBusy}"/>
+            </StackPanel>
+          </Button>
+
+          <Button Command="{Binding GoToLibraryCommand}"
+                  Content="← Back to Library"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Center"
+                  Padding="0,10"
+                  Background="#ecf0f1" Foreground="#2c3e50" CornerRadius="8"/>
+
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <!-- Right Panel: Quiz List -->
+    <Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="12">
+
+      <TextBlock Grid.Row="0" Text="📋 My Quizzes"
+                 FontSize="22" FontWeight="Bold" Foreground="#2c3e50"/>
+
+      <ScrollViewer Grid.Row="1">
+        <ItemsControl ItemsSource="{Binding Quizzes}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="svc:QuizDto">
+              <Border Background="White" CornerRadius="8" Padding="16,12"
+                      Margin="0,0,0,10"
+                      BoxShadow="0 1 4 0 #15000000">
+                <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+
+                  <StackPanel Grid.Column="0" Spacing="4">
+                    <TextBlock Text="{Binding Title}"
+                               FontWeight="SemiBold" FontSize="15"
+                               Foreground="#2c3e50"/>
+                    <TextBlock FontSize="12" Foreground="#95a5a6">
+                      <Run Text="{Binding QuestionCount}"/><Run Text=" questions · "/><Run Text="{Binding CreatedAt, StringFormat='{}{0:MMM dd}'}"/>
+                    </TextBlock>
+                  </StackPanel>
+
+                  <Border Grid.Column="1" CornerRadius="4" Padding="8,3" Margin="0,0,10,0">
+                    <StackPanel>
+                      <TextBlock Text="Published"
+                                 FontSize="11" Foreground="#1e8449"
+                                 IsVisible="{Binding Published}"/>
+                      <TextBlock Text="Draft"
+                                 FontSize="11" Foreground="#d35400"
+                                 IsVisible="{Binding !Published}"/>
+                    </StackPanel>
+                  </Border>
+
+                  <Button Grid.Column="2"
+                          Content="▶ Take Quiz"
+                          CommandParameter="{Binding}"
+                          Padding="10,6" Margin="0,0,8,0" CornerRadius="6"
+                          Background="#3498db" Foreground="White"
+                          Click="OnTakeQuiz"/>
+
+                  <Button Grid.Column="3"
+                          Content="🗑"
+                          CommandParameter="{Binding Id}"
+                          Padding="8,6" CornerRadius="6"
+                          Background="#fdecea" Foreground="#e74c3c"
+                          Click="OnDeleteQuiz"/>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </Grid>
+  </Grid>
+</UserControl>

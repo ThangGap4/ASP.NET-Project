@@ -156,147 +156,134 @@ attempt_answers >── question_options
 
 ## PHASE 2 – Backend API hoàn chỉnh
 
-**Trạng thái: ⚠️ Partial (thiếu Auth, thiếu Attempt)**
+**Trạng thái: ✅ Hoàn thành**
 
 ### 2.1 Authentication – `AuthController.cs`
 
-**Trạng thái: ❌ Chưa có**
+**Trạng thái: ✅ Hoàn thành**
 
-- [ ] `POST /api/auth/register` – Đăng ký user (student)
-- [ ] `POST /api/auth/login` – Đăng nhập, trả JWT token
-- [ ] Cài package `Microsoft.AspNetCore.Authentication.JwtBearer`
-- [ ] Hash password bằng `BCrypt.Net` hoặc `ASP.NET Identity`
-- [ ] Middleware xác thực JWT trong `Program.cs`
+- [x] `POST /api/auth/register` – Đăng ký user (student)
+- [x] `POST /api/auth/login` – Đăng nhập, trả JWT token
+- [x] Cài package `Microsoft.AspNetCore.Authentication.JwtBearer`
+- [x] Hash password bằng `BCrypt.Net-Next`
+- [x] Middleware xác thực JWT trong `Program.cs`
 
 ### 2.2 Document Controller – `DocumentController.cs`
 
-**Trạng thái: ⚠️ Chỉ đọc được `.txt`**
+**Trạng thái: ✅ Hoàn thành**
 
-- [ ] `POST /api/documents/upload` – Hỗ trợ đầy đủ:
-  - `.txt` – đọc trực tiếp ✅ (đã có)
-  - `.pdf` – cài `PdfPig` (`UglyToad.PdfPig`)
-  - `.docx` – cài `DocumentFormat.OpenXml`
-  - URL web – dùng `HttpClient` + `HtmlAgilityPack`
-- [ ] Sau khi extract text → tự động chunk (300–800 tokens/chunk)
-- [ ] Lưu `Document` + danh sách `DocumentChunk` vào DB
-- [ ] `GET /api/documents` – Lấy danh sách documents của user
-- [ ] `DELETE /api/documents/{id}` – Xóa document
-- [ ] Thêm `[Authorize]` cho tất cả endpoints
+- [x] `POST /api/documents/upload` – Hỗ trợ đầy đủ:
+  - `.txt` – đọc trực tiếp ✅
+  - `.pdf` – cài `PdfPig` ✅
+  - `.docx` – cài `DocumentFormat.OpenXml` ✅
+  - URL web – `POST /api/documents/upload-url` ✅
+- [x] Sau khi upload → tự động process background (chunk + embed)
+- [x] Lưu `Document` + danh sách `DocumentChunk` vào DB
+- [x] `GET /api/documents` – Lấy danh sách documents của user
+- [x] `GET /api/documents/{id}/chunks` – Xem chunks (debug)
+- [x] `DELETE /api/documents/{id}` – Xóa document
+- [x] `[Authorize]` cho tất cả endpoints
 
 ### 2.3 Quiz Controller – `QuizController.cs`
 
-**Trạng thái: ⚠️ CRUD cơ bản nhưng `UserId` hardcode**
+**Trạng thái: ✅ Hoàn thành**
 
-- [ ] Fix `UserId` lấy từ JWT claim thật (không hardcode `Guid.NewGuid()`)
-- [ ] `POST /api/quizzes/generate` – Sinh quiz từ document qua OpenAI:
+- [x] Fix `UserId` lấy từ JWT claim thật
+- [x] `POST /api/quizzes/generate` – Sinh quiz từ document qua OpenAI (RAG)
   - Nhận: `documentId`, `questionCount`, `difficulty`
-  - Lấy top-k chunks liên quan (RAG)
+  - Lấy top-k chunks liên quan (cosine similarity)
   - Gọi OpenAI sinh JSON câu hỏi
   - Parse và lưu `Quiz` + `Question` + `QuestionOption`
-- [ ] `GET /api/quizzes/{id}/questions` – Lấy câu hỏi (ẩn `is_correct`)
-- [ ] `PATCH /api/quizzes/{id}/publish` – Admin publish quiz
-- [ ] Thêm `[Authorize]` cho tất cả endpoints
+- [x] `GET /api/quizzes/{id}` – Lấy câu hỏi (ẩn `is_correct`)
+- [x] `PATCH /api/quizzes/{id}/publish` – Publish/unpublish quiz
+- [x] `[Authorize]` cho tất cả endpoints
 
 ### 2.4 Attempt Controller – `AttemptController.cs`
 
-**Trạng thái: ❌ Chưa có**
+**Trạng thái: ✅ Hoàn thành**
 
-- [ ] `POST /api/attempts` – Bắt đầu làm quiz (tạo `QuizAttempt`)
-- [ ] `POST /api/attempts/{id}/submit` – Nộp bài:
-  - MCQ: chấm local so `is_correct`
-  - Tự luận: gọi `OpenAIService.GradeEssay()`
-  - Tính tổng điểm, lưu `AttemptAnswer`
-  - Cập nhật `QuizAttempt.Status = "graded"`
-- [ ] `GET /api/attempts/{id}/result` – Xem kết quả chi tiết
-- [ ] `GET /api/attempts/my` – Lịch sử làm bài của user
-- [ ] Thêm `[Authorize]` cho tất cả endpoints
+- [x] `POST /api/attempts/start` – Bắt đầu làm quiz (tạo `QuizAttempt`)
+- [x] `POST /api/attempts/{id}/submit` – Nộp bài:
+  - MCQ: chấm local so `is_correct` ✅
+  - Tự luận: gọi `OpenAIService.GradeEssay()` ✅
+  - Tính tổng điểm, lưu `AttemptAnswer` ✅
+  - Cập nhật `QuizAttempt.Status = "graded"` ✅
+- [x] `GET /api/attempts/{id}/result` – Xem kết quả chi tiết
+- [x] `GET /api/attempts/my` – Lịch sử làm bài của user
+- [x] `[Authorize]` cho tất cả endpoints
 
 ---
 
 ## PHASE 3 – Services & AI
 
-**Trạng thái: ⚠️ Partial**
+**Trạng thái: ✅ Hoàn thành**
 
-### 3.1 Fix `OpenAIService.cs`
+### 3.1 `OpenAIService.cs`
 
-- [ ] Sửa đúng SDK `openai-dotnet` v2.x:
-  - Dùng `ChatClient` thay vì `OpenAIClient.CreateChatCompletionAsync`
-  - `ChatMessage.CreateUserMessage(prompt)`
-- [ ] `GenerateQuizJson(string context, int count, string difficulty)` – sinh MCQ
-- [ ] `GradeEssay(string question, string studentAnswer, string rubric)` – chấm tự luận
-- [ ] Retry logic khi gặp lỗi JSON parse
+**Trạng thái: ✅ Hoàn thành**
 
-### 3.2 Tạo `DocumentProcessorService.cs`
+- [x] Dùng đúng SDK `openai-dotnet` v2.x (`ChatClient`, `ChatMessage.CreateUserMessage()`)
+- [x] `GenerateQuizJson(string context, int count, string difficulty)` – sinh MCQ
+- [x] `GradeEssay(string question, string studentAnswer, string rubric)` – chấm tự luận
 
-**Trạng thái: ❌ Chưa có**
+### 3.2 `DocumentProcessorService.cs`
 
-- [ ] `ExtractText(string filePath, string mimeType)` – extract text từ file
-- [ ] `ChunkText(string text, int maxTokens = 500)` – cắt text thành chunks
-- [ ] `ProcessDocument(Guid documentId)` – orchestrate toàn bộ flow
+**Trạng thái: ✅ Hoàn thành**
 
-### 3.3 Tạo `EmbeddingService.cs`
+- [x] `ExtractTextAsync(string filePath, string mimeType)` – extract text từ .txt/.pdf/.docx
+- [x] `ExtractTextFromUrlAsync(string url)` – fetch + parse HTML từ URL
+- [x] `ChunkText(string text)` – cắt text thành chunks ~1800 chars (overlap 200)
+- [x] `ProcessDocumentAsync(Guid documentId)` – orchestrate toàn bộ flow (extract→chunk→embed→save)
 
-**Trạng thái: ❌ Chưa có**
+### 3.3 `EmbeddingService.cs`
 
-- [ ] Dùng OpenAI `text-embedding-3-small` (1536 dim)
-- [ ] `GetEmbedding(string text)` → `float[]`
-- [ ] `GetTopKChunks(Guid documentId, string query, int k = 5)` – cosine similarity
-- [ ] Lưu embedding vào `DocumentChunk.EmbeddingVector`
+**Trạng thái: ✅ Hoàn thành**
+
+- [x] Dùng OpenAI `text-embedding-3-small`
+- [x] `GetEmbeddingAsync(string text)` → `float[]`
+- [x] `CosineSimilarity(float[] a, float[] b)` – tính điểm tương đồng
+- [x] `GetTopKChunksAsync(Guid documentId, string query, int k)` – RAG retrieval
+- [x] `GetTopKChunksAcrossDocumentsAsync(...)` – tìm trong nhiều document
 
 ---
 
 ## PHASE 4 – Avalonia UI
 
-**Trạng thái: ❌ Views/ rỗng, MainWindow chỉ có 3 button giả**
+**Trạng thái: ✅ Hoàn thành**
 
-### 4.1 Cài thêm packages cho Desktop
+### 4.1 Packages cho Desktop
 
-- [ ] `CommunityToolkit.Mvvm` – MVVM helpers
-- [ ] `Avalonia.ReactiveUI` – hoặc dùng CommunityToolkit.Mvvm
+- [x] `CommunityToolkit.Mvvm` 8.4.0 – MVVM helpers (ObservableObject, RelayCommand, ObservableProperty)
 
-### 4.2 Fix `ApiClient.cs`
+### 4.2 `ApiClient.cs`
 
-- [ ] Implement thật: `GetFromJsonAsync`, `PostAsJsonAsync`
-- [ ] Thêm `Authorization: Bearer {token}` header
-- [ ] Thêm các method:
-  - `LoginAsync(string email, string password)`
-  - `UploadDocumentAsync(string filePath)`
-  - `GenerateQuizAsync(Guid documentId, int count)`
-  - `GetQuizQuestionsAsync(Guid quizId)`
-  - `SubmitAttemptAsync(SubmitDto dto)`
-  - `GetResultAsync(Guid attemptId)`
+**Trạng thái: ✅ Hoàn thành**
 
-### 4.3 Tạo Views & ViewModels
+- [x] Implement thật: `GetFromJsonAsync`, `PostAsJsonAsync`, `MultipartFormDataContent`
+- [x] `SetToken(token)` – thêm `Authorization: Bearer` header
+- [x] Methods đầy đủ:
+  - `LoginAsync` / `RegisterAsync`
+  - `GetDocumentsAsync` / `UploadDocumentAsync` / `UploadUrlAsync` / `DeleteDocumentAsync`
+  - `GetQuizzesAsync` / `GetQuizAsync` / `GenerateQuizAsync` / `DeleteQuizAsync`
+  - `StartAttemptAsync` / `SubmitAttemptAsync` / `GetResultAsync` / `GetMyAttemptsAsync`
 
-**Màn 1 – Login (`LoginView.axaml`)**
-- [ ] Form nhập email + password
-- [ ] Nút Login gọi `AuthController`
-- [ ] Lưu JWT token vào memory
+### 4.3 ViewModels (CommunityToolkit.Mvvm)
 
-**Màn 2 – Library (`LibraryView.axaml`)**
-- [ ] Danh sách tài liệu đã upload
-- [ ] Button Import File (mở file picker: PDF, DOCX, TXT)
-- [ ] Input URL web
-- [ ] Trạng thái processing (loading indicator)
+- [x] `MainWindowViewModel` – navigation hub, điều phối giữa các Views
+- [x] `LoginViewModel` – login/register, lưu JWT token
+- [x] `LibraryViewModel` – quản lý documents, upload file/URL
+- [x] `CreateQuizViewModel` – chọn doc, generate quiz, list quizzes
+- [x] `TakeQuizViewModel` – làm bài, next/prev, submit
+- [x] `ResultViewModel` – xem kết quả, parse feedback JSON
 
-**Màn 3 – Create Quiz (`CreateQuizView.axaml`)**
-- [ ] Chọn document từ danh sách
-- [ ] Nhập số câu (5/10/15/20)
-- [ ] Chọn độ khó (Easy/Medium/Hard)
-- [ ] Nút Generate Quiz
-- [ ] Loading + hiện danh sách quiz đã tạo
+### 4.4 Views (Avalonia XAML)
 
-**Màn 4 – Take Quiz (`TakeQuizView.axaml`)**
-- [ ] Hiển thị từng câu hỏi
-- [ ] Radio button cho MCQ
-- [ ] TextBox cho câu tự luận
-- [ ] Nút Next/Previous
-- [ ] Nút Submit
-
-**Màn 5 – Result (`ResultView.axaml`)**
-- [ ] Tổng điểm / điểm tối đa
-- [ ] Chi tiết từng câu: đúng/sai, điểm, feedback
-- [ ] Trích dẫn nguồn (chunk id)
+- [x] `LoginView.axaml` – form login/register, toggle mode
+- [x] `LibraryView.axaml` – list docs, file picker, URL import, delete
+- [x] `CreateQuizView.axaml` – chọn doc, số câu, độ khó, generate, list quizzes
+- [x] `TakeQuizView.axaml` – MCQ options, essay textbox, next/prev/submit
+- [x] `ResultView.axaml` – score summary, chi tiết từng câu, feedback
+- [x] `MainWindow.axaml` – DataTemplates routing, top bar khi logged in
 
 ---
 
@@ -336,20 +323,20 @@ dotnet publish -c Release -r win-x64 --self-contained true
 - [x] **Chạy EF migration** – Tạo bảng trên Render Postgres
 
 ### Tuần 1 (backend core)
-- [ ] Cập nhật Models (Phase 1)
-- [ ] Tạo `AuthController.cs` + JWT
-- [ ] Fix `DocumentController.cs` – thêm PDF/DOCX support
-- [ ] Fix `QuizController.cs` – thêm generate endpoint
-- [ ] Tạo `AttemptController.cs`
+- [x] Cập nhật Models (Phase 1)
+- [x] Tạo `AuthController.cs` + JWT
+- [x] Fix `DocumentController.cs` – thêm PDF/DOCX/URL support
+- [x] Fix `QuizController.cs` – thêm generate endpoint (RAG)
+- [x] Tạo `AttemptController.cs`
 
 ### Tuần 2 (services + AI)
-- [ ] Fix `OpenAIService.cs` – đúng SDK
-- [ ] Tạo `DocumentProcessorService.cs`
-- [ ] Tạo `EmbeddingService.cs` (RAG)
+- [x] Fix `OpenAIService.cs` – đúng SDK
+- [x] Tạo `DocumentProcessorService.cs`
+- [x] Tạo `EmbeddingService.cs` (RAG + cosine similarity)
 
 ### Tuần 3 (desktop UI)
-- [ ] Fix `ApiClient.cs` – implement thật
-- [ ] Tạo đủ 5 Views + ViewModels
+- [x] Fix `ApiClient.cs` – implement thật (tất cả endpoints)
+- [x] Tạo đủ 5 Views + ViewModels (MVVM CommunityToolkit)
 - [ ] Test end-to-end: upload → generate → làm bài → kết quả
 
 ### Tuần 4 (polish + deploy)
@@ -380,15 +367,15 @@ dotnet publish -c Release -r win-x64 --self-contained true
 | `Microsoft.EntityFrameworkCore.Design` | EF migrations | ✅ Đã có |
 | `Swashbuckle.AspNetCore` | Swagger | ✅ Đã có |
 | `OpenAI` v2.x | OpenAI SDK | ✅ Đã có |
-| `Microsoft.AspNetCore.Authentication.JwtBearer` | JWT Auth | ❌ Cần thêm |
-| `BCrypt.Net-Next` | Hash password | ❌ Cần thêm |
-| `UglyToad.PdfPig` | Đọc PDF | ❌ Cần thêm |
-| `DocumentFormat.OpenXml` | Đọc DOCX | ❌ Cần thêm |
-| `HtmlAgilityPack` | Parse HTML từ URL | ❌ Cần thêm |
+| `Microsoft.AspNetCore.Authentication.JwtBearer` | JWT Auth | ✅ Đã có |
+| `BCrypt.Net-Next` | Hash password | ✅ Đã có |
+| `UglyToad.PdfPig` | Đọc PDF | ✅ Đã có |
+| `DocumentFormat.OpenXml` | Đọc DOCX | ✅ Đã có |
+| `HtmlAgilityPack` | Parse HTML từ URL | ✅ Đã có |
 
 ### QuizAI.Desktop
 | Package | Mục đích | Trạng thái |
 |---|---|---|
 | `Avalonia` v11.x | UI framework | ✅ Đã có |
 | `Avalonia.Themes.Fluent` | Theme | ✅ Đã có |
-| `CommunityToolkit.Mvvm` | MVVM | ❌ Cần thêm |
+| `CommunityToolkit.Mvvm` | MVVM | ✅ Đã có |

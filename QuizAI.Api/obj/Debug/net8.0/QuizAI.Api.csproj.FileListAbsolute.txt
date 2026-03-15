@@ -128,3 +128,12 @@
 /home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 /home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/Microsoft.IdentityModel.Tokens.dll
 /home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/System.IdentityModel.Tokens.Jwt.dll
+/home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/DocumentFormat.OpenXml.dll
+/home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/DocumentFormat.OpenXml.Framework.dll
+/home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/HtmlAgilityPack.dll
+/home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/System.IO.Packaging.dll
+/home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/UglyToad.PdfPig.dll
+/home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/UglyToad.PdfPig.Core.dll
+/home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/UglyToad.PdfPig.Fonts.dll
+/home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/UglyToad.PdfPig.Tokenization.dll
+/home/thang/Documents/ASP.NET-Project/QuizAI.Api/bin/Debug/net8.0/UglyToad.PdfPig.Tokens.dll

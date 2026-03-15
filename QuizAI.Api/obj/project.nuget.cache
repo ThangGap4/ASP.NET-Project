@@ -1,10 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "1U/x4UwfHFcQC+VK8pgGwcvg2woqo36s030NL2QN7bWiMastn4jVFupjaBi4JDDnGIvZrGCk7ora/5capG4Sbw==",
+  "dgSpecHash": "LJEFfl6FIJiQP0/bFwBBrsnZDoQa9W1AjHB7u4euv3GTGFlIc+4g8b1kESF6uPOdajy1b8zncQTEfG2du8Mcbw==",
   "success": true,
   "projectFilePath": "/home/thang/Documents/ASP.NET-Project/QuizAI.Api/QuizAI.Api.csproj",
   "expectedPackageFiles": [
     "/home/thang/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512",
+    "/home/thang/.nuget/packages/documentformat.openxml/3.4.1/documentformat.openxml.3.4.1.nupkg.sha512",
+    "/home/thang/.nuget/packages/documentformat.openxml.framework/3.4.1/documentformat.openxml.framework.3.4.1.nupkg.sha512",
+    "/home/thang/.nuget/packages/htmlagilitypack/1.12.4/htmlagilitypack.1.12.4.nupkg.sha512",
     "/home/thang/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/home/thang/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/8.0.2/microsoft.aspnetcore.authentication.jwtbearer.8.0.2.nupkg.sha512",
     "/home/thang/.nuget/packages/microsoft.bcl.asyncinterfaces/6.0.0/microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
@@ -58,6 +61,7 @@
     "/home/thang/.nuget/packages/system.composition.typedparts/6.0.0/system.composition.typedparts.6.0.0.nupkg.sha512",
     "/home/thang/.nuget/packages/system.diagnostics.diagnosticsource/10.0.2/system.diagnostics.diagnosticsource.10.0.2.nupkg.sha512",
     "/home/thang/.nuget/packages/system.identitymodel.tokens.jwt/7.1.2/system.identitymodel.tokens.jwt.7.1.2.nupkg.sha512",
+    "/home/thang/.nuget/packages/system.io.packaging/8.0.1/system.io.packaging.8.0.1.nupkg.sha512",
     "/home/thang/.nuget/packages/system.io.pipelines/10.0.1/system.io.pipelines.10.0.1.nupkg.sha512",
     "/home/thang/.nuget/packages/system.memory.data/10.0.1/system.memory.data.10.0.1.nupkg.sha512",
     "/home/thang/.nuget/packages/system.net.serversentevents/10.0.2/system.net.serversentevents.10.0.2.nupkg.sha512",
@@ -66,7 +70,12 @@
     "/home/thang/.nuget/packages/system.text.encoding.codepages/6.0.0/system.text.encoding.codepages.6.0.0.nupkg.sha512",
     "/home/thang/.nuget/packages/system.text.encodings.web/10.0.1/system.text.encodings.web.10.0.1.nupkg.sha512",
     "/home/thang/.nuget/packages/system.text.json/10.0.1/system.text.json.10.0.1.nupkg.sha512",
-    "/home/thang/.nuget/packages/system.threading.channels/6.0.0/system.threading.channels.6.0.0.nupkg.sha512"
+    "/home/thang/.nuget/packages/system.threading.channels/6.0.0/system.threading.channels.6.0.0.nupkg.sha512",
+    "/home/thang/.nuget/packages/uglytoad.pdfpig/1.7.0-custom-5/uglytoad.pdfpig.1.7.0-custom-5.nupkg.sha512",
+    "/home/thang/.nuget/packages/uglytoad.pdfpig.core/1.7.0-custom-5/uglytoad.pdfpig.core.1.7.0-custom-5.nupkg.sha512",
+    "/home/thang/.nuget/packages/uglytoad.pdfpig.fonts/1.7.0-custom-5/uglytoad.pdfpig.fonts.1.7.0-custom-5.nupkg.sha512",
+    "/home/thang/.nuget/packages/uglytoad.pdfpig.tokenization/1.7.0-custom-5/uglytoad.pdfpig.tokenization.1.7.0-custom-5.nupkg.sha512",
+    "/home/thang/.nuget/packages/uglytoad.pdfpig.tokens/1.7.0-custom-5/uglytoad.pdfpig.tokens.1.7.0-custom-5.nupkg.sha512"
   ],
   "logs": []
 }
