@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "K5RwppmQcK1DG0iGC1Z2M4uNHDdcPpCfOFhZ2FTbXLOAff1+3/KAEiGfpct3qYHUQlIswGw2v+27qTghC3L8QA==",
+  "dgSpecHash": "xiQSpdout/9i9F2dmLgmGTDgJWTIgMhFLWMulnXUHGv91zW1l00QcQJxQx0O6ECix1sxOJmo/hUfdMXO3OKm6g==",
   "success": true,
   "projectFilePath": "/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/QuizAI.Desktop.csproj",
   "expectedPackageFiles": [
@@ -19,6 +19,7 @@
     "/home/thang/.nuget/packages/avalonia.themes.simple/11.3.11/avalonia.themes.simple.11.3.11.nupkg.sha512",
     "/home/thang/.nuget/packages/avalonia.win32/11.3.11/avalonia.win32.11.3.11.nupkg.sha512",
     "/home/thang/.nuget/packages/avalonia.x11/11.3.11/avalonia.x11.11.3.11.nupkg.sha512",
+    "/home/thang/.nuget/packages/communitytoolkit.mvvm/8.4.0/communitytoolkit.mvvm.8.4.0.nupkg.sha512",
     "/home/thang/.nuget/packages/harfbuzzsharp/8.3.1.1/harfbuzzsharp.8.3.1.1.nupkg.sha512",
     "/home/thang/.nuget/packages/harfbuzzsharp.nativeassets.linux/8.3.1.1/harfbuzzsharp.nativeassets.linux.8.3.1.1.nupkg.sha512",
     "/home/thang/.nuget/packages/harfbuzzsharp.nativeassets.macos/8.3.1.1/harfbuzzsharp.nativeassets.macos.8.3.1.1.nupkg.sha512",

@@ -1,0 +1,133 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:QuizAI.Desktop.ViewModels"
+             xmlns:svc="using:QuizAI.Desktop.Services"
+             x:Class="QuizAI.Desktop.Views.LibraryView"
+             x:DataType="vm:LibraryViewModel">
+
+  <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="20" RowSpacing="16">
+
+    <!-- Header -->
+    <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+      <StackPanel Grid.Column="0">
+        <TextBlock Text="📚 Document Library"
+                   FontSize="24" FontWeight="Bold"
+                   Foreground="#2c3e50"/>
+        <TextBlock Text="{Binding StatusMessage}"
+                   Foreground="#7f8c8d" FontSize="13"/>
+      </StackPanel>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+        <Button Command="{Binding LoadDocumentsCommand}"
+                Content="↻ Refresh"
+                IsEnabled="{Binding !IsBusy}"
+                Padding="12,8" CornerRadius="6"
+                Background="#ecf0f1" Foreground="#2c3e50"/>
+        <Button Command="{Binding GoToCreateQuizCommand}"
+                Content="➡ Create Quiz"
+                Padding="12,8" CornerRadius="6"
+                Background="#3498db" Foreground="White"/>
+        <Button Command="{Binding LogoutCommand}"
+                Content="Logout"
+                Padding="12,8" CornerRadius="6"
+                Background="#e74c3c" Foreground="White"/>
+      </StackPanel>
+    </Grid>
+
+    <!-- Upload Controls -->
+    <Border Grid.Row="1" Background="#f8f9fa" CornerRadius="10" Padding="16">
+      <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" RowSpacing="10">
+
+        <!-- File upload -->
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="📄 File:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBlock Grid.Row="0" Grid.Column="1"
+                   Text="Use the button to pick a file (.txt, .pdf, .docx)"
+                   VerticalAlignment="Center"
+                   Foreground="#95a5a6" FontSize="13"/>
+        <Button Grid.Row="0" Grid.Column="2"
+                Name="PickFileBtn"
+                Content="Browse File..."
+                IsEnabled="{Binding !IsBusy}"
+                Padding="12,8" CornerRadius="6"
+                Background="#27ae60" Foreground="White"
+                Click="OnPickFile"/>
+
+        <!-- URL import -->
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="🌐 URL:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBox Grid.Row="1" Grid.Column="1"
+                 Text="{Binding UrlInput}"
+                 Watermark="https://example.com/article"
+                 CornerRadius="6" Padding="10,8"/>
+        <Button Grid.Row="1" Grid.Column="2"
+                Command="{Binding UploadUrlCommand}"
+                Content="Import URL"
+                IsEnabled="{Binding !IsBusy}"
+                Padding="12,8" CornerRadius="6"
+                Background="#9b59b6" Foreground="White"/>
+      </Grid>
+    </Border>
+
+    <!-- Document List -->
+    <ScrollViewer Grid.Row="2">
+      <ItemsControl ItemsSource="{Binding Documents}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="svc:DocumentDto">
+            <Border Background="White" CornerRadius="8" Padding="16,12"
+                    Margin="0,0,0,8"
+                    BoxShadow="0 1 4 0 #15000000">
+              <Grid ColumnDefinitions="*,Auto,Auto">
+
+                <StackPanel Grid.Column="0" Spacing="4">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="{Binding FileName}"
+                               FontWeight="SemiBold" FontSize="15"
+                               Foreground="#2c3e50"/>
+                    <TextBlock Text="✓ Ready"
+                               FontSize="11" Foreground="#1e8449"
+                               IsVisible="{Binding Processed}"/>
+                    <TextBlock Text="⏳ Processing"
+                               FontSize="11" Foreground="#d35400"
+                               IsVisible="{Binding !Processed}"/>
+                  </StackPanel>
+                  <TextBlock FontSize="12" Foreground="#95a5a6">
+                    <Run Text="{Binding ChunkCount}"/><Run Text=" chunks · "/><Run Text="{Binding UploadedAt, StringFormat='{}{0:MMM dd, yyyy}'}"/>
+                  </TextBlock>
+                </StackPanel>
+
+                <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                           Text="{Binding MimeType}" Foreground="#bdc3c7"
+                           FontSize="12" Margin="0,0,16,0"/>
+
+                <Button Grid.Column="2"
+                        CommandParameter="{Binding Id}"
+                        Content="🗑"
+                        ToolTip.Tip="Delete"
+                        Padding="8,6" CornerRadius="6"
+                        Background="#fdecea" Foreground="#e74c3c"
+                        Click="OnDeleteDocument"/>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+
+    <!-- Empty state -->
+    <StackPanel Grid.Row="2"
+                IsVisible="{Binding Documents.Count, Converter={x:Static ObjectConverters.IsNull}}"
+                VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="8">
+      <TextBlock Text="📭" FontSize="48" HorizontalAlignment="Center"/>
+      <TextBlock Text="No documents yet. Upload a file or import a URL to get started."
+                 Foreground="#95a5a6" HorizontalAlignment="Center"/>
+    </StackPanel>
+
+    <!-- Loading overlay -->
+    <Border Grid.Row="2" IsVisible="{Binding IsBusy}"
+            Background="#80FFFFFF">
+      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+        <ProgressBar IsIndeterminate="True" Width="200"/>
+        <TextBlock Text="{Binding StatusMessage}" HorizontalAlignment="Center"/>
+      </StackPanel>
+    </Border>
+
+  </Grid>
+</UserControl>

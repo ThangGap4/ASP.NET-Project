@@ -1,27 +1,39 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuizAI.Api.Data;
 using QuizAI.Api.Models;
+using QuizAI.Api.Services;
 
 namespace QuizAI.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class DocumentController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly IWebHostEnvironment _env;
+    private readonly DocumentProcessorService _processor;
 
-    public DocumentController(AppDbContext context, IWebHostEnvironment env)
+    public DocumentController(
+        AppDbContext context,
+        IWebHostEnvironment env,
+        DocumentProcessorService processor)
     {
         _context = context;
         _env = env;
+        _processor = processor;
     }
 
+    // GET /api/documents – Lấy danh sách documents của user hiện tại
     [HttpGet]
     public async Task<ActionResult<IEnumerable<object>>> GetDocuments()
     {
+        var userId = GetUserId();
         var docs = await _context.Documents
+            .Where(d => d.OwnerId == userId)
             .Select(d => new
             {
                 d.Id,
@@ -32,29 +44,54 @@ public class DocumentController : ControllerBase
                 d.UploadedAt,
                 ChunkCount = d.Chunks.Count
             })
+            .OrderByDescending(d => d.UploadedAt)
             .ToListAsync();
         return Ok(docs);
     }
 
+    // GET /api/documents/{id}
     [HttpGet("{id}")]
-    public async Task<ActionResult<Document>> GetDocument(Guid id)
+    public async Task<ActionResult<object>> GetDocument(Guid id)
     {
-        var doc = await _context.Documents.FindAsync(id);
-        if (doc == null) return NotFound();
-        return doc;
+        var userId = GetUserId();
+        var doc = await _context.Documents
+            .Where(d => d.Id == id && d.OwnerId == userId)
+            .Select(d => new
+            {
+                d.Id,
+                d.FileName,
+                d.MimeType,
+                d.FileSize,
+                d.Processed,
+                d.UploadedAt,
+                d.StorageUrl,
+                ChunkCount = d.Chunks.Count
+            })
+            .FirstOrDefaultAsync();
+
+        if (doc == null) return NotFound(new { message = "Document not found" });
+        return Ok(doc);
     }
 
+    // POST /api/documents/upload – Upload file (txt, pdf, docx)
     [HttpPost("upload")]
     [Consumes("multipart/form-data")]
-    public async Task<IActionResult> UploadDocument([FromForm] IFormFile file)
+    [RequestSizeLimit(50 * 1024 * 1024)] // 50MB max
+    public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
     {
         if (file == null || file.Length == 0)
-            return BadRequest("File is required");
+            return BadRequest(new { message = "File is required" });
 
-        var uploadsDir = Path.Combine(_env.ContentRootPath, "uploads");
+        var allowedExtensions = new[] { ".txt", ".pdf", ".docx" };
+        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (!allowedExtensions.Contains(ext))
+            return BadRequest(new { message = "Only .txt, .pdf, .docx files are allowed" });
+
+        var userId = GetUserId();
+        var uploadsDir = Path.Combine(_env.ContentRootPath, "uploads", userId.ToString());
         Directory.CreateDirectory(uploadsDir);
 
-        var uniqueName = $"{Guid.NewGuid()}_{file.FileName}";
+        var uniqueName = $"{Guid.NewGuid()}{ext}";
         var filePath = Path.Combine(uploadsDir, uniqueName);
 
         using (var stream = new FileStream(filePath, FileMode.Create))
@@ -68,12 +105,19 @@ public class DocumentController : ControllerBase
             MimeType = file.ContentType,
             FileSize = file.Length,
             StorageUrl = filePath,
-            OwnerId = Guid.Empty,
+            OwnerId = userId,
             Processed = false
         };
 
         _context.Documents.Add(document);
         await _context.SaveChangesAsync();
+
+        // Process in background (don't await — respond immediately)
+        _ = Task.Run(async () =>
+        {
+            try { await _processor.ProcessDocumentAsync(document.Id); }
+            catch { /* logged inside service */ }
+        });
 
         return CreatedAtAction(nameof(GetDocument), new { id = document.Id }, new
         {
@@ -82,21 +126,106 @@ public class DocumentController : ControllerBase
             document.MimeType,
             document.FileSize,
             document.Processed,
-            document.UploadedAt
+            document.UploadedAt,
+            message = "File uploaded. Processing in background..."
         });
     }
 
+    // POST /api/documents/upload-url – Import từ URL web
+    [HttpPost("upload-url")]
+    public async Task<IActionResult> UploadFromUrl([FromBody] UploadUrlDto dto)
+    {
+        if (string.IsNullOrWhiteSpace(dto.Url))
+            return BadRequest(new { message = "URL is required" });
+
+        if (!Uri.TryCreate(dto.Url, UriKind.Absolute, out var uri)
+            || (uri.Scheme != "http" && uri.Scheme != "https"))
+            return BadRequest(new { message = "Invalid URL" });
+
+        var userId = GetUserId();
+
+        var document = new Document
+        {
+            FileName = dto.Title ?? uri.Host + uri.AbsolutePath,
+            MimeType = "text/html",
+            FileSize = 0,
+            StorageUrl = dto.Url,    // Store the URL directly
+            OwnerId = userId,
+            Processed = false
+        };
+
+        _context.Documents.Add(document);
+        await _context.SaveChangesAsync();
+
+        // Process in background
+        _ = Task.Run(async () =>
+        {
+            try { await _processor.ProcessDocumentAsync(document.Id); }
+            catch { /* logged inside service */ }
+        });
+
+        return CreatedAtAction(nameof(GetDocument), new { id = document.Id }, new
+        {
+            document.Id,
+            document.FileName,
+            document.MimeType,
+            document.Processed,
+            document.UploadedAt,
+            message = "URL received. Processing in background..."
+        });
+    }
+
+    // GET /api/documents/{id}/chunks – Xem danh sách chunks (để debug/xem trước)
+    [HttpGet("{id}/chunks")]
+    public async Task<IActionResult> GetChunks(Guid id)
+    {
+        var userId = GetUserId();
+        var doc = await _context.Documents
+            .FirstOrDefaultAsync(d => d.Id == id && d.OwnerId == userId);
+        if (doc == null) return NotFound(new { message = "Document not found" });
+
+        var chunks = await _context.DocumentChunks
+            .Where(c => c.DocumentId == id)
+            .OrderBy(c => c.ChunkIndex)
+            .Select(c => new
+            {
+                c.Id,
+                c.ChunkIndex,
+                c.TokenCount,
+                ContentPreview = c.Content.Substring(0, c.Content.Length > 200 ? 200 : c.Content.Length),
+                HasEmbedding = c.EmbeddingVector != null
+            })
+            .ToListAsync();
+
+        return Ok(chunks);
+    }
+
+    // DELETE /api/documents/{id}
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteDocument(Guid id)
     {
-        var doc = await _context.Documents.FindAsync(id);
-        if (doc == null) return NotFound();
+        var userId = GetUserId();
+        var doc = await _context.Documents
+            .FirstOrDefaultAsync(d => d.Id == id && d.OwnerId == userId);
+        if (doc == null) return NotFound(new { message = "Document not found" });
 
-        if (System.IO.File.Exists(doc.StorageUrl))
-            System.IO.File.Delete(doc.StorageUrl);
+        // Delete physical file if it's a local file
+        if (!doc.StorageUrl.StartsWith("http"))
+        {
+            if (System.IO.File.Exists(doc.StorageUrl))
+                System.IO.File.Delete(doc.StorageUrl);
+        }
 
         _context.Documents.Remove(doc);
         await _context.SaveChangesAsync();
         return NoContent();
     }
+
+    private Guid GetUserId()
+    {
+        var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return Guid.TryParse(id, out var guid) ? guid : Guid.Empty;
+    }
 }
+
+public record UploadUrlDto(string Url, string? Title);
