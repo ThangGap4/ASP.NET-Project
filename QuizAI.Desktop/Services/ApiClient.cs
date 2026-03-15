@@ -17,7 +17,8 @@ public class ApiClient
     public ApiClient()
     {
         var baseUrl = Environment.GetEnvironmentVariable("QUIZAI_API_URL")
-            ?? "http://localhost:5127/api/";
+            ?? "https://asp-net-project-9dm5.onrender.com/api/";
+            // ?? "http://localhost:8080/api/";
 
         _http = new HttpClient
         {
@@ -151,6 +152,11 @@ public class ApiClient
         return res ?? new();
     }
 
+    public async Task<UserProfileDto?> GetMeAsync()
+    {
+        return await _http.GetFromJsonAsync<UserProfileDto>("auth/me", JsonOptions);
+    }
+
     // ─── Helpers ─────────────────────────────────────────────────────────────
 
     private static string GetMimeType(string fileName) =>
@@ -264,4 +270,16 @@ public record AnswerResultDto(
 );
 
 public record OptionResultDto(string Content, bool IsCorrect);
+
+public record UserProfileDto(
+    Guid Id,
+    string Email,
+    string DisplayName,
+    string Role,
+    DateTime? LastLogin,
+    int TotalDocuments,
+    int TotalQuizzes,
+    int TotalAttempts,
+    double AverageScorePercent
+);
 

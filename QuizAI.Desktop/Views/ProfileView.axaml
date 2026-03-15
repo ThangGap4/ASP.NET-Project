@@ -1,0 +1,136 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:QuizAI.Desktop.ViewModels"
+             x:Class="QuizAI.Desktop.Views.ProfileView"
+             x:DataType="vm:ProfileViewModel">
+
+  <DockPanel Margin="24">
+
+    <!-- Header -->
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="12" Margin="0,0,0,24">
+      <TextBlock Text="Profile"
+                 FontSize="26" FontWeight="Bold"
+                 Foreground="#2c3e50" VerticalAlignment="Center"/>
+      <Button Command="{Binding GoBackCommand}"
+              Content="Back"
+              Background="#95a5a6" Foreground="White"
+              CornerRadius="6" Padding="12,6"
+              VerticalAlignment="Center"/>
+    </StackPanel>
+
+    <ProgressBar DockPanel.Dock="Top" IsIndeterminate="True"
+                 IsVisible="{Binding IsBusy}" Height="4" Margin="0,0,0,12"/>
+
+    <TextBlock DockPanel.Dock="Top"
+               Text="{Binding StatusMessage}"
+               Foreground="#e74c3c" Margin="0,0,0,12"
+               IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+    <ScrollViewer>
+      <StackPanel Spacing="16" MaxWidth="560">
+
+        <!-- User info card -->
+        <Border Background="White" CornerRadius="10" Padding="24"
+                BoxShadow="0 2 10 0 #15000000">
+          <StackPanel Spacing="12">
+            <TextBlock Text="Account Info"
+                       FontSize="14" FontWeight="SemiBold"
+                       Foreground="#7f8c8d" Margin="0,0,0,4"/>
+
+            <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto,Auto">
+              <TextBlock Grid.Row="0" Grid.Column="0" Text="Name" Foreground="#7f8c8d" VerticalAlignment="Center"/>
+              <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding DisplayName}"
+                         FontSize="15" FontWeight="SemiBold" Foreground="#2c3e50"/>
+
+              <TextBlock Grid.Row="1" Grid.Column="0" Text="Email" Foreground="#7f8c8d"
+                         VerticalAlignment="Center" Margin="0,10,0,0"/>
+              <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Email}"
+                         FontSize="15" Foreground="#2c3e50" Margin="0,10,0,0"/>
+
+              <TextBlock Grid.Row="2" Grid.Column="0" Text="Role" Foreground="#7f8c8d"
+                         VerticalAlignment="Center" Margin="0,10,0,0"/>
+              <Border Grid.Row="2" Grid.Column="1" Margin="0,10,0,0"
+                      HorizontalAlignment="Left" CornerRadius="4" Padding="8,3"
+                      Background="#e8f5e9">
+                <TextBlock Text="{Binding Role}" Foreground="#27ae60" FontSize="12" FontWeight="SemiBold"/>
+              </Border>
+
+              <TextBlock Grid.Row="3" Grid.Column="0" Text="Last Login" Foreground="#7f8c8d"
+                         VerticalAlignment="Center" Margin="0,10,0,0"/>
+              <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding LastLogin}"
+                         FontSize="14" Foreground="#2c3e50" Margin="0,10,0,0"/>
+            </Grid>
+          </StackPanel>
+        </Border>
+
+        <!-- Stats card -->
+        <Border Background="White" CornerRadius="10" Padding="24"
+                BoxShadow="0 2 10 0 #15000000">
+          <StackPanel Spacing="12">
+            <TextBlock Text="Activity Stats"
+                       FontSize="14" FontWeight="SemiBold"
+                       Foreground="#7f8c8d" Margin="0,0,0,4"/>
+
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" >
+
+              <!-- Documents -->
+              <Border Grid.Row="0" Grid.Column="0" Background="#ebf5fb" CornerRadius="8"
+                      Padding="16" Margin="0,0,8,8">
+                <StackPanel>
+                  <TextBlock Text="{Binding TotalDocuments}"
+                             FontSize="32" FontWeight="Bold" Foreground="#2980b9"
+                             HorizontalAlignment="Center"/>
+                  <TextBlock Text="Documents"
+                             FontSize="12" Foreground="#7f8c8d"
+                             HorizontalAlignment="Center"/>
+                </StackPanel>
+              </Border>
+
+              <!-- Quizzes -->
+              <Border Grid.Row="0" Grid.Column="1" Background="#eafaf1" CornerRadius="8"
+                      Padding="16" Margin="8,0,0,8">
+                <StackPanel>
+                  <TextBlock Text="{Binding TotalQuizzes}"
+                             FontSize="32" FontWeight="Bold" Foreground="#27ae60"
+                             HorizontalAlignment="Center"/>
+                  <TextBlock Text="Quizzes Created"
+                             FontSize="12" Foreground="#7f8c8d"
+                             HorizontalAlignment="Center"/>
+                </StackPanel>
+              </Border>
+
+              <!-- Attempts -->
+              <Border Grid.Row="1" Grid.Column="0" Background="#fef9e7" CornerRadius="8"
+                      Padding="16" Margin="0,0,8,0">
+                <StackPanel>
+                  <TextBlock Text="{Binding TotalAttempts}"
+                             FontSize="32" FontWeight="Bold" Foreground="#f39c12"
+                             HorizontalAlignment="Center"/>
+                  <TextBlock Text="Attempts"
+                             FontSize="12" Foreground="#7f8c8d"
+                             HorizontalAlignment="Center"/>
+                </StackPanel>
+              </Border>
+
+              <!-- Avg Score -->
+              <Border Grid.Row="1" Grid.Column="1" Background="#fdf2f8" CornerRadius="8"
+                      Padding="16" Margin="8,0,0,0">
+                <StackPanel>
+                  <TextBlock Text="{Binding AverageScoreText}"
+                             FontSize="32" FontWeight="Bold" Foreground="#8e44ad"
+                             HorizontalAlignment="Center"/>
+                  <TextBlock Text="Avg Score"
+                             FontSize="12" Foreground="#7f8c8d"
+                             HorizontalAlignment="Center"/>
+                </StackPanel>
+              </Border>
+
+            </Grid>
+          </StackPanel>
+        </Border>
+
+      </StackPanel>
+    </ScrollViewer>
+
+  </DockPanel>
+</UserControl>
