@@ -16,9 +16,12 @@ public class ApiClient
 
     public ApiClient()
     {
+        var baseUrl = Environment.GetEnvironmentVariable("QUIZAI_API_URL")
+            ?? "http://localhost:5127/api/";
+
         _http = new HttpClient
         {
-            BaseAddress = new Uri("http://localhost:5127/api/"),
+            BaseAddress = new Uri(baseUrl),
             Timeout = TimeSpan.FromSeconds(60)
         };
     }

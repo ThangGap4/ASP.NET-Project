@@ -79,9 +79,10 @@ public class DocumentController : ControllerBase
     // POST /api/documents/upload – Upload file (txt, pdf, docx)
     [HttpPost("upload")]
     [Consumes("multipart/form-data")]
-    [RequestSizeLimit(50 * 1024 * 1024)] // 50MB max
-    public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    public async Task<IActionResult> UploadFile([FromForm] UploadFileDto dto)
     {
+        var file = dto.File;
         if (file == null || file.Length == 0)
             return BadRequest(new { message = "File is required" });
 
@@ -238,3 +239,8 @@ public class DocumentController : ControllerBase
 }
 
 public record UploadUrlDto(string Url, string? Title);
+
+public class UploadFileDto
+{
+    public IFormFile File { get; set; } = null!;
+}

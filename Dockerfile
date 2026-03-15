@@ -25,8 +25,7 @@ RUN mkdir -p /app/uploads && chmod 755 /app/uploads
 # Copy published output
 COPY --from=build /app/publish .
 
-# Expose port (Render uses PORT env var, default 8080)
-ENV ASPNETCORE_URLS=http://+:8080
+# Expose port (Render injects PORT env var at runtime)
 EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "QuizAI.Api.dll"]
