@@ -8,6 +8,8 @@ using QuizAI.Api.Services;
 // Render injects ASPNETCORE_URLS or PORT — let ASP.NET Core handle it automatically
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseNpgsql(connectionString));

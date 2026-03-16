@@ -17,8 +17,8 @@ public class ApiClient
     public ApiClient()
     {
         var baseUrl = Environment.GetEnvironmentVariable("QUIZAI_API_URL")
-            ?? "https://asp-net-project-9dm5.onrender.com/api/";
-            // ?? "http://localhost:8080/api/";
+             ?? "https://asp-net-project-9dm5.onrender.com/api/";
+            //?? "http://localhost:8080/api/";
 
         _http = new HttpClient
         {
