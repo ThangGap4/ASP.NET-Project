@@ -9,7 +9,7 @@ using QuizAI.Api.Services;
 namespace QuizAI.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/documents")]
 [Authorize]
 public class DocumentController : ControllerBase
 {
