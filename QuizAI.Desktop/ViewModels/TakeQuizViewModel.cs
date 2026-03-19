@@ -27,6 +27,10 @@ public partial class TakeQuizViewModel : ObservableObject
     // Current question answer state
     [ObservableProperty] private ObservableCollection<OptionViewModel> _currentOptions = new();
     [ObservableProperty] private string _essayAnswer = string.Empty;
+    [ObservableProperty] private bool? _trueFalseAnswer = null;
+
+    public bool TrueSelected => TrueFalseAnswer == true;
+    public bool FalseSelected => TrueFalseAnswer == false;
 
     public bool HasPrevious => CurrentQuestionIndex > 0;
     public bool HasNext => CurrentQuestionIndex < _questions.Count - 1;
@@ -105,10 +109,25 @@ public partial class TakeQuizViewModel : ObservableObject
                 if (opt != null) opt.IsSelected = true;
             }
             EssayAnswer = saved.Text ?? string.Empty;
+            if (CurrentQuestion.Type == "true_false" && !string.IsNullOrEmpty(saved.Text))
+            {
+                TrueFalseAnswer = saved.Text.Equals("True", StringComparison.OrdinalIgnoreCase);
+                OnPropertyChanged(nameof(TrueSelected));
+                OnPropertyChanged(nameof(FalseSelected));
+            }
+            else
+            {
+                TrueFalseAnswer = null;
+                OnPropertyChanged(nameof(TrueSelected));
+                OnPropertyChanged(nameof(FalseSelected));
+            }
         }
         else
         {
             EssayAnswer = string.Empty;
+            TrueFalseAnswer = null;
+            OnPropertyChanged(nameof(TrueSelected));
+            OnPropertyChanged(nameof(FalseSelected));
         }
 
         OnPropertyChanged(nameof(HasPrevious));
@@ -137,14 +156,10 @@ public partial class TakeQuizViewModel : ObservableObject
 
     public void SelectTrueFalse(bool value)
     {
+        TrueFalseAnswer = value;
         EssayAnswer = value ? "True" : "False";
-        var match = CurrentOptions.FirstOrDefault(o =>
-            o.Content.Equals(value ? "True" : "False", StringComparison.OrdinalIgnoreCase));
-        if (match != null)
-        {
-            foreach (var o in CurrentOptions) o.IsSelected = false;
-            match.IsSelected = true;
-        }
+        OnPropertyChanged(nameof(TrueSelected));
+        OnPropertyChanged(nameof(FalseSelected));
     }
 
     [RelayCommand]

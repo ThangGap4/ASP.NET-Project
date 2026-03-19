@@ -148,6 +148,13 @@ public class ApiClient
         res.EnsureSuccessStatusCode();
     }
 
+    public async Task<bool> PublishQuizAsync(Guid id, bool published)
+    {
+        var res = await _http.PatchAsJsonAsync($"quizzes/{id}/publish", new { published });
+        res.EnsureSuccessStatusCode();
+        return published;
+    }
+
     // ─── ATTEMPTS ────────────────────────────────────────────────────────────
 
     public async Task<AttemptStartDto?> StartAttemptAsync(Guid quizId)

@@ -29,4 +29,13 @@ public partial class CreateQuizView : UserControl
                 vm.DeleteQuizCommand.Execute(id);
         }
     }
+
+    private void OnTogglePublish(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && DataContext is CreateQuizViewModel vm)
+        {
+            if (btn.CommandParameter is QuizDto quiz)
+                vm.TogglePublishCommand.Execute(quiz);
+        }
+    }
 }

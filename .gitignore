@@ -1,38 +1,19 @@
-# Build outputs
+# Build results
 bin/
 obj/
+*.dll
+*.exe
+*.pdb
 
-# User secrets and local settings
-appsettings.Local.json
-*.user
-
-# Visual Studio / Rider
+# Dependencies
 .vs/
+.vscode/
 .idea/
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
 
-# Logs
-*.log
-logs/
+# Local settings (API keys, secrets)
+appsettings.Local.json
+appsettings.Development.json
+*.local.json
 
-# OS
-.DS_Store
-Thumbs.db
-
-# NuGet
-*.nupkg
-.nuget/
-packages/
-
-# Publish output
-publish/
-out/
-
-# Uploads folder (runtime data)
-QuizAI.Api/uploads/
-
-# dotnet ef migrations temp
-*.designer.cs.bak
+# Git
+.git/

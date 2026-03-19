@@ -32,7 +32,8 @@ public class AttemptController : ControllerBase
             .FirstOrDefaultAsync(q => q.Id == dto.QuizId);
 
         if (quiz == null) return NotFound(new { message = "Quiz not found" });
-        if (!quiz.Published) return BadRequest(new { message = "Quiz is not published" });
+        if (!quiz.Published && quiz.CreatorId != userId)
+            return BadRequest(new { message = "Quiz is not published" });
 
         var attempt = new QuizAttempt
         {
