@@ -60,6 +60,8 @@ public class QuizController : ControllerBase
 
         if (quiz == null) return NotFound(new { message = "Quiz not found" });
 
+        var isCreator = quiz.CreatorId == userId;
+
         return Ok(new
         {
             quiz.Id,
@@ -75,13 +77,13 @@ public class QuizController : ControllerBase
                 q.Type,
                 q.Prompt,
                 q.MaxScore,
-                // Hide is_correct from students
+                Rubric = isCreator ? q.RubricJson : null,
                 Options = q.Options.OrderBy(o => o.OptIndex).Select(o => new
                 {
                     o.Id,
                     o.OptIndex,
-                    o.Content
-                    // is_correct intentionally hidden
+                    o.Content,
+                    IsCorrect = isCreator ? (bool?)o.IsCorrect : null
                 })
             })
         });
