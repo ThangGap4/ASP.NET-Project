@@ -48,7 +48,7 @@ public partial class CreateQuizViewModel : ObservableObject
         try
         {
             var docs = await _api.GetDocumentsAsync();
-            Documents = new ObservableCollection<DocumentDto>(docs.Where(d => d.Processed));
+            Documents = new ObservableCollection<DocumentDto>(docs.Where(d => d.Processed && d.ChunkCount > 0));
 
             var quizzes = await _api.GetQuizzesAsync();
             Quizzes = new ObservableCollection<QuizDto>(quizzes);
@@ -124,6 +124,24 @@ public partial class CreateQuizViewModel : ObservableObject
             var quiz = Quizzes.FirstOrDefault(q => q.Id == id);
             if (quiz != null) Quizzes.Remove(quiz);
             StatusMessage = "Quiz deleted";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private async Task TogglePublishAsync(QuizDto quiz)
+    {
+        try
+        {
+            var newState = !quiz.Published;
+            await _api.PublishQuizAsync(quiz.Id, newState);
+            var index = Quizzes.IndexOf(quiz);
+            if (index >= 0)
+                Quizzes[index] = quiz with { Published = newState };
+            StatusMessage = newState ? "Quiz published" : "Quiz set to draft";
         }
         catch (Exception ex)
         {

@@ -80,12 +80,14 @@
             <Button Content="True"
                     FontSize="16" FontWeight="SemiBold"
                     Padding="40,16" CornerRadius="8"
-                    Background="#ebf5fb" Foreground="#2980b9"
+                    Background="{Binding TrueSelected, Converter={StaticResource BoolToSelectedBrushConverter}}"
+                    Foreground="{Binding TrueSelected, Converter={StaticResource BoolToColorConverter}}"
                     Click="OnTrueClick"/>
             <Button Content="False"
                     FontSize="16" FontWeight="SemiBold"
                     Padding="40,16" CornerRadius="8"
-                    Background="#fdedec" Foreground="#c0392b"
+                    Background="{Binding FalseSelected, Converter={StaticResource BoolToSelectedBrushConverter}}"
+                    Foreground="{Binding FalseSelected, Converter={StaticResource BoolToColorConverter}}"
                     Click="OnFalseClick"/>
           </StackPanel>
 

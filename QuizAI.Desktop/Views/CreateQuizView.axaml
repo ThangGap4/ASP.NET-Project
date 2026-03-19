@@ -111,7 +111,7 @@
               <Border Background="White" CornerRadius="8" Padding="16,12"
                       Margin="0,0,0,10"
                       BoxShadow="0 1 4 0 #15000000">
-                <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto">
 
                   <StackPanel Grid.Column="0" Spacing="4">
                     <TextBlock Text="{Binding Title}"
@@ -122,16 +122,26 @@
                     </TextBlock>
                   </StackPanel>
 
-                  <Border Grid.Column="1" CornerRadius="4" Padding="8,3" Margin="0,0,10,0">
-                    <StackPanel>
-                      <TextBlock Text="Published"
-                                 FontSize="11" Foreground="#1e8449"
-                                 IsVisible="{Binding Published}"/>
-                      <TextBlock Text="Draft"
-                                 FontSize="11" Foreground="#d35400"
-                                 IsVisible="{Binding !Published}"/>
-                    </StackPanel>
-                  </Border>
+                  <Button Grid.Column="1"
+                          CommandParameter="{Binding}"
+                          Padding="8,6" Margin="0,0,8,0" CornerRadius="6"
+                          Click="OnTogglePublish">
+                    <Button.Styles>
+                      <Style Selector="Button">
+                        <Setter Property="Background" Value="#eafaf1"/>
+                        <Setter Property="Foreground" Value="#1e8449"/>
+                      </Style>
+                    </Button.Styles>
+                    <TextBlock IsVisible="{Binding Published}" Text="Published" FontSize="11"/>
+                  </Button>
+                  <Button Grid.Column="1"
+                          CommandParameter="{Binding}"
+                          Padding="8,6" Margin="0,0,8,0" CornerRadius="6"
+                          IsVisible="{Binding !Published}"
+                          Background="#fef9e7" Foreground="#d35400"
+                          Click="OnTogglePublish">
+                    <TextBlock Text="Draft" FontSize="11"/>
+                  </Button>
 
                   <Button Grid.Column="2"
                           Content="Take Quiz"
