@@ -79,6 +79,9 @@
                      Height="90"
                      CornerRadius="6" Padding="10,8"
                      VerticalContentAlignment="Top"/>
+            <TextBlock Text="{Binding PasteCharCount}"
+                       FontSize="11" HorizontalAlignment="Right"
+                       Foreground="{Binding IsPasteOverLimit, Converter={StaticResource BoolToColorConverter}}"/>
           </StackPanel>
           <Button Grid.Column="2"
                   Command="{Binding SavePasteTextCommand}"

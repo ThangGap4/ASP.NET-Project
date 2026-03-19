@@ -19,6 +19,17 @@ public partial class LibraryViewModel : ObservableObject
     [ObservableProperty] private string _pasteText = string.Empty;
     [ObservableProperty] private string _pasteTitle = string.Empty;
 
+    private const int MaxPasteChars = 50_000;
+
+    public string PasteCharCount => $"{PasteText.Length:N0} / {MaxPasteChars:N0}";
+    public bool IsPasteOverLimit => PasteText.Length > MaxPasteChars;
+
+    partial void OnPasteTextChanged(string value)
+    {
+        OnPropertyChanged(nameof(PasteCharCount));
+        OnPropertyChanged(nameof(IsPasteOverLimit));
+    }
+
     [ObservableProperty] private bool _isEditMode = false;
     [ObservableProperty] private DocumentDto? _editingDocument;
     [ObservableProperty] private string _editFileName = string.Empty;
@@ -177,6 +188,12 @@ public partial class LibraryViewModel : ObservableObject
         if (string.IsNullOrWhiteSpace(PasteText))
         {
             StatusMessage = "Please enter some content.";
+            return;
+        }
+
+        if (PasteText.Length > MaxPasteChars)
+        {
+            StatusMessage = $"Content too long. Max {MaxPasteChars:N0} characters (current: {PasteText.Length:N0}).";
             return;
         }
 
