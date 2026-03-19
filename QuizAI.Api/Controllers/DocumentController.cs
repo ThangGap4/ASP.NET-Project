@@ -14,20 +14,20 @@ namespace QuizAI.Api.Controllers;
 public class DocumentController : ControllerBase
 {
     private readonly AppDbContext _context;
-    private readonly IWebHostEnvironment _env;
     private readonly DocumentProcessorService _processor;
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly CloudinaryService _cloudinary;
 
     public DocumentController(
         AppDbContext context,
-        IWebHostEnvironment env,
         DocumentProcessorService processor,
-        IServiceScopeFactory scopeFactory)
+        IServiceScopeFactory scopeFactory,
+        CloudinaryService cloudinary)
     {
         _context = context;
-        _env = env;
         _processor = processor;
         _scopeFactory = scopeFactory;
+        _cloudinary = cloudinary;
     }
 
     // GET /api/documents – Lấy danh sách documents của user hiện tại
@@ -92,15 +92,15 @@ public class DocumentController : ControllerBase
             return BadRequest(new { message = "Only .txt, .pdf, .docx files are allowed" });
 
         var userId = GetUserId();
-        var uploadsDir = Path.Combine(_env.ContentRootPath, "uploads", userId.ToString());
-        Directory.CreateDirectory(uploadsDir);
 
-        var uniqueName = $"{Guid.NewGuid()}{ext}";
-        var filePath = Path.Combine(uploadsDir, uniqueName);
-
-        using (var stream = new FileStream(filePath, FileMode.Create))
+        string storageUrl;
+        try
         {
-            await file.CopyToAsync(stream);
+            storageUrl = await _cloudinary.UploadRawAsync(file.OpenReadStream(), file.FileName);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = $"Upload failed: {ex.Message}" });
         }
 
         var document = new Document
@@ -108,7 +108,7 @@ public class DocumentController : ControllerBase
             FileName = file.FileName,
             MimeType = file.ContentType,
             FileSize = file.Length,
-            StorageUrl = filePath,
+            StorageUrl = storageUrl,
             OwnerId = userId,
             Processed = false
         };
@@ -219,10 +219,9 @@ public class DocumentController : ControllerBase
             .FirstOrDefaultAsync(d => d.Id == id && d.OwnerId == userId);
         if (doc == null) return NotFound(new { message = "Document not found" });
 
-        if (!doc.StorageUrl.StartsWith("http"))
+        if (doc.StorageUrl.StartsWith("http"))
         {
-            if (System.IO.File.Exists(doc.StorageUrl))
-                System.IO.File.Delete(doc.StorageUrl);
+            try { await _cloudinary.DeleteAsync(doc.StorageUrl); } catch { }
         }
 
         _context.Documents.Remove(doc);
@@ -238,21 +237,26 @@ public class DocumentController : ControllerBase
             return BadRequest(new { message = "Content is required" });
 
         var userId = GetUserId();
-        var uploadsDir = Path.Combine(_env.ContentRootPath, "uploads", userId.ToString());
-        Directory.CreateDirectory(uploadsDir);
-
         var fileName = string.IsNullOrWhiteSpace(dto.Title) ? "pasted-text.txt" : $"{dto.Title.Trim()}.txt";
-        var uniqueName = $"{Guid.NewGuid()}.txt";
-        var filePath = Path.Combine(uploadsDir, uniqueName);
+        var contentBytes = System.Text.Encoding.UTF8.GetBytes(dto.Content);
 
-        await System.IO.File.WriteAllTextAsync(filePath, dto.Content, System.Text.Encoding.UTF8);
+        string storageUrl;
+        try
+        {
+            using var ms = new MemoryStream(contentBytes);
+            storageUrl = await _cloudinary.UploadRawAsync(ms, fileName);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = $"Upload failed: {ex.Message}" });
+        }
 
         var document = new Document
         {
             FileName = fileName,
             MimeType = "text/plain",
-            FileSize = System.Text.Encoding.UTF8.GetByteCount(dto.Content),
-            StorageUrl = filePath,
+            FileSize = contentBytes.Length,
+            StorageUrl = storageUrl,
             OwnerId = userId,
             Processed = false
         };
