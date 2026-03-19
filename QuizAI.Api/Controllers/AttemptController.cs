@@ -9,7 +9,7 @@ using QuizAI.Api.Services;
 namespace QuizAI.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/attempts")]
 [Authorize]
 public class AttemptController : ControllerBase
 {
