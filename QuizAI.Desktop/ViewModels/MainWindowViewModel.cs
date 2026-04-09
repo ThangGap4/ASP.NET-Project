@@ -16,6 +16,9 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private bool _isLoggedIn = false;
 
+    [ObservableProperty]
+    private bool _isAdmin = false;
+
     public MainWindowViewModel(ApiClient api)
     {
         _api = api;
@@ -27,6 +30,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         CurrentView = new LoginViewModel(_api, this);
         IsLoggedIn = false;
+        IsAdmin = false;
         CurrentUserName = string.Empty;
     }
 
@@ -45,6 +49,11 @@ public partial class MainWindowViewModel : ObservableObject
         CurrentView = new TakeQuizViewModel(_api, this, quizId, quizTitle);
     }
 
+    public void NavigateToParticipants(Guid quizId, string quizTitle)
+    {
+        CurrentView = new QuizParticipantsViewModel(_api, this, quizId, quizTitle);
+    }
+
     public void NavigateToResult(Guid attemptId)
     {
         CurrentView = new ResultViewModel(_api, this, attemptId);
@@ -60,9 +69,15 @@ public partial class MainWindowViewModel : ObservableObject
         CurrentView = new ProfileViewModel(_api, this);
     }
 
-    public void OnLoggedIn(string displayName)
+    public void NavigateToAdmin()
+    {
+        CurrentView = new AdminDashboardViewModel(_api, this);
+    }
+
+    public void OnLoggedIn(string displayName, string role)
     {
         IsLoggedIn = true;
+        IsAdmin = role == "Admin";
         CurrentUserName = displayName;
         NavigateToLibrary();
     }

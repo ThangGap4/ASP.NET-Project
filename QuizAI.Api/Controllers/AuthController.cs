@@ -58,6 +58,9 @@ public class AuthController : ControllerBase
         if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
             return Unauthorized(new { message = "Invalid email or password" });
 
+        if (user.IsBanned)
+            return StatusCode(403, new { message = "Your account has been banned. Please contact the administrator." });
+
         user.LastLogin = DateTime.UtcNow;
         await _context.SaveChangesAsync();
 

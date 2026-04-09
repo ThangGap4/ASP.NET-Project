@@ -39,7 +39,7 @@ public partial class LoginViewModel : ObservableObject
             if (result != null)
             {
                 _api.SetToken(result.Token);
-                _main.OnLoggedIn(result.DisplayName);
+                _main.OnLoggedIn(result.DisplayName, result.Role);
             }
         }
         catch (UnauthorizedAccessException ex)
@@ -83,7 +83,7 @@ public partial class LoginViewModel : ObservableObject
             if (result != null)
             {
                 _api.SetToken(result.Token);
-                _main.OnLoggedIn(result.DisplayName);
+                _main.OnLoggedIn(result.DisplayName, result.Role);
             }
         }
         catch (InvalidOperationException ex)

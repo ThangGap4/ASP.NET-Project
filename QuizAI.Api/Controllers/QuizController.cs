@@ -25,13 +25,13 @@ public class QuizController : ControllerBase
         _embeddingService = embeddingService;
     }
 
-    // GET /api/quizzes – Lấy danh sách quiz của user
+    // GET /api/quizzes – Lấy danh sách quiz của user (chỉ lấy quiz của TÔI, không lấy của người khác)
     [HttpGet]
     public async Task<ActionResult<IEnumerable<object>>> GetQuizzes()
     {
         var userId = GetUserId();
         var quizzes = await _context.Quizzes
-            .Where(q => q.CreatorId == userId || q.Published)
+            .Where(q => q.CreatorId == userId)
             .Select(q => new
             {
                 q.Id,
@@ -41,7 +41,7 @@ public class QuizController : ControllerBase
                 q.CreatedAt,
                 q.SourceDocumentId,
                 QuestionCount = q.Questions.Count,
-                IsOwner = q.CreatorId == userId
+                IsOwner = true
             })
             .OrderByDescending(q => q.CreatedAt)
             .ToListAsync();
@@ -134,11 +134,17 @@ public class QuizController : ControllerBase
         QuizJsonResponse? parsed;
         try
         {
-            // Strip markdown code blocks if present
+            // Strip markdown code blocks if present just in case
             var cleanJson = rawJson.Trim();
             if (cleanJson.StartsWith("```")) {
                 cleanJson = cleanJson.Replace("```json", "").Replace("```", "").Trim();
             }
+            
+            // Console.WriteLine for debugging
+            Console.WriteLine("--- RAW AI JSON ---");
+            Console.WriteLine(cleanJson);
+            Console.WriteLine("-------------------");
+
             parsed = JsonSerializer.Deserialize<QuizJsonResponse>(cleanJson,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
