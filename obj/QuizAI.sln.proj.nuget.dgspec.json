@@ -1,25 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "/home/thang/Documents/ASP.NET-Project/QuizAI.sln.proj": {}
+    "D:\\docnet\\ASP.NET-Project\\QuizAI.sln.proj": {}
   },
   "projects": {
-    "/home/thang/Documents/ASP.NET-Project/QuizAI.Api/QuizAI.Api.csproj": {
+    "D:\\docnet\\ASP.NET-Project\\QuizAI.Api\\QuizAI.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/thang/Documents/ASP.NET-Project/QuizAI.Api/QuizAI.Api.csproj",
+        "projectUniqueName": "D:\\docnet\\ASP.NET-Project\\QuizAI.Api\\QuizAI.Api.csproj",
         "projectName": "QuizAI.Api",
-        "projectPath": "/home/thang/Documents/ASP.NET-Project/QuizAI.Api/QuizAI.Api.csproj",
-        "packagesPath": "/home/thang/.nuget/packages/",
-        "outputPath": "/home/thang/Documents/ASP.NET-Project/QuizAI.Api/obj/",
+        "projectPath": "D:\\docnet\\ASP.NET-Project\\QuizAI.Api\\QuizAI.Api.csproj",
+        "packagesPath": "C:\\Users\\Khoa Dang\\.nuget\\packages\\",
+        "outputPath": "D:\\docnet\\ASP.NET-Project\\QuizAI.Api\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/home/thang/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\Khoa Dang\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -32,7 +38,13 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -41,6 +53,10 @@
             "BCrypt.Net-Next": {
               "target": "Package",
               "version": "[4.0.3, )"
+            },
+            "CloudinaryDotNet": {
+              "target": "Package",
+              "version": "[1.27.0, )"
             },
             "DocumentFormat.OpenXml": {
               "target": "Package",
@@ -98,26 +114,32 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.125/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/QuizAI.Desktop.csproj": {
+    "D:\\docnet\\ASP.NET-Project\\QuizAI.Desktop\\QuizAI.Desktop.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/QuizAI.Desktop.csproj",
+        "projectUniqueName": "D:\\docnet\\ASP.NET-Project\\QuizAI.Desktop\\QuizAI.Desktop.csproj",
         "projectName": "QuizAI.Desktop",
-        "projectPath": "/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/QuizAI.Desktop.csproj",
-        "packagesPath": "/home/thang/.nuget/packages/",
-        "outputPath": "/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/obj/",
+        "projectPath": "D:\\docnet\\ASP.NET-Project\\QuizAI.Desktop\\QuizAI.Desktop.csproj",
+        "packagesPath": "C:\\Users\\Khoa Dang\\.nuget\\packages\\",
+        "outputPath": "D:\\docnet\\ASP.NET-Project\\QuizAI.Desktop\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/home/thang/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\Khoa Dang\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -130,7 +152,13 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -177,41 +205,53 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.125/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "/home/thang/Documents/ASP.NET-Project/QuizAI.sln.proj": {
+    "D:\\docnet\\ASP.NET-Project\\QuizAI.sln.proj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/thang/Documents/ASP.NET-Project/QuizAI.sln.proj",
+        "projectUniqueName": "D:\\docnet\\ASP.NET-Project\\QuizAI.sln.proj",
         "projectName": "QuizAI.sln",
-        "projectPath": "/home/thang/Documents/ASP.NET-Project/QuizAI.sln.proj",
-        "packagesPath": "/home/thang/.nuget/packages/",
-        "outputPath": "/home/thang/Documents/ASP.NET-Project/obj/",
+        "projectPath": "D:\\docnet\\ASP.NET-Project\\QuizAI.sln.proj",
+        "packagesPath": "C:\\Users\\Khoa Dang\\.nuget\\packages\\",
+        "outputPath": "D:\\docnet\\ASP.NET-Project\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/home/thang/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\Khoa Dang\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "/home/thang/Documents/ASP.NET-Project/QuizAI.Api/QuizAI.Api.csproj": {
-                "projectPath": "/home/thang/Documents/ASP.NET-Project/QuizAI.Api/QuizAI.Api.csproj"
+              "D:\\docnet\\ASP.NET-Project\\QuizAI.Api\\QuizAI.Api.csproj": {
+                "projectPath": "D:\\docnet\\ASP.NET-Project\\QuizAI.Api\\QuizAI.Api.csproj"
               },
-              "/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/QuizAI.Desktop.csproj": {
-                "projectPath": "/home/thang/Documents/ASP.NET-Project/QuizAI.Desktop/QuizAI.Desktop.csproj"
+              "D:\\docnet\\ASP.NET-Project\\QuizAI.Desktop\\QuizAI.Desktop.csproj": {
+                "projectPath": "D:\\docnet\\ASP.NET-Project\\QuizAI.Desktop\\QuizAI.Desktop.csproj"
               }
             }
           }
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -235,7 +275,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.125/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

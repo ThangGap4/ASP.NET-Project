@@ -66,7 +66,8 @@
                       </Border>
                       <TextBlock Grid.Column="1" Text="{Binding Content}"
                                  VerticalAlignment="Center"
-                                 TextWrapping="Wrap" FontSize="15"/>
+                                 TextWrapping="Wrap" FontSize="15"
+                                 Foreground="Black"/>
                     </Grid>
                   </Border>
                 </Button>

@@ -1,0 +1,265 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:QuizAI.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="QuizAI.Desktop.Views.AdminDashboardView"
+             x:Name="Root"
+             x:DataType="vm:AdminDashboardViewModel">
+
+    <Grid RowDefinitions="Auto,*" Margin="20">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
+                <Button Content="← Back" Command="{Binding GoBackCommand}" 
+                        Background="#ecf0f1" Foreground="#2c3e50" Padding="15,5" CornerRadius="4"/>
+            </StackPanel>
+            
+            <TextBlock Text="Admin Dashboard" FontSize="28" FontWeight="Bold" Foreground="#2c3e50"/>
+            <TextBlock Text="Manage users and global published quizzes." Foreground="#7f8c8d" Margin="0,4,0,10"/>
+
+            <!-- Statistics Widget -->
+            <Grid ColumnDefinitions="*,*,*,*" Margin="0,0,0,10" IsVisible="{Binding Stats, Converter={x:Static ObjectConverters.IsNotNull}}">
+                <Border Grid.Column="0" Background="#3498db" CornerRadius="8" Padding="15" Margin="0,0,10,0">
+                    <StackPanel>
+                        <TextBlock Text="Total Users" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding Stats.TotalUsers}" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Background="#2ecc71" CornerRadius="8" Padding="15" Margin="0,0,10,0">
+                    <StackPanel>
+                        <TextBlock Text="Total Quizzes" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding Stats.TotalQuizzes}" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Background="#9b59b6" CornerRadius="8" Padding="15" Margin="0,0,10,0">
+                    <StackPanel>
+                        <TextBlock Text="Published Quizzes" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding Stats.TotalPublishedQuizzes}" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="3" Background="#f39c12" CornerRadius="8" Padding="15" Margin="0,0,0,0">
+                    <StackPanel>
+                        <TextBlock Text="Total Attempts" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding Stats.TotalAttempts}" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                <Button Content="Refresh Data" Command="{Binding LoadDataCommand}" Width="120" HorizontalContentAlignment="Center" Background="#3498db" Foreground="White"/>
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" VerticalAlignment="Center"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Loading Indicator -->
+        <ProgressBar Grid.Row="1" IsIndeterminate="True" 
+                     IsVisible="{Binding IsLoading}" 
+                     HorizontalAlignment="Center" VerticalAlignment="Center" Width="40" Height="40"/>
+
+        <!-- Main Workspace -->
+        <TabControl Grid.Row="1" IsVisible="{Binding !IsLoading}">
+            <TabControl.Styles>
+                <Style Selector="TabItem">
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Foreground" Value="#7f8c8d"/>
+                </Style>
+                <Style Selector="TabItem:selected">
+                    <Setter Property="Foreground" Value="#2c3e50"/>
+                </Style>
+                <!-- Fix Button disappearing issue (keep text colored correctly or prevent transparent pressed state) -->
+                <Style Selector="Button:pressed">
+                    <Setter Property="Opacity" Value="0.7"/>
+                </Style>
+            </TabControl.Styles>
+
+            <!-- Tab 1: Users -->
+            <TabItem Header="Users">
+                <Grid ColumnDefinitions="3*,2*" Margin="0,10,0,0">
+                    <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15" BoxShadow="0 4 10 0 LightGray" Margin="0,0,5,0">
+                        <Grid RowDefinitions="Auto,*">
+                            <TextBlock Grid.Row="0" Text="All Users" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                            <ScrollViewer Grid.Row="1">
+                                <ListBox ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser, Mode=TwoWay}" CornerRadius="6" Background="Transparent">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#f8f9fa" CornerRadius="6" Padding="10" Margin="0,0,0,4">
+                                                <Grid ColumnDefinitions="*, Auto">
+                                                    <StackPanel Grid.Column="0">
+                                                        <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" FontSize="14" Foreground="#34495e"/>
+                                                        <TextBlock Text="{Binding Email}" Foreground="#7f8c8d" FontSize="12"/>
+                                                        <TextBlock Text="{Binding Role, StringFormat='Role: {0}'}" FontSize="12" Foreground="#e67e22" Margin="0,4,0,0"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="1" HorizontalAlignment="Right" Spacing="4">
+                                                        <TextBlock Text="{Binding QuizCount, StringFormat='Quizzes: {0}'}" Foreground="#2980b9" FontSize="12" HorizontalAlignment="Right"/>
+                                                        <TextBlock Text="{Binding AttemptCount, StringFormat='Attempts: {0}'}" Foreground="#27ae60" FontSize="12" HorizontalAlignment="Right"/>
+                                                        <Button Command="{Binding #Root.((vm:AdminDashboardViewModel)DataContext).ToggleBanCommand}"
+                                                                CommandParameter="{Binding Id}"
+                                                                Margin="0,5,0,0">
+                                                            <Button.Styles>
+                                                                <Style Selector="Button">
+                                                                    <Setter Property="Background" Value="#c0392b"/>
+                                                                    <Setter Property="Foreground" Value="White"/>
+                                                                    <Setter Property="FontSize" Value="10"/>
+                                                                    <Setter Property="Padding" Value="5,2"/>
+                                                                </Style>
+                                                            </Button.Styles>
+                                                            <TextBlock Text="{Binding IsBanned, StringFormat='Ban: {0}'}"/>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="15" BoxShadow="0 4 10 0 LightGray" Margin="5,0,0,0">
+                        <Grid RowDefinitions="Auto,*">
+                            <TextBlock Grid.Row="0" Text="{Binding SelectedUser.DisplayName, StringFormat='History: {0}', FallbackValue='Select a User'}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                            <ScrollViewer Grid.Row="1">
+                                <ItemsControl ItemsSource="{Binding SelectedUserHistory}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#f8f9fa" CornerRadius="6" Padding="10" Margin="0,0,0,8">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding QuizTitle}" FontWeight="Bold" FontSize="14" Foreground="#34495e" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding Score, StringFormat='Score: {0}'}" Foreground="#27ae60" FontSize="12"/>
+                                                    <TextBlock Text="{Binding CompletedAt, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" Foreground="#7f8c8d" FontSize="12"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- Tab 2: Quizzes -->
+            <TabItem Header="Published Quizzes">
+                <Border Background="White" CornerRadius="8" Padding="15" BoxShadow="0 4 10 0 LightGray" Margin="0,10,0,0">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Grid.Row="0" Text="Published Quizzes" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                    <ScrollViewer Grid.Row="1">
+                        <ItemsControl ItemsSource="{Binding PublishedQuizzes}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#f8f9fa" CornerRadius="6" Padding="10" Margin="0,0,0,8">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="14" Foreground="#34495e"/>
+                                                <TextBlock Text="{Binding CreatorName, StringFormat='By: {0}'}" Foreground="#95a5a6" FontSize="12"/>
+                                                <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,4,0,0">
+                                                    <TextBlock Text="{Binding QuestionCount, StringFormat='Qs: {0}'}" Foreground="#2980b9" FontSize="12"/>
+                                                    <TextBlock Text="{Binding AttemptCount, StringFormat='Attempts: {0}'}" Foreground="#27ae60" FontSize="12"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Spacing="4" HorizontalAlignment="Right">                                                    <Button Content="Preview"
+                                                            Command="{Binding #Root.((vm:AdminDashboardViewModel)DataContext).PreviewQuizCommand}"
+                                                            CommandParameter="{Binding}"
+                                                            Background="#3498db" Foreground="White" FontSize="10" Padding="5,2"/>                                                <Button Content="Unpublish" 
+                                                        Command="{Binding #Root.((vm:AdminDashboardViewModel)DataContext).ForceUnpublishCommand}"
+                                                        CommandParameter="{Binding Id}"
+                                                        Background="#e67e22" Foreground="White" FontSize="10" Padding="5,2"/>
+                                                <Button Content="Delete" 
+                                                        Command="{Binding #Root.((vm:AdminDashboardViewModel)DataContext).DeleteQuizCommand}"
+                                                        CommandParameter="{Binding Id}"
+                                                        Background="#c0392b" Foreground="White" FontSize="10" Padding="5,2"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+            </TabItem>
+
+            <!-- Tab 3: Documents -->
+            <TabItem Header="Documents">
+                <Border Background="White" CornerRadius="8" Padding="15" BoxShadow="0 4 10 0 LightGray" Margin="0,10,0,0">
+                    <Grid RowDefinitions="Auto,*">
+                        <TextBlock Grid.Row="0" Text="System Documents" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                        <ScrollViewer Grid.Row="1">
+                            <ItemsControl ItemsSource="{Binding Documents}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#f8f9fa" CornerRadius="6" Padding="10" Margin="0,0,0,8">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <StackPanel Grid.Column="0">
+                                                    <TextBlock Text="{Binding FileName}" FontWeight="Bold" FontSize="14" Foreground="#34495e"/>
+                                                    <TextBlock Text="{Binding OwnerName, StringFormat='Owner: {0}'}" Foreground="#95a5a6" FontSize="12"/>
+                                                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,4,0,0">
+                                                        <TextBlock Text="{Binding Tokens, StringFormat='Size: {0} bytes'}" Foreground="#2980b9" FontSize="12"/>
+                                                        <TextBlock Text="{Binding UploadedAt, StringFormat='{}{0:yyyy-MM-dd}'}" Foreground="#27ae60" FontSize="12"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" Spacing="4" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                    <Button Content="Delete"
+                                                            Command="{Binding #Root.((vm:AdminDashboardViewModel)DataContext).DeleteDocumentCommand}"
+                                                            CommandParameter="{Binding Id}"
+                                                            Background="#c0392b" Foreground="White" FontSize="10" Padding="10,5"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+            </TabItem>
+
+            <!-- Tab 4: Leaderboard -->
+            <TabItem Header="Leaderboard">
+                <Grid ColumnDefinitions="*,*" Margin="0,10,0,0">
+                    <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15" BoxShadow="0 4 10 0 LightGray" Margin="0,0,5,0">
+                        <Grid RowDefinitions="Auto,*">
+                            <TextBlock Grid.Row="0" Text="🏆 Top 5 Students (Avg Score)" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                            <ItemsControl Grid.Row="1" ItemsSource="{Binding Stats.TopUsers}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#f8f9fa" CornerRadius="6" Padding="10" Margin="0,0,0,8">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <StackPanel Grid.Column="0">
+                                                    <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" FontSize="14" Foreground="#34495e"/>
+                                                    <TextBlock Text="{Binding AttemptCount, StringFormat='Total Attempts: {0}'}" Foreground="#7f8c8d" FontSize="12"/>
+                                                </StackPanel>
+                                                <TextBlock Grid.Column="1" Text="{Binding AverageScore, StringFormat='{}{0:0.##}%'}" Foreground="#27ae60" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="15" BoxShadow="0 4 10 0 LightGray" Margin="5,0,0,0">
+                        <Grid RowDefinitions="Auto,*">
+                            <TextBlock Grid.Row="0" Text="🔥 Most Popular Quizzes" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                            <ItemsControl Grid.Row="1" ItemsSource="{Binding Stats.TopQuizzes}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#f8f9fa" CornerRadius="6" Padding="10" Margin="0,0,0,8">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <TextBlock Grid.Column="0" Text="{Binding Title}" FontWeight="Bold" FontSize="14" Foreground="#34495e" TextWrapping="Wrap"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding AttemptCount, StringFormat='{}{0} tries'}" Foreground="#e67e22" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+    </Grid>
+</UserControl>

@@ -17,8 +17,8 @@ public class ApiClient
     public ApiClient()
     {
         var baseUrl = Environment.GetEnvironmentVariable("QUIZAI_API_URL")
-             ?? "https://asp-net-project-9dm5.onrender.com/api/";
-            //?? "http://localhost:8080/api/";
+             //?? "https://asp-net-project-9dm5.onrender.com/api/";
+             ?? "http://localhost:5127/api/";
 
         _http = new HttpClient
         {
@@ -182,9 +182,72 @@ public class ApiClient
         return res ?? new();
     }
 
+    public async Task<List<QuizParticipantDto>> GetQuizResultsAsync(Guid quizId)
+    {
+        var res = await _http.GetFromJsonAsync<List<QuizParticipantDto>>($"attempts/quiz/{quizId}", JsonOptions);
+        return res ?? new();
+    }
+
     public async Task<UserProfileDto?> GetMeAsync()
     {
         return await _http.GetFromJsonAsync<UserProfileDto>("auth/me", JsonOptions);
+    }
+
+    // ─── ADMIN ───────────────────────────────────────────────────────────────
+
+    public async Task<SystemStatsDto?> GetSystemStatsAsync()
+    {
+        return await _http.GetFromJsonAsync<SystemStatsDto>("admin/stats", JsonOptions);
+    }
+
+    public async Task<List<AdminDocumentDto>> GetAdminDocumentsAsync()
+    {
+        var res = await _http.GetFromJsonAsync<List<AdminDocumentDto>>("admin/documents", JsonOptions);
+        return res ?? new();
+    }
+
+    public async Task AdminDeleteDocumentAsync(Guid docId)
+    {
+        var res = await _http.DeleteAsync($"admin/documents/{docId}");
+        res.EnsureSuccessStatusCode();
+    }
+
+    public async Task<List<AdminUserDto>> GetAdminUsersAsync()
+    {
+        var res = await _http.GetFromJsonAsync<List<AdminUserDto>>("admin/users", JsonOptions);
+        return res ?? new();
+    }
+
+    public async Task<List<AdminUserHistoryDto>> GetUserHistoryAsync(Guid userId)
+    {
+        var res = await _http.GetFromJsonAsync<List<AdminUserHistoryDto>>($"admin/users/{userId}/history", JsonOptions);
+        return res ?? new();
+    }
+
+    public async Task<List<AdminQuizDto>> GetAdminQuizzesAsync()
+    {
+        var res = await _http.GetFromJsonAsync<List<AdminQuizDto>>("admin/quizzes", JsonOptions);
+        return res ?? new();
+    }
+
+    public async Task<bool> ToggleUserBanAsync(Guid userId)
+    {
+        var res = await _http.PostAsync($"admin/users/{userId}/toggle-ban", null);
+        res.EnsureSuccessStatusCode();
+        var data = await res.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        return data.GetProperty("isBanned").GetBoolean();
+    }
+
+    public async Task ForceUnpublishQuizAsync(Guid quizId)
+    {
+        var res = await _http.PatchAsync($"admin/quizzes/{quizId}/unpublish", null);
+        res.EnsureSuccessStatusCode();
+    }
+
+    public async Task DeleteAdminQuizAsync(Guid quizId)
+    {
+        var res = await _http.DeleteAsync($"admin/quizzes/{quizId}");
+        res.EnsureSuccessStatusCode();
     }
 
     // ─── Helpers ─────────────────────────────────────────────────────────────
@@ -311,5 +374,75 @@ public record UserProfileDto(
     int TotalQuizzes,
     int TotalAttempts,
     double AverageScorePercent
+);
+
+// ─── ADMIN DTOs ──────────────────────────────────────────────────────────────
+
+public record AdminUserDto(
+    Guid Id,
+    string Email,
+    string DisplayName,
+    string Role,
+    bool IsBanned,
+    DateTime CreatedAt,
+    DateTime? LastLogin,
+    int QuizCount,
+    int AttemptCount
+);
+
+public record TopUserDto(Guid Id, string DisplayName, int AttemptCount, double AverageScore);
+public record TopQuizDto(Guid Id, string Title, int AttemptCount);
+
+public record SystemStatsDto(
+    int TotalUsers,
+    int TotalQuizzes,
+    int TotalPublishedQuizzes,
+    int TotalAttempts,
+    List<TopUserDto>? TopUsers = null,
+    List<TopQuizDto>? TopQuizzes = null
+);
+
+public record AdminUserHistoryDto(
+    Guid Id,
+    Guid QuizId,
+    string QuizTitle,
+    int Score,
+    int TotalQuestions,
+    DateTime CompletedAt
+);
+
+public record AdminDocumentDto(
+    Guid Id,
+    string FileName,
+    DateTime UploadedAt,
+    bool Processed,
+    string OwnerName,
+    long Tokens,
+    string FileType
+);
+
+public record AdminQuizDto(
+    Guid Id,
+    string Title,
+    string? Description,
+    DateTime CreatedAt,
+    bool Published,
+    Guid? CreatorId,
+    string CreatorName,
+    int QuestionCount,
+    int AttemptCount
+);
+
+public record QuizParticipantDto(
+    Guid Id,
+    Guid UserId,
+    string UserName,
+    Guid QuizId,
+    string QuizTitle,
+    decimal? TotalScore,
+    decimal? MaxTotalScore,
+    string Status,
+    DateTime StartedAt,
+    DateTime? FinishedAt
 );
 

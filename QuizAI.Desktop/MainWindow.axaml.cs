@@ -25,5 +25,11 @@ public partial class MainWindow : Window
         if (DataContext is MainWindowViewModel vm)
             vm.NavigateToProfile();
     }
+
+    private void OnAdminClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+            vm.NavigateToAdmin();
+    }
 }
 

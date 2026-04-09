@@ -59,4 +59,26 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+// Seed Default Admin Account
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    // Make sure database is created
+    context.Database.Migrate();
+
+    if (!context.Users.Any(u => u.Role == "Admin"))
+    {
+        var adminUser = new QuizAI.Api.Models.AppUser
+        {
+            Email = "admin@gmail.com",
+            DisplayName = "Admin System",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
+            Role = "Admin"
+        };
+        context.Users.Add(adminUser);
+        context.SaveChanges();
+    }
+}
+
 app.Run();
