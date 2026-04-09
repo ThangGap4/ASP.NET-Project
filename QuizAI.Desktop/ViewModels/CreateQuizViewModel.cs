@@ -19,6 +19,7 @@ public partial class CreateQuizViewModel : ObservableObject
     [ObservableProperty] private string _quizTitle = string.Empty;
     [ObservableProperty] private string _statusMessage = string.Empty;
     [ObservableProperty] private bool _isBusy = false;
+    [ObservableProperty] private string _joinQuizIdText = string.Empty;
 
     public List<string> DifficultyOptions { get; } = new() { "easy", "medium", "hard" };
     public List<string> QuestionTypeOptions { get; } = new() { "mcq", "true_false", "fill_blank", "mixed" };
@@ -62,6 +63,20 @@ public partial class CreateQuizViewModel : ObservableObject
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private void JoinQuiz()
+    {
+        if (Guid.TryParse(JoinQuizIdText, out var id))
+        {
+            _main.NavigateToTakeQuiz(id, "Shared Quiz");
+            JoinQuizIdText = string.Empty;
+        }
+        else
+        {
+            StatusMessage = "Invalid Quiz ID format.";
         }
     }
 
@@ -113,6 +128,12 @@ public partial class CreateQuizViewModel : ObservableObject
     private void TakeQuiz(QuizDto quiz)
     {
         _main.NavigateToTakeQuiz(quiz.Id, quiz.Title);
+    }
+
+    [RelayCommand]
+    private void ViewResults(QuizDto quiz)
+    {
+        _main.NavigateToParticipants(quiz.Id, quiz.Title);
     }
 
     [RelayCommand]

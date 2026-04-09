@@ -1,7 +1,8 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:conv="using:QuizAI.Desktop.Converters"
-             x:Class="QuizAI.Desktop.App">
+             x:Class="QuizAI.Desktop.App"
+             RequestedThemeVariant="Light">
     <Application.Resources>
         <conv:BoolToColorConverter x:Key="BoolToColorConverter"/>
         <conv:BoolToSelectedBrushConverter x:Key="BoolToSelectedBrushConverter"/>

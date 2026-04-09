@@ -44,6 +44,8 @@ public class OpenAIService
         You are a quiz generator. Create exactly {{questionCount}} questions based ONLY on the provided context.
         Difficulty: {{difficulty}}
 
+        IMPORTANT RULE: You MUST generate the questions, options, and rubric in the EXACT SAME LANGUAGE as the provided context. If the context is in Vietnamese, generate everything in Vietnamese. If the context is in English, generate in English. Do not mix languages.
+
         {{typeInstruction}}
 
         Return ONLY valid JSON (no markdown, no extra text) with this exact structure:
@@ -68,7 +70,11 @@ public class OpenAIService
         """;
 
         var messages = new List<ChatMessage> { ChatMessage.CreateUserMessage(prompt) };
-        var response = await _chatClient.CompleteChatAsync(messages);
+        var options = new ChatCompletionOptions
+        {
+            ResponseFormat = ChatResponseFormat.CreateJsonObjectFormat()
+        };
+        var response = await _chatClient.CompleteChatAsync(messages, options);
         return response.Value.Content[0].Text;
     }
 

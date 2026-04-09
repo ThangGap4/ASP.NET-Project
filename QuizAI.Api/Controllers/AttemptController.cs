@@ -203,6 +203,35 @@ public class AttemptController : ControllerBase
         return Ok(attempts);
     }
 
+    [HttpGet("quiz/{quizId}")]
+    public async Task<IActionResult> GetAttemptsForQuiz(Guid quizId)
+    {
+        var userId = GetUserId();
+        
+        var quiz = await _context.Quizzes.FirstOrDefaultAsync(q => q.Id == quizId && q.CreatorId == userId);
+        if (quiz == null) return Forbid();
+
+        var attempts = await _context.QuizAttempts
+            .Where(a => a.QuizId == quizId)
+            .OrderByDescending(a => a.StartedAt)
+            .Select(a => new
+            {
+                a.Id,
+                a.UserId,
+                UserName = a.User.DisplayName,
+                a.QuizId,
+                QuizTitle = a.Quiz.Title,
+                a.TotalScore,
+                a.MaxTotalScore,
+                a.Status,
+                a.StartedAt,
+                a.FinishedAt
+            })
+            .ToListAsync();
+
+        return Ok(attempts);
+    }
+
     private Guid GetUserId()
     {
         var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

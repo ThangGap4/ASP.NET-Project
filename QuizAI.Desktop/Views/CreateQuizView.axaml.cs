@@ -21,6 +21,15 @@ public partial class CreateQuizView : UserControl
         }
     }
 
+    private void OnViewResults(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && DataContext is CreateQuizViewModel vm)
+        {
+            if (btn.CommandParameter is QuizDto quiz)
+                vm.ViewResultsCommand.Execute(quiz);
+        }
+    }
+
     private void OnDeleteQuiz(object? sender, RoutedEventArgs e)
     {
         if (sender is Button btn && DataContext is CreateQuizViewModel vm)
@@ -36,6 +45,15 @@ public partial class CreateQuizView : UserControl
         {
             if (btn.CommandParameter is QuizDto quiz)
                 vm.TogglePublishCommand.Execute(quiz);
+        }
+    }
+
+    private void OnCopyQuizId(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.CommandParameter is Guid id)
+        {
+            var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+            _ = clipboard?.SetTextAsync(id.ToString());
         }
     }
 }
