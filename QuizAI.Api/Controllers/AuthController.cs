@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using QuizAI.Api.Data;
 using QuizAI.Api.Models;
 using QuizAI.Api.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace QuizAI.Api.Controllers;
 
@@ -25,7 +26,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
         if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
-            return Conflict(new { message = "Email already exists" });
+            return Conflict(new { message = "Email này đã được sử dụng" });
 
         var user = new AppUser
         {
@@ -56,10 +57,10 @@ public class AuthController : ControllerBase
             .FirstOrDefaultAsync(u => u.Email == dto.Email.ToLower().Trim());
 
         if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-            return Unauthorized(new { message = "Invalid email or password" });
+            return Unauthorized(new { message = "Email hoặc mật khẩu không chính xác" });
 
         if (user.IsBanned)
-            return StatusCode(403, new { message = "Your account has been banned. Please contact the administrator." });
+            return StatusCode(403, new { message = "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên." });
 
         user.LastLogin = DateTime.UtcNow;
         await _context.SaveChangesAsync();
@@ -90,6 +91,7 @@ public class AuthController : ControllerBase
             .CountAsync(a => a.UserId == userId);
 
         var gradedAttempts = await _context.QuizAttempts
+            .AsNoTracking()
             .Where(a => a.UserId == userId && a.Status == "graded" && a.MaxTotalScore > 0)
             .ToListAsync();
 
@@ -114,8 +116,16 @@ public class AuthController : ControllerBase
     }
 }
 
-public record RegisterDto(string Email, string Password, string DisplayName);
-public record LoginDto(string Email, string Password);
+public record RegisterDto(
+    [Required(ErrorMessage = "Vui lòng nhập Email")] [EmailAddress(ErrorMessage = "Email không đúng định dạng")] [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Email phải chứa phần mở rộng hợp lệ (ví dụ: @gmail.com)")] string Email, 
+    [Required(ErrorMessage = "Vui lòng nhập Mật khẩu")] [MinLength(8, ErrorMessage = "Mật khẩu phải có ít nhất 8 ký tự")] [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Mật khẩu phải bao gồm chữ hoa, chữ thường và chữ số.")] string Password, 
+    [Required(ErrorMessage = "Vui lòng nhập Tên hiển thị")] string DisplayName
+);
+
+public record LoginDto(
+    [Required(ErrorMessage = "Vui lòng nhập Email")] [EmailAddress(ErrorMessage = "Email không đúng định dạng")] string Email, 
+    [Required(ErrorMessage = "Vui lòng nhập Mật khẩu")] string Password
+);
 public record AuthResponseDto(Guid Id, string Email, string DisplayName, string Role, string Token);
 public record UserProfileDto(
     Guid Id,

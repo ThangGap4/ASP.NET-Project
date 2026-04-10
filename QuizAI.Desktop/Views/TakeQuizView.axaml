@@ -10,7 +10,7 @@
     <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
       <Button Grid.Column="0"
               Command="{Binding GoBackCommand}"
-              Content="Back"
+              Content="{DynamicResource Common_Back}"
               Padding="10,8" CornerRadius="6"
               Background="#ecf0f1" Foreground="#2c3e50"/>
       <StackPanel Grid.Column="1" HorizontalAlignment="Center">
@@ -78,13 +78,13 @@
           <!-- True / False buttons -->
           <StackPanel IsVisible="{Binding IsTrueFalseQuestion}"
                       Orientation="Horizontal" Spacing="16" HorizontalAlignment="Center">
-            <Button Content="True"
+            <Button Content="{DynamicResource TakeQuiz_True}"
                     FontSize="16" FontWeight="SemiBold"
                     Padding="40,16" CornerRadius="8"
                     Background="{Binding TrueSelected, Converter={StaticResource BoolToSelectedBrushConverter}}"
                     Foreground="{Binding TrueSelected, Converter={StaticResource BoolToColorConverter}}"
                     Click="OnTrueClick"/>
-            <Button Content="False"
+            <Button Content="{DynamicResource TakeQuiz_False}"
                     FontSize="16" FontWeight="SemiBold"
                     Padding="40,16" CornerRadius="8"
                     Background="{Binding FalseSelected, Converter={StaticResource BoolToSelectedBrushConverter}}"
@@ -94,17 +94,17 @@
 
           <!-- Fill in the blank -->
           <StackPanel IsVisible="{Binding IsFillBlankQuestion}" Spacing="8">
-            <TextBlock Text="Fill in the blank:" FontWeight="SemiBold" Foreground="#2c3e50"/>
+            <TextBlock Text="{DynamicResource TakeQuiz_FillBlank}" FontWeight="SemiBold" Foreground="#2c3e50"/>
             <TextBox Text="{Binding EssayAnswer}"
-                     Watermark="Type your answer here..."
+                     Watermark=""
                      CornerRadius="8" Padding="12"/>
           </StackPanel>
 
           <!-- Essay answer -->
           <StackPanel IsVisible="{Binding IsEssayQuestion}" Spacing="8">
-            <TextBlock Text="Your answer:" FontWeight="SemiBold" Foreground="#2c3e50"/>
+            <TextBlock Text="{DynamicResource Result_YourAnswer}" FontWeight="SemiBold" Foreground="#2c3e50"/>
             <TextBox Text="{Binding EssayAnswer}"
-                     Watermark="Type your answer here..."
+                     Watermark=""
                      MinHeight="150"
                      AcceptsReturn="True"
                      TextWrapping="Wrap"
@@ -120,7 +120,7 @@
       <Button Grid.Column="0"
               Command="{Binding PreviousQuestionCommand}"
               IsEnabled="{Binding HasPrevious}"
-              Content="Previous"
+              Content="{DynamicResource TakeQuiz_Previous}"
               Padding="16,10" CornerRadius="8"
               Background="#ecf0f1" Foreground="#2c3e50"/>
 
@@ -134,7 +134,7 @@
       <Button Grid.Column="2"
               Command="{Binding NextQuestionCommand}"
               IsVisible="{Binding HasNext}"
-              Content="Next"
+              Content="{DynamicResource TakeQuiz_Next}"
               Padding="16,10" Margin="0,0,10,0" CornerRadius="8"
               Background="#3498db" Foreground="White"/>
 
@@ -145,7 +145,7 @@
               Padding="16,10" CornerRadius="8"
               Background="#27ae60" Foreground="White" FontWeight="SemiBold">
         <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Text="Submit Quiz" VerticalAlignment="Center"/>
+          <TextBlock Text="{DynamicResource TakeQuiz_Submit}" VerticalAlignment="Center"/>
           <ProgressBar IsIndeterminate="True" Width="50" Height="4" IsVisible="{Binding IsBusy}"/>
         </StackPanel>
       </Button>

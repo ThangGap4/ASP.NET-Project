@@ -9,19 +9,25 @@
     <!-- Header -->
     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="12" Margin="0,0,0,20">
       <Button Command="{Binding GoBackCommand}"
-              Content="← Back"
+              Content="{DynamicResource Common_Back}"
               Background="#ecf0f1" Foreground="#2c3e50"
               CornerRadius="6" Padding="12,6"
               VerticalAlignment="Center"/>
       <TextBlock FontSize="24" FontWeight="Bold" Foreground="#2c3e50" VerticalAlignment="Center">
-        <Run Text="Results: "/>
+        <Run Text="{DynamicResource Participants_Results}"/>
+        <Run Text=" "/>
         <Run Text="{Binding QuizTitle}"/>
       </TextBlock>
       <Button Command="{Binding LoadParticipantsCommand}"
-              Content="Refresh"
+              Content="{DynamicResource Common_Refresh}"
               Background="#95a5a6" Foreground="White"
               CornerRadius="6" Padding="12,6"
               VerticalAlignment="Center"/>
+      <Button Command="{Binding GoToAnalyticsCommand}"
+              Content="{DynamicResource Participants_BtnAnalytics}"
+              Background="#8e44ad" Foreground="White"
+              CornerRadius="6" Padding="12,6"
+              VerticalAlignment="Center" Cursor="Hand"/>
     </StackPanel>
 
     <!-- Status -->

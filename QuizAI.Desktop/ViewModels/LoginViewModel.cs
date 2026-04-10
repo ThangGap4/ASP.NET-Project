@@ -27,7 +27,7 @@ public partial class LoginViewModel : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
         {
-            ErrorMessage = "Please enter email and password";
+            ErrorMessage = App.GetString("Msg_Err_FillFields");
             return;
         }
 
@@ -48,11 +48,11 @@ public partial class LoginViewModel : ObservableObject
         }
         catch (TaskCanceledException)
         {
-            ErrorMessage = "Server is waking up, please try again in a moment...";
+            ErrorMessage = "Máy chủ đang khởi động, vui lòng thử lại sau giây lát...";
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error: {ex.Message}";
+            ErrorMessage = $"Lỗi: {ex.Message}";
         }
         finally
         {
@@ -65,13 +65,13 @@ public partial class LoginViewModel : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(DisplayName))
         {
-            ErrorMessage = "Please fill in all fields";
+            ErrorMessage = App.GetString("Msg_Err_FillFields");
             return;
         }
 
-        if (Password.Length < 6)
+        if (Password.Length < 8)
         {
-            ErrorMessage = "Password must be at least 6 characters";
+            ErrorMessage = App.GetString("Msg_Err_PasswordLen");
             return;
         }
 
@@ -92,11 +92,11 @@ public partial class LoginViewModel : ObservableObject
         }
         catch (TaskCanceledException)
         {
-            ErrorMessage = "Server is waking up, please try again in a moment...";
+            ErrorMessage = "Máy chủ đang khởi động, vui lòng thử lại sau giây lát...";
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error: {ex.Message}";
+            ErrorMessage = $"Lỗi: {ex.Message}";
         }
         finally
         {

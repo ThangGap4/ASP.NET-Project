@@ -12,36 +12,36 @@
         <!-- Header -->
         <StackPanel Grid.Row="0" Margin="0,0,0,20">
             <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
-                <Button Content="← Back" Command="{Binding GoBackCommand}" 
+                <Button Content="{DynamicResource Common_Back}" Command="{Binding GoBackCommand}" 
                         Background="#ecf0f1" Foreground="#2c3e50" Padding="15,5" CornerRadius="4"/>
             </StackPanel>
             
-            <TextBlock Text="Admin Dashboard" FontSize="28" FontWeight="Bold" Foreground="#2c3e50"/>
-            <TextBlock Text="Manage users and global published quizzes." Foreground="#7f8c8d" Margin="0,4,0,10"/>
+            <TextBlock Text="{DynamicResource Admin_Title}" FontSize="28" FontWeight="Bold" Foreground="#2c3e50"/>
+            <TextBlock Text="{DynamicResource Admin_Desc}" Foreground="#7f8c8d" Margin="0,4,0,10"/>
 
             <!-- Statistics Widget -->
             <Grid ColumnDefinitions="*,*,*,*" Margin="0,0,0,10" IsVisible="{Binding Stats, Converter={x:Static ObjectConverters.IsNotNull}}">
                 <Border Grid.Column="0" Background="#3498db" CornerRadius="8" Padding="15" Margin="0,0,10,0">
                     <StackPanel>
-                        <TextBlock Text="Total Users" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Admin_TotalUsers}" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
                         <TextBlock Text="{Binding Stats.TotalUsers}" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,5,0,0"/>
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="1" Background="#2ecc71" CornerRadius="8" Padding="15" Margin="0,0,10,0">
                     <StackPanel>
-                        <TextBlock Text="Total Quizzes" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Admin_TotalQuizzes}" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
                         <TextBlock Text="{Binding Stats.TotalQuizzes}" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,5,0,0"/>
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="2" Background="#9b59b6" CornerRadius="8" Padding="15" Margin="0,0,10,0">
                     <StackPanel>
-                        <TextBlock Text="Published Quizzes" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Admin_PubQuizzes}" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
                         <TextBlock Text="{Binding Stats.TotalPublishedQuizzes}" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,5,0,0"/>
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="3" Background="#f39c12" CornerRadius="8" Padding="15" Margin="0,0,0,0">
                     <StackPanel>
-                        <TextBlock Text="Total Attempts" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Admin_TotalAttempts}" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
                         <TextBlock Text="{Binding Stats.TotalAttempts}" Foreground="White" FontSize="24" FontWeight="Bold" Margin="0,5,0,0"/>
                     </StackPanel>
                 </Border>
@@ -76,11 +76,11 @@
             </TabControl.Styles>
 
             <!-- Tab 1: Users -->
-            <TabItem Header="Users">
+            <TabItem Header="{DynamicResource Admin_AllUsers}">
                 <Grid ColumnDefinitions="3*,2*" Margin="0,10,0,0">
                     <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15" BoxShadow="0 4 10 0 LightGray" Margin="0,0,5,0">
                         <Grid RowDefinitions="Auto,*">
-                            <TextBlock Grid.Row="0" Text="All Users" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                            <TextBlock Grid.Row="0" Text="{DynamicResource Admin_AllUsers}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
                             <ScrollViewer Grid.Row="1">
                                 <ListBox ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser, Mode=TwoWay}" CornerRadius="6" Background="Transparent">
                                     <ListBox.ItemTemplate>
@@ -141,10 +141,10 @@
             </TabItem>
 
             <!-- Tab 2: Quizzes -->
-            <TabItem Header="Published Quizzes">
+            <TabItem Header="{DynamicResource Admin_PubQuizzes}">
                 <Border Background="White" CornerRadius="8" Padding="15" BoxShadow="0 4 10 0 LightGray" Margin="0,10,0,0">
                 <Grid RowDefinitions="Auto,*">
-                    <TextBlock Grid.Row="0" Text="Published Quizzes" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                    <TextBlock Grid.Row="0" Text="{DynamicResource Admin_PubQuizzes}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
                     <ScrollViewer Grid.Row="1">
                         <ItemsControl ItemsSource="{Binding PublishedQuizzes}">
                             <ItemsControl.ItemTemplate>
@@ -182,10 +182,10 @@
             </TabItem>
 
             <!-- Tab 3: Documents -->
-            <TabItem Header="Documents">
+            <TabItem Header="{DynamicResource Admin_SysDocs}">
                 <Border Background="White" CornerRadius="8" Padding="15" BoxShadow="0 4 10 0 LightGray" Margin="0,10,0,0">
                     <Grid RowDefinitions="Auto,*">
-                        <TextBlock Grid.Row="0" Text="System Documents" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="0" Text="{DynamicResource Admin_SysDocs}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
                         <ScrollViewer Grid.Row="1">
                             <ItemsControl ItemsSource="{Binding Documents}">
                                 <ItemsControl.ItemTemplate>

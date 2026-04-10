@@ -105,4 +105,40 @@ public class OpenAIService
         var response = await _chatClient.CompleteChatAsync(messages);
         return response.Value.Content[0].Text;
     }
+
+    public async Task<string> ExplainAnswerAsync(string question, string? studentAnswer, string? correctAnswer, string contextText)
+    {
+        var prompt = $$"""
+        You are an AI tutor. A student has answered a quiz question.
+        Based ONLY on the provided context, explain why the correct answer is correct and why the student's answer (if provided) is wrong.
+        You MUST extract the exact quoting passage from the context that supports your explanation.
+        Please provide your response in the same language as the context.
+
+        Return ONLY valid JSON (no markdown, no extra text) with this exact structure:
+        {
+          "explanation": "Detailed explanation here...",
+          "extractedText": "Exact quote from context here..."
+        }
+
+        Question: {{question}}
+        Student Answer: {{(string.IsNullOrWhiteSpace(studentAnswer) ? "None" : studentAnswer)}}
+        Correct Answer: {{(string.IsNullOrWhiteSpace(correctAnswer) ? "None" : correctAnswer)}}
+
+        Context:
+        {{contextText}}
+        """;
+
+        var messages = new List<ChatMessage>
+        {
+            ChatMessage.CreateUserMessage(prompt)
+        };
+
+        var options = new ChatCompletionOptions
+        {
+            ResponseFormat = ChatResponseFormat.CreateJsonObjectFormat()
+        };
+
+        var response = await _chatClient.CompleteChatAsync(messages, options);
+        return response.Value.Content[0].Text;
+    }
 }

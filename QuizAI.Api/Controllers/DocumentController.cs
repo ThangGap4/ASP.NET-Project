@@ -36,6 +36,7 @@ public class DocumentController : ControllerBase
     {
         var userId = GetUserId();
         var docs = await _context.Documents
+            .AsNoTracking()
             .Where(d => d.OwnerId == userId)
             .Select(d => new
             {
@@ -58,6 +59,7 @@ public class DocumentController : ControllerBase
     {
         var userId = GetUserId();
         var doc = await _context.Documents
+            .AsNoTracking()
             .Where(d => d.Id == id && d.OwnerId == userId)
             .Select(d => new
             {
@@ -191,10 +193,12 @@ public class DocumentController : ControllerBase
     {
         var userId = GetUserId();
         var doc = await _context.Documents
+            .AsNoTracking()
             .FirstOrDefaultAsync(d => d.Id == id && d.OwnerId == userId);
         if (doc == null) return NotFound(new { message = "Document not found" });
 
         var chunks = await _context.DocumentChunks
+            .AsNoTracking()
             .Where(c => c.DocumentId == id)
             .OrderBy(c => c.ChunkIndex)
             .Select(c => new

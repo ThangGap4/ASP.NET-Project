@@ -48,7 +48,24 @@ public class ApiClient
     {
         var res = await _http.PostAsJsonAsync("auth/login", new { email, password });
         if ((int)res.StatusCode == 401)
-            throw new UnauthorizedAccessException("Invalid email or password");
+            throw new UnauthorizedAccessException("Email hoặc mật khẩu không chính xác");
+        if ((int)res.StatusCode == 400)
+        {
+            try
+            {
+                var errorDoc = await res.Content.ReadFromJsonAsync<JsonElement>();
+                if (errorDoc.TryGetProperty("errors", out var errorsObj))
+                {
+                    string msg = "";
+                    foreach (var prop in errorsObj.EnumerateObject())
+                        foreach (var err in prop.Value.EnumerateArray())
+                            msg += err.GetString() + "\n";
+                    throw new UnauthorizedAccessException(msg.Trim());
+                }
+            }
+            catch (UnauthorizedAccessException) { throw; }
+            catch { }
+        }
         res.EnsureSuccessStatusCode();
         return await res.Content.ReadFromJsonAsync<AuthResponseDto>(JsonOptions);
     }
@@ -57,7 +74,24 @@ public class ApiClient
     {
         var res = await _http.PostAsJsonAsync("auth/register", new { email, password, displayName });
         if ((int)res.StatusCode == 409)
-            throw new InvalidOperationException("Email already registered");
+            throw new InvalidOperationException("Email này đã được sử dụng");
+        if ((int)res.StatusCode == 400)
+        {
+            try
+            {
+                var errorDoc = await res.Content.ReadFromJsonAsync<JsonElement>();
+                if (errorDoc.TryGetProperty("errors", out var errorsObj))
+                {
+                    string msg = "";
+                    foreach (var prop in errorsObj.EnumerateObject())
+                        foreach (var err in prop.Value.EnumerateArray())
+                            msg += err.GetString() + "\n";
+                    throw new InvalidOperationException(msg.Trim());
+                }
+            }
+            catch (InvalidOperationException) { throw; }
+            catch { }
+        }
         res.EnsureSuccessStatusCode();
         return await res.Content.ReadFromJsonAsync<AuthResponseDto>(JsonOptions);
     }
@@ -155,6 +189,11 @@ public class ApiClient
         return published;
     }
 
+    public async Task<QuizStatisticsDto?> GetQuizStatisticsAsync(Guid id)
+    {
+        return await _http.GetFromJsonAsync<QuizStatisticsDto>($"quizzes/{id}/statistics", JsonOptions);
+    }
+
     // ─── ATTEMPTS ────────────────────────────────────────────────────────────
 
     public async Task<AttemptStartDto?> StartAttemptAsync(Guid quizId)
@@ -174,6 +213,13 @@ public class ApiClient
     public async Task<AttemptResultDto?> GetResultAsync(Guid attemptId)
     {
         return await _http.GetFromJsonAsync<AttemptResultDto>($"attempts/{attemptId}/result", JsonOptions);
+    }
+
+    public async Task<ExplainResponseDto?> ExplainAnswerAsync(Guid attemptId, Guid questionId)
+    {
+        var res = await _http.GetAsync($"attempts/{attemptId}/explain/{questionId}");
+        res.EnsureSuccessStatusCode();
+        return await res.Content.ReadFromJsonAsync<ExplainResponseDto>(JsonOptions);
     }
 
     public async Task<List<AttemptSummaryDto>> GetMyAttemptsAsync()
@@ -351,6 +397,7 @@ public record AttemptResultDto(
 
 public record AnswerResultDto(
     Guid Id,
+    Guid QuestionId,
     string QuestionPrompt,
     string QuestionType,
     string? AnswerText,
@@ -444,5 +491,31 @@ public record QuizParticipantDto(
     string Status,
     DateTime StartedAt,
     DateTime? FinishedAt
+);
+
+public record ExplainResponseDto(string Explanation, string ExtractedText);
+
+public record QuizStatisticsDto(
+    int TotalParticipants,
+    double AverageScorePercent,
+    List<QuestionStatisticsDto> Questions
+);
+
+public record QuestionStatisticsDto(
+    Guid QuestionId,
+    string Prompt,
+    string Type,
+    int TotalAnswers,
+    int CorrectAnswers,
+    double CorrectRatePercent,
+    List<OptionStatisticsDto> Options
+);
+
+public record OptionStatisticsDto(
+    Guid OptionId,
+    string Content,
+    bool IsCorrect,
+    int SelectionCount,
+    double SelectionRatePercent
 );
 

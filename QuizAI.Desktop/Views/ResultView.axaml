@@ -7,7 +7,7 @@
   <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="20" RowSpacing="16">
 
     <!-- Header -->
-    <TextBlock Grid.Row="0" Text="📊 Quiz Result"
+    <TextBlock Grid.Row="0" Text="{DynamicResource Result_Title}"
                FontSize="24" FontWeight="Bold" Foreground="#2c3e50"/>
 
     <!-- Score summary -->
@@ -21,7 +21,7 @@
                      FontSize="48" FontWeight="Bold"
                      HorizontalAlignment="Center"
                      Foreground="#2c3e50"/>
-          <TextBlock Text="Score" FontSize="14"
+          <TextBlock Text="{DynamicResource Result_Score}" FontSize="14"
                      HorizontalAlignment="Center" Foreground="#7f8c8d"/>
         </StackPanel>
 
@@ -33,7 +33,7 @@
             <TextBlock Text="{Binding MaxTotalScore}"
                        FontSize="36" FontWeight="Bold" Foreground="#7f8c8d"/>
           </StackPanel>
-          <TextBlock Text="Points" FontSize="14"
+          <TextBlock Text="{DynamicResource Result_Points}" FontSize="14"
                      HorizontalAlignment="Center" Foreground="#7f8c8d"/>
         </StackPanel>
 
@@ -84,7 +84,7 @@
                   <!-- Essay answer -->
                   <StackPanel IsVisible="{Binding AnswerText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                               Spacing="4">
-                    <TextBlock Text="Your answer:" Foreground="#7f8c8d" FontSize="13"/>
+                    <TextBlock Text="{DynamicResource Result_YourAnswer}" Foreground="#7f8c8d" FontSize="13"/>
                     <Border Background="#f8f9fa" CornerRadius="6" Padding="10,8">
                       <TextBlock Text="{Binding AnswerText}"
                                  TextWrapping="Wrap" FontSize="13" Foreground="#2c3e50"/>
@@ -96,7 +96,7 @@
                 <Border IsVisible="{Binding FeedbackText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                         Background="#f0f3f4" CornerRadius="6" Padding="10,8">
                   <StackPanel Spacing="4">
-                    <TextBlock Text="💬 Feedback:" FontWeight="SemiBold"
+                    <TextBlock Text="{DynamicResource Result_Feedback}" FontWeight="SemiBold"
                                FontSize="12" Foreground="#2c3e50"/>
                     <TextBlock Text="{Binding FeedbackText}"
                                TextWrapping="Wrap" FontSize="13" Foreground="#555"/>
@@ -113,6 +113,27 @@
                     <Run Text="{Binding FinalScore}"/><Run Text=" / "/><Run Text="{Binding MaxScore}"/><Run Text=" pts"/>
                   </TextBlock>
                 </Grid>
+
+                <!-- AI Explanations -->
+                <StackPanel IsVisible="{Binding !IsCorrect}" Spacing="8" Margin="0,4,0,0">
+                  <Button Command="{Binding ExplainCommand}"
+                          Content="{DynamicResource Result_ExplanationBtn}"
+                          Background="#f39c12" Foreground="White"
+                          Padding="10,6" CornerRadius="4"
+                          IsVisible="{Binding !IsBusyExplain}"
+                          HorizontalAlignment="Left"
+                          Cursor="Hand"/>
+                  <StackPanel IsVisible="{Binding IsBusyExplain}" Orientation="Horizontal" Spacing="8">
+                    <ProgressBar IsIndeterminate="True" Width="80"/>
+                    <TextBlock Text="{DynamicResource Msg_Loading}" FontSize="12" Foreground="#f39c12" VerticalAlignment="Center"/>
+                  </StackPanel>
+                  <Border IsVisible="{Binding AiExplanation, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                          Background="#fff8e1" CornerRadius="6" Padding="12"
+                          BorderBrush="#ffe082" BorderThickness="1">
+                    <TextBlock Text="{Binding AiExplanation}"
+                               TextWrapping="Wrap" FontSize="13" Foreground="#e67e22"/>
+                  </Border>
+                </StackPanel>
 
               </StackPanel>
             </Border>

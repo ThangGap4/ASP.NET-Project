@@ -31,6 +31,7 @@ public class QuizController : ControllerBase
     {
         var userId = GetUserId();
         var quizzes = await _context.Quizzes
+            .AsNoTracking()
             .Where(q => q.CreatorId == userId)
             .Select(q => new
             {
@@ -54,6 +55,8 @@ public class QuizController : ControllerBase
     {
         var userId = GetUserId();
         var quiz = await _context.Quizzes
+            .AsNoTracking()
+            .AsSplitQuery()
             .Include(q => q.Questions)
                 .ThenInclude(q => q.Options)
             .FirstOrDefaultAsync(q => q.Id == id && (q.CreatorId == userId || q.Published));
@@ -238,6 +241,69 @@ public class QuizController : ControllerBase
         return NoContent();
     }
 
+    // GET /api/quizzes/{id}/statistics
+    [HttpGet("{id}/statistics")]
+    public async Task<IActionResult> GetQuizStatistics(Guid id)
+    {
+        var userId = GetUserId();
+        
+        var quiz = await _context.Quizzes
+            .Include(q => q.Questions)
+                .ThenInclude(q => q.Options)
+            .AsNoTracking()
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(q => q.Id == id && q.CreatorId == userId);
+            
+        if (quiz == null) return NotFound(new { message = "Quiz not found or unauthorized" });
+        
+        var attempts = await _context.QuizAttempts
+            .Where(a => a.QuizId == id && a.Status == "graded" && a.MaxTotalScore > 0)
+            .Include(a => a.Answers)
+            .AsNoTracking()
+            .ToListAsync();
+            
+        var totalAttempts = attempts.Count;
+        var avgScore = totalAttempts > 0 
+            ? attempts.Average(a => (double)a.TotalScore / (double)a.MaxTotalScore * 100) 
+            : 0;
+            
+        var allAnswers = attempts.SelectMany(a => a.Answers).ToList();
+        
+        var questionsStat = quiz.Questions.OrderBy(q => q.Seq).Select(q => {
+            var qAnswers = allAnswers.Where(a => a.QuestionId == q.Id).ToList();
+            var qTotal = qAnswers.Count;
+            var qCorrect = qAnswers.Count(a => a.AutoScore == q.MaxScore || a.AutoScore > 0);
+            
+            return new QuestionStatisticsDto
+            (
+                q.Id,
+                q.Prompt,
+                q.Type,
+                qTotal,
+                qCorrect,
+                qTotal > 0 ? Math.Round((double)qCorrect / qTotal * 100, 1) : 0,
+                q.Options.OrderBy(o => o.OptIndex).Select(o => {
+                    var selectCount = qAnswers.Count(a => a.SelectedOptionId == o.Id);
+                    return new OptionStatisticsDto
+                    (
+                        o.Id,
+                        o.Content,
+                        o.IsCorrect,
+                        selectCount,
+                        qTotal > 0 ? Math.Round((double)selectCount / qTotal * 100, 1) : 0
+                    );
+                }).ToList()
+            );
+        }).ToList();
+        
+        return Ok(new QuizStatisticsDto
+        (
+            totalAttempts,
+            Math.Round(avgScore, 1),
+            questionsStat
+        ));
+    }
+
     private Guid GetUserId()
     {
         var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -274,3 +340,27 @@ public class QuizOptionJson
     public string Content { get; set; } = string.Empty;
     public bool IsCorrect { get; set; }
 }
+
+public record QuizStatisticsDto(
+    int TotalParticipants,
+    double AverageScorePercent,
+    List<QuestionStatisticsDto> Questions
+);
+
+public record QuestionStatisticsDto(
+    Guid QuestionId,
+    string Prompt,
+    string Type,
+    int TotalAnswers,
+    int CorrectAnswers,
+    double CorrectRatePercent,
+    List<OptionStatisticsDto> Options
+);
+
+public record OptionStatisticsDto(
+    Guid OptionId,
+    string Content,
+    bool IsCorrect,
+    int SelectionCount,
+    double SelectionRatePercent
+);

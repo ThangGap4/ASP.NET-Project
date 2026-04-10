@@ -9,17 +9,17 @@
 
     <!-- Header -->
     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="12" Margin="0,0,0,20">
-      <TextBlock Text="Attempt History"
+      <TextBlock Text="{DynamicResource History_Title}"
                  FontSize="26" FontWeight="Bold"
                  Foreground="#2c3e50"
                  VerticalAlignment="Center"/>
       <Button Command="{Binding LoadCommand}"
-              Content="Refresh"
+              Content="{DynamicResource Common_Refresh}"
               Background="#ecf0f1" Foreground="#2c3e50"
               CornerRadius="6" Padding="12,6"
               VerticalAlignment="Center"/>
       <Button Command="{Binding GoBackCommand}"
-              Content="Back to Library"
+              Content="{DynamicResource History_BackToLibrary}"
               Background="#95a5a6" Foreground="White"
               CornerRadius="6" Padding="12,6"
               VerticalAlignment="Center"/>
@@ -79,7 +79,7 @@
                   </TextBlock>
                   <Button Command="{Binding $parent[ItemsControl].((vm:HistoryViewModel)DataContext).ViewResultCommand}"
                           CommandParameter="{Binding}"
-                          Content="View Result"
+                          Content="{DynamicResource History_ViewResult}"
                           Background="#3498db" Foreground="White"
                           CornerRadius="6" Padding="10,5"
                           FontSize="12"/>

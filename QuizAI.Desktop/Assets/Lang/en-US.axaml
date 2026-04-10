@@ -1,0 +1,121 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    
+    <!-- Top Bar -->
+    <sys:String x:Key="Header_Welcome">Welcome, </sys:String>
+    <sys:String x:Key="Header_Admin">Admin</sys:String>
+    <sys:String x:Key="Header_History">History</sys:String>
+    <sys:String x:Key="Header_Profile">Profile</sys:String>
+
+    <!-- Login/Register View -->
+    <sys:String x:Key="Login_Title">Welcome to Quiz AI</sys:String>
+    <sys:String x:Key="Login_Email">Email Address</sys:String>
+    <sys:String x:Key="Login_Password">Password</sys:String>
+    <sys:String x:Key="Login_DisplayName">Display Name</sys:String>
+    <sys:String x:Key="Login_BtnLogin">Login</sys:String>
+    <sys:String x:Key="Login_BtnRegister">Register</sys:String>
+    <sys:String x:Key="Login_SwitchRegister">Don't have an account? Register</sys:String>
+    <sys:String x:Key="Login_SwitchLogin">Already have an account? Login</sys:String>
+
+    <!-- Generic / Common -->
+    <sys:String x:Key="Common_Back">← Back</sys:String>
+    <sys:String x:Key="Common_Refresh">Refresh</sys:String>
+    <sys:String x:Key="Common_Delete">Delete</sys:String>
+    <sys:String x:Key="Common_Cancel">Cancel</sys:String>
+    <sys:String x:Key="Common_Save">Save</sys:String>
+    <sys:String x:Key="Common_Status_Graded">Graded</sys:String>
+    <sys:String x:Key="Common_Status_InProgress">In Progress</sys:String>
+
+    <!-- Library View -->
+    <sys:String x:Key="Library_MyQuizzes">My Quizzes</sys:String>
+    <sys:String x:Key="Library_JoinQuiz">Join Quiz</sys:String>
+    <sys:String x:Key="Library_JoinBtn">Join</sys:String>
+    <sys:String x:Key="Library_CreateNew">Create New Quiz</sys:String>
+    <sys:String x:Key="Library_Docs">Document Library</sys:String>
+    <sys:String x:Key="Library_Questions">{0} questions</sys:String>
+    <sys:String x:Key="Library_StatusPub">Published</sys:String>
+    <sys:String x:Key="Library_StatusDraft">Draft</sys:String>
+    <sys:String x:Key="Library_BtnResults">Results</sys:String>
+    <sys:String x:Key="Library_BtnTakeQuiz">Take Quiz</sys:String>
+    <sys:String x:Key="Library_BtnCopyID">Copy ID</sys:String>
+
+    <!-- Admin Dashboard View -->
+    <sys:String x:Key="Admin_Title">Admin Dashboard</sys:String>
+    <sys:String x:Key="Admin_Desc">Manage users and global published quizzes.</sys:String>
+    <sys:String x:Key="Admin_TotalUsers" xml:space="preserve">Total
+Users</sys:String>
+    <sys:String x:Key="Admin_TotalQuizzes" xml:space="preserve">Total
+Quizzes</sys:String>
+    <sys:String x:Key="Admin_TotalAttempts" xml:space="preserve">Total
+Attempts</sys:String>
+    <sys:String x:Key="Admin_SysDocs">System Documents</sys:String>
+    <sys:String x:Key="Admin_AllUsers">All Users</sys:String>
+    <sys:String x:Key="Admin_PubQuizzes">Published Quizzes</sys:String>
+
+    <!-- Profile View -->
+    <sys:String x:Key="Profile_Title">Profile</sys:String>
+    <sys:String x:Key="Profile_Language">Language</sys:String>
+    <sys:String x:Key="Profile_AccountInfo">Account Info</sys:String>
+    <sys:String x:Key="Profile_Name">Name</sys:String>
+    <sys:String x:Key="Profile_Email">Email</sys:String>
+    <sys:String x:Key="Profile_Role">Role</sys:String>
+    <sys:String x:Key="Profile_LastLogin">Last Login</sys:String>
+    <sys:String x:Key="Profile_ActivityStats">Activity Stats</sys:String>
+    <sys:String x:Key="Profile_DocsCount">Documents</sys:String>
+    <sys:String x:Key="Profile_QuizzesCreated">Quizzes Created</sys:String>
+    <sys:String x:Key="Profile_AttemptsCount">Attempts</sys:String>
+    <sys:String x:Key="Profile_AvgScore">Avg Score</sys:String>
+
+    <!-- Quiz Participants View -->
+    <sys:String x:Key="Participants_Results">Results</sys:String>
+    <sys:String x:Key="Participants_BtnAnalytics">📊 View Analytics</sys:String>
+    <sys:String x:Key="Participants_Status">Status: {0}</sys:String>
+    <sys:String x:Key="Participants_Started">Started: {0}</sys:String>
+
+    <!-- Quiz Statistics View -->
+    <sys:String x:Key="Stats_Title">📊 Analytics</sys:String>
+    <sys:String x:Key="Stats_TotalParticipants">Participants</sys:String>
+    <sys:String x:Key="Stats_AvgScore">Average Score</sys:String>
+    <sys:String x:Key="Stats_CorrectRate">Correct Rate:</sys:String>
+    <sys:String x:Key="Stats_CorrectBadge">Correct</sys:String>
+    <sys:String x:Key="Stats_SelectionText">{0} people ({1})</sys:String>
+
+    <!-- Result / History View -->
+    <sys:String x:Key="Result_Title">Quiz Result</sys:String>
+    <sys:String x:Key="Result_Score">Score</sys:String>
+    <sys:String x:Key="Result_Points">Points</sys:String>
+    <sys:String x:Key="Result_ExplanationBtn">💡 AI Explanation</sys:String>
+    <sys:String x:Key="Result_CorrectAnswer">Correct answer:</sys:String>
+    <sys:String x:Key="Result_YourAnswer">Your answer:</sys:String>
+    <sys:String x:Key="Result_Feedback">💬 Feedback:</sys:String>
+
+    <!-- Take Quiz View -->
+    <sys:String x:Key="TakeQuiz_True">True</sys:String>
+    <sys:String x:Key="TakeQuiz_False">False</sys:String>
+    <sys:String x:Key="TakeQuiz_FillBlank">Fill in the blank:</sys:String>
+    <sys:String x:Key="TakeQuiz_Previous">Previous</sys:String>
+    <sys:String x:Key="TakeQuiz_Next">Next</sys:String>
+    <sys:String x:Key="TakeQuiz_Submit">Submit Quiz</sys:String>
+
+    <!-- History View -->
+    <sys:String x:Key="History_Title">Attempt History</sys:String>
+    <sys:String x:Key="History_BackToLibrary">Back to Library</sys:String>
+    <sys:String x:Key="History_Date">Date: {0}</sys:String>
+    <sys:String x:Key="History_Status">Status: {0}</sys:String>
+    <sys:String x:Key="History_ViewResult">View Result</sys:String>
+
+    <!-- Create Quiz View -->
+    <sys:String x:Key="Create_Title">AI-powered Quiz Generator</sys:String>
+    <sys:String x:Key="Create_Desc">Upload a file, import a URL, or paste text above to get started.</sys:String>
+    <sys:String x:Key="Create_UploadFile">Upload File</sys:String>
+    <sys:String x:Key="Create_GenerateBtn">Generate Quiz</sys:String>
+
+    <!-- ViewModels Strings -->
+    <sys:String x:Key="Msg_Err_FillFields">Please fill in all fields</sys:String>
+    <sys:String x:Key="Msg_Err_PasswordLen">Password must be at least 8 characters</sys:String>
+    <sys:String x:Key="Msg_Loading">Loading data...</sys:String>
+    <sys:String x:Key="Msg_Success">Process completed successfully.</sys:String>
+    <sys:String x:Key="Msg_NoDocs">No documents available.</sys:String>
+
+</ResourceDictionary>

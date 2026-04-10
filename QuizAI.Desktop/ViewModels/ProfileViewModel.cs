@@ -22,6 +22,21 @@ public partial class ProfileViewModel : ObservableObject
 
     public string AverageScoreText => $"{AverageScorePercent:F1}%";
 
+    public string[] AvailableLanguages { get; } = { "en-US", "vi-VN" };
+
+    private string _selectedLanguage = App.CurrentLanguage;
+    public string SelectedLanguage
+    {
+        get => _selectedLanguage;
+        set
+        {
+            if (SetProperty(ref _selectedLanguage, value))
+            {
+                App.SetLanguage(value);
+            }
+        }
+    }
+
     public ProfileViewModel(ApiClient api, MainWindowViewModel main)
     {
         _api = api;

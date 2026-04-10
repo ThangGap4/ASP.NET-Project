@@ -54,4 +54,10 @@ public partial class QuizParticipantsViewModel : ObservableObject
     {
         _main.CurrentView = new CreateQuizViewModel(_api, _main); // or Library, typically CreateQuiz
     }
+
+    [RelayCommand]
+    private void GoToAnalytics()
+    {
+        _main.CurrentView = new QuizStatisticsViewModel(_api, _main, QuizId, QuizTitle);
+    }
 }

@@ -4,8 +4,13 @@
              x:Class="QuizAI.Desktop.App"
              RequestedThemeVariant="Light">
     <Application.Resources>
-        <conv:BoolToColorConverter x:Key="BoolToColorConverter"/>
-        <conv:BoolToSelectedBrushConverter x:Key="BoolToSelectedBrushConverter"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://QuizAI.Desktop/Assets/Lang/en-US.axaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <conv:BoolToColorConverter x:Key="BoolToColorConverter"/>
+            <conv:BoolToSelectedBrushConverter x:Key="BoolToSelectedBrushConverter"/>
+        </ResourceDictionary>
     </Application.Resources>
     <Application.Styles>
         <FluentTheme />

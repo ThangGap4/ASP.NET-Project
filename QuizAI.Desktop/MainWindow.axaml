@@ -38,6 +38,9 @@
     <DataTemplate DataType="{x:Type vm:QuizParticipantsViewModel}">
       <views:QuizParticipantsView/>
     </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:QuizStatisticsViewModel}">
+      <views:QuizStatisticsView/>
+    </DataTemplate>
   </Window.DataTemplates>
 
   <Grid RowDefinitions="Auto,*">
@@ -51,22 +54,21 @@
                    Text="Quiz AI"
                    FontSize="18" FontWeight="Bold"
                    Foreground="White" VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="1"
-                   Text="{Binding CurrentUserName, StringFormat='Welcome, {0}'}"
-                   HorizontalAlignment="Center"
-                   Foreground="#bdc3c7"
-                   VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="1" HorizontalAlignment="Center" Foreground="#bdc3c7" VerticalAlignment="Center">
+          <Run Text="{DynamicResource Header_Welcome}"/>
+          <Run Text="{Binding CurrentUserName}"/>
+        </TextBlock>
         <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
-          <Button Content="Admin"
+          <Button Content="{DynamicResource Header_Admin}"
                   IsVisible="{Binding IsAdmin}"
                   Click="OnAdminClick"
                   Background="#e74c3c" Foreground="White"
                   CornerRadius="6" Padding="10,5" FontSize="12" FontWeight="Bold"/>
-          <Button Content="History"
+          <Button Content="{DynamicResource Header_History}"
                   Click="OnHistoryClick"
                   Background="#34495e" Foreground="White"
                   CornerRadius="6" Padding="10,5" FontSize="12"/>
-          <Button Content="Profile"
+          <Button Content="{DynamicResource Header_Profile}"
                   Click="OnProfileClick"
                   Background="#34495e" Foreground="White"
                   CornerRadius="6" Padding="10,5" FontSize="12"/>

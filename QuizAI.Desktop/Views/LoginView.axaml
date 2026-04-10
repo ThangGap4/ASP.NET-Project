@@ -19,7 +19,7 @@
                    HorizontalAlignment="Center"
                    Foreground="#2c3e50"/>
 
-        <TextBlock Text="AI-powered Quiz Generator"
+        <TextBlock Text="{DynamicResource Login_Title}"
                    FontSize="14"
                    HorizontalAlignment="Center"
                    Foreground="#7f8c8d"
@@ -27,16 +27,16 @@
 
         <!-- Register-only field -->
         <StackPanel IsVisible="{Binding IsRegisterMode}" Spacing="6">
-          <TextBlock Text="Display Name" FontWeight="SemiBold" Foreground="#2c3e50"/>
+          <TextBlock Text="{DynamicResource Login_DisplayName}" FontWeight="SemiBold" Foreground="#2c3e50"/>
           <TextBox Text="{Binding DisplayName}"
-                   Watermark="Your name"
+                   Watermark=""
                    CornerRadius="8"
                    Padding="12,10"/>
         </StackPanel>
 
         <!-- Email -->
         <StackPanel Spacing="6">
-          <TextBlock Text="Email" FontWeight="SemiBold" Foreground="#2c3e50"/>
+          <TextBlock Text="{DynamicResource Login_Email}" FontWeight="SemiBold" Foreground="#2c3e50"/>
           <TextBox Text="{Binding Email}"
                    Watermark="you@example.com"
                    CornerRadius="8"
@@ -45,10 +45,10 @@
 
         <!-- Password -->
         <StackPanel Spacing="6">
-          <TextBlock Text="Password" FontWeight="SemiBold" Foreground="#2c3e50"/>
+          <TextBlock Text="{DynamicResource Login_Password}" FontWeight="SemiBold" Foreground="#2c3e50"/>
           <TextBox Text="{Binding Password}"
                    PasswordChar="●"
-                   Watermark="Password"
+                   Watermark=""
                    CornerRadius="8"
                    Padding="12,10"/>
         </StackPanel>
@@ -68,7 +68,7 @@
         <Button Command="{Binding LoginCommand}"
                 IsVisible="{Binding !IsRegisterMode}"
                 IsEnabled="{Binding !IsBusy}"
-                Content="Login"
+                Content="{DynamicResource Login_BtnLogin}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center"
                 Padding="0,14"
@@ -81,7 +81,7 @@
         <Button Command="{Binding RegisterCommand}"
                 IsVisible="{Binding IsRegisterMode}"
                 IsEnabled="{Binding !IsBusy}"
-                Content="Create Account"
+                Content="{DynamicResource Login_BtnRegister}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center"
                 Padding="0,14"
@@ -97,9 +97,9 @@
                 Foreground="#3498db"
                 Padding="0">
           <StackPanel>
-            <TextBlock Text="Don't have an account? Register"
+            <TextBlock Text="{DynamicResource Login_SwitchRegister}"
                        IsVisible="{Binding !IsRegisterMode}"/>
-            <TextBlock Text="Already have an account? Login"
+            <TextBlock Text="{DynamicResource Login_SwitchLogin}"
                        IsVisible="{Binding IsRegisterMode}"/>
           </StackPanel>
         </Button>

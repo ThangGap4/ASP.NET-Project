@@ -1,0 +1,118 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    
+    <!-- Top Bar -->
+    <sys:String x:Key="Header_Welcome">Xin chào, </sys:String>
+    <sys:String x:Key="Header_Admin">Quản trị</sys:String>
+    <sys:String x:Key="Header_History">Lịch sử</sys:String>
+    <sys:String x:Key="Header_Profile">Hồ sơ</sys:String>
+
+    <!-- Login/Register View -->
+    <sys:String x:Key="Login_Title">Hệ thống Trắc nghiệm AI</sys:String>
+    <sys:String x:Key="Login_Email">Địa chỉ Email</sys:String>
+    <sys:String x:Key="Login_Password">Mật khẩu</sys:String>
+    <sys:String x:Key="Login_DisplayName">Tên hiển thị</sys:String>
+    <sys:String x:Key="Login_BtnLogin">Đăng nhập</sys:String>
+    <sys:String x:Key="Login_BtnRegister">Đăng ký</sys:String>
+    <sys:String x:Key="Login_SwitchRegister">Chưa có tài khoản? Tham gia ngay</sys:String>
+    <sys:String x:Key="Login_SwitchLogin">Đã có tài khoản? Đăng nhập thôi</sys:String>
+
+    <!-- Generic / Common -->
+    <sys:String x:Key="Common_Back">← Quay lại</sys:String>
+    <sys:String x:Key="Common_Refresh">Làm mới</sys:String>
+    <sys:String x:Key="Common_Delete">Xoá</sys:String>
+    <sys:String x:Key="Common_Cancel">Huỷ</sys:String>
+    <sys:String x:Key="Common_Save">Lưu</sys:String>
+    <sys:String x:Key="Common_Status_Graded">Đã chấm điểm</sys:String>
+    <sys:String x:Key="Common_Status_InProgress">Đang làm</sys:String>
+
+    <!-- Library View -->
+    <sys:String x:Key="Library_MyQuizzes">Bài kiểm tra của tôi</sys:String>
+    <sys:String x:Key="Library_JoinQuiz">Làm bài theo mã</sys:String>
+    <sys:String x:Key="Library_JoinBtn">Bắt đầu</sys:String>
+    <sys:String x:Key="Library_CreateNew">Tạo Bài Trắc Nghiệm Mới</sys:String>
+    <sys:String x:Key="Library_Docs">Thư viện Tài liệu</sys:String>
+    <sys:String x:Key="Library_Questions">{0} câu hỏi</sys:String>
+    <sys:String x:Key="Library_StatusPub">Đã xuất bản</sys:String>
+    <sys:String x:Key="Library_StatusDraft">Bản nháp</sys:String>
+    <sys:String x:Key="Library_BtnResults">Kết quả</sys:String>
+    <sys:String x:Key="Library_BtnTakeQuiz">Làm bài</sys:String>
+    <sys:String x:Key="Library_BtnCopyID">Chép mã ID</sys:String>
+
+    <!-- Admin Dashboard View -->
+    <sys:String x:Key="Admin_Title">Bảng điều khiển Quản trị</sys:String>
+    <sys:String x:Key="Admin_Desc">Quản lý người dùng, tài liệu và các bài quiz hệ thống.</sys:String>
+    <sys:String x:Key="Admin_TotalUsers" xml:space="preserve">Tổng User</sys:String>
+    <sys:String x:Key="Admin_TotalQuizzes" xml:space="preserve">Tổng Quiz</sys:String>
+    <sys:String x:Key="Admin_TotalAttempts" xml:space="preserve">Lượt thi</sys:String>
+    <sys:String x:Key="Admin_SysDocs">Tài liệu Hệ thống</sys:String>
+    <sys:String x:Key="Admin_AllUsers">Người dùng</sys:String>
+    <sys:String x:Key="Admin_PubQuizzes">Quiz công khai</sys:String>
+
+    <!-- Profile View -->
+    <sys:String x:Key="Profile_Title">Hồ sơ cá nhân</sys:String>
+    <sys:String x:Key="Profile_Language">Ngôn ngữ giao diện</sys:String>
+    <sys:String x:Key="Profile_AccountInfo">Thông tin tài khoản</sys:String>
+    <sys:String x:Key="Profile_Name">Họ tên</sys:String>
+    <sys:String x:Key="Profile_Email">Email</sys:String>
+    <sys:String x:Key="Profile_Role">Vai trò</sys:String>
+    <sys:String x:Key="Profile_LastLogin">Đăng nhập cuối</sys:String>
+    <sys:String x:Key="Profile_ActivityStats">Chỉ số hoạt động</sys:String>
+    <sys:String x:Key="Profile_DocsCount">Tài liệu</sys:String>
+    <sys:String x:Key="Profile_QuizzesCreated">Quiz đã tạo</sys:String>
+    <sys:String x:Key="Profile_AttemptsCount">Lượt thi</sys:String>
+    <sys:String x:Key="Profile_AvgScore">Điểm trung bình</sys:String>
+
+    <!-- Quiz Participants View -->
+    <sys:String x:Key="Participants_Results">Danh sách Kết quả</sys:String>
+    <sys:String x:Key="Participants_BtnAnalytics">📊 Xem Biểu Đồ Thống Kê</sys:String>
+    <sys:String x:Key="Participants_Status">Trạng thái: {0}</sys:String>
+    <sys:String x:Key="Participants_Started">Bắt đầu: {0}</sys:String>
+
+    <!-- Quiz Statistics View -->
+    <sys:String x:Key="Stats_Title">📊 Biểu đồ Thống kê</sys:String>
+    <sys:String x:Key="Stats_TotalParticipants">Lượt tham gia</sys:String>
+    <sys:String x:Key="Stats_AvgScore">Điểm trung bình</sys:String>
+    <sys:String x:Key="Stats_CorrectRate">Tỉ lệ đúng:</sys:String>
+    <sys:String x:Key="Stats_CorrectBadge">Đúng</sys:String>
+    <sys:String x:Key="Stats_SelectionText">{0} người ({1})</sys:String>
+
+    <!-- Result / History View -->
+    <sys:String x:Key="Result_Title">Kết quả thi</sys:String>
+    <sys:String x:Key="Result_Score">Điểm số</sys:String>
+    <sys:String x:Key="Result_Points">Điểm</sys:String>
+    <sys:String x:Key="Result_ExplanationBtn">💡 Gợi ý &amp; Giải thích (AI)</sys:String>
+    <sys:String x:Key="Result_CorrectAnswer">Đáp án đúng:</sys:String>
+    <sys:String x:Key="Result_YourAnswer">Bài làm của bạn:</sys:String>
+    <sys:String x:Key="Result_Feedback">💬 Đánh giá nhận xét:</sys:String>
+
+    <!-- Take Quiz View -->
+    <sys:String x:Key="TakeQuiz_True">Đúng</sys:String>
+    <sys:String x:Key="TakeQuiz_False">Sai</sys:String>
+    <sys:String x:Key="TakeQuiz_FillBlank">Điền vào chỗ trống:</sys:String>
+    <sys:String x:Key="TakeQuiz_Previous">Câu trước</sys:String>
+    <sys:String x:Key="TakeQuiz_Next">Câu kế</sys:String>
+    <sys:String x:Key="TakeQuiz_Submit">Nộp bài</sys:String>
+
+    <!-- History View -->
+    <sys:String x:Key="History_Title">Lịch sử làm bài</sys:String>
+    <sys:String x:Key="History_BackToLibrary">Về Thư viện</sys:String>
+    <sys:String x:Key="History_Date">Ngày thi: {0}</sys:String>
+    <sys:String x:Key="History_Status">Trạng thái: {0}</sys:String>
+    <sys:String x:Key="History_ViewResult">Xem kết quả</sys:String>
+
+    <!-- Create Quiz View -->
+    <sys:String x:Key="Create_Title">Trợ lý AI tạo bài thi</sys:String>
+    <sys:String x:Key="Create_Desc">Tải lên tài liệu hoặc dán chữ vào đây để AI tự soạn đề.</sys:String>
+    <sys:String x:Key="Create_UploadFile">Tải tập tin</sys:String>
+    <sys:String x:Key="Create_GenerateBtn">Tiến hành tạo</sys:String>
+
+    <!-- ViewModels Strings -->
+    <sys:String x:Key="Msg_Err_FillFields">Vui lòng nhập đầy đủ thông tin</sys:String>
+    <sys:String x:Key="Msg_Err_PasswordLen">Mật khẩu phải có tối thiểu 8 ký tự</sys:String>
+    <sys:String x:Key="Msg_Loading">Đang tải dữ liệu...</sys:String>
+    <sys:String x:Key="Msg_Success">Hành động thành công.</sys:String>
+    <sys:String x:Key="Msg_NoDocs">Không có tài liệu nào.</sys:String>
+
+</ResourceDictionary>

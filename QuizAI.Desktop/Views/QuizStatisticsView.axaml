@@ -1,0 +1,115 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:QuizAI.Desktop.ViewModels"
+             xmlns:svc="using:QuizAI.Desktop.Services"
+             x:Class="QuizAI.Desktop.Views.QuizStatisticsView"
+             x:DataType="vm:QuizStatisticsViewModel">
+
+  <DockPanel Margin="24">
+    <!-- Header -->
+    <StackPanel DockPanel.Dock="Top" Spacing="16" Margin="0,0,0,24">
+      <StackPanel Orientation="Horizontal" Spacing="12">
+        <Button Command="{Binding GoBackCommand}"
+                Content="{DynamicResource Common_Back}"
+                Background="#ecf0f1" Foreground="#2c3e50"
+                CornerRadius="6" Padding="12,6"
+                VerticalAlignment="Center"/>
+        <TextBlock FontSize="24" FontWeight="Bold" Foreground="#2c3e50" VerticalAlignment="Center">
+          <Run Text="{DynamicResource Stats_Title}"/>
+          <Run Text=" "/>
+          <Run Text="{Binding QuizTitle}"/>
+        </TextBlock>
+      </StackPanel>
+
+      <!-- Overview Grid -->
+      <Border Background="White" CornerRadius="8" Padding="20"
+              BoxShadow="0 2 10 0 #15000000">
+        <StackPanel Orientation="Horizontal" Spacing="40" HorizontalAlignment="Center">
+          <StackPanel HorizontalAlignment="Center" Spacing="4">
+            <TextBlock Text="{Binding TotalParticipants}" FontSize="36" FontWeight="Bold" Foreground="#3498db" HorizontalAlignment="Center"/>
+            <TextBlock Text="{DynamicResource Stats_TotalParticipants}" FontSize="14" Foreground="#7f8c8d" HorizontalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel HorizontalAlignment="Center" Spacing="4">
+            <TextBlock Text="{Binding AverageScoreText}" FontSize="36" FontWeight="Bold" Foreground="#27ae60" HorizontalAlignment="Center"/>
+            <TextBlock Text="{DynamicResource Stats_AvgScore}" FontSize="14" Foreground="#7f8c8d" HorizontalAlignment="Center"/>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+
+    <!-- Status -->
+    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+      <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" Height="4"/>
+      <TextBlock Text="{Binding StatusMessage}"
+                 Foreground="#7f8c8d" FontSize="14" HorizontalAlignment="Center"
+                 IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+    </StackPanel>
+
+    <!-- Questions Chart List -->
+    <ScrollViewer IsVisible="{Binding !IsBusy}">
+      <ItemsControl ItemsSource="{Binding Questions}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="svc:QuestionStatisticsDto">
+            <Border Background="White" CornerRadius="8" Padding="20" Margin="0,0,0,16"
+                    BoxShadow="0 1 5 0 #15000000">
+              <StackPanel Spacing="12">
+                <!-- Question Header -->
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBlock Grid.Column="0" Text="{Binding Prompt}" FontSize="16" FontWeight="SemiBold" Foreground="#2c3e50" TextWrapping="Wrap"/>
+                  <Border Grid.Column="1" Background="#e8f8f5" CornerRadius="12" Padding="12,6" Margin="16,0,0,0">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                      <TextBlock Text="{DynamicResource Stats_CorrectRate}" FontSize="13" Foreground="#1abc9c"/>
+                      <TextBlock Text="{Binding CorrectRatePercent, StringFormat='{}{0:F1}%'}" FontSize="13" FontWeight="Bold" Foreground="#16a085"/>
+                    </StackPanel>
+                  </Border>
+                </Grid>
+
+                <!-- Options Iteration -->
+                <ItemsControl ItemsSource="{Binding Options}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="svc:OptionStatisticsDto">
+                      <Grid Margin="0,6,0,6" RowDefinitions="Auto,Auto">
+                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,4">
+                          <!-- Content & Badge -->
+                          <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="{Binding Content}" FontSize="14" Foreground="#34495e" TextWrapping="Wrap"/>
+                            <Border IsVisible="{Binding IsCorrect}" Background="#27ae60" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
+                              <TextBlock Text="{DynamicResource Stats_CorrectBadge}" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                            </Border>
+                          </StackPanel>
+                          <!-- Stats Value -->
+                          <TextBlock Grid.Column="1" FontSize="13" Foreground="#7f8c8d">
+                            <Run Text="{Binding SelectionCount}"/>
+                            <Run Text=" ({Binding SelectionRatePercent, StringFormat='{}{0:F1}%'})"/>
+                          </TextBlock>
+                        </Grid>
+                        
+                        <!-- Progress Bar (Chart) -->
+                        <ProgressBar Grid.Row="1" Minimum="0" Maximum="100" 
+                                     Value="{Binding SelectionRatePercent}" 
+                                     Height="8" CornerRadius="4"
+                                     Classes.correct="{Binding IsCorrect}">
+                          <ProgressBar.Styles>
+                            <!-- Use green for correct option, blue for incorrect options, to make it visually clear -->
+                            <Style Selector="ProgressBar">
+                              <Setter Property="Foreground" Value="#3498db" />
+                              <Setter Property="Background" Value="#ecf0f1" />
+                            </Style>
+                            <Style Selector="ProgressBar.correct">
+                              <Setter Property="Foreground" Value="#27ae60" />
+                            </Style>
+                          </ProgressBar.Styles>
+                        </ProgressBar>
+                      </Grid>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+              </StackPanel>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

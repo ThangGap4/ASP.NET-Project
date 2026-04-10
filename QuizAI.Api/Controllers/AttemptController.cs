@@ -15,11 +15,13 @@ public class AttemptController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly OpenAIService _openAIService;
+    private readonly EmbeddingService _embeddingService;
 
-    public AttemptController(AppDbContext context, OpenAIService openAIService)
+    public AttemptController(AppDbContext context, OpenAIService openAIService, EmbeddingService embeddingService)
     {
         _context = context;
         _openAIService = openAIService;
+        _embeddingService = embeddingService;
     }
 
     [HttpPost("start")]
@@ -138,6 +140,8 @@ public class AttemptController : ControllerBase
         var userId = GetUserId();
 
         var attempt = await _context.QuizAttempts
+            .AsNoTracking()
+            .AsSplitQuery()
             .Include(a => a.Answers)
                 .ThenInclude(a => a.Question)
                     .ThenInclude(q => q.Options)
@@ -159,6 +163,7 @@ public class AttemptController : ControllerBase
             Answers = attempt.Answers.Select(a => new
             {
                 a.Id,
+                QuestionId = a.QuestionId,
                 QuestionPrompt = a.Question.Prompt,
                 QuestionType = a.Question.Type,
                 a.AnswerText,
@@ -185,6 +190,7 @@ public class AttemptController : ControllerBase
         var userId = GetUserId();
 
         var attempts = await _context.QuizAttempts
+            .AsNoTracking()
             .Where(a => a.UserId == userId)
             .OrderByDescending(a => a.StartedAt)
             .Select(a => new
@@ -208,10 +214,11 @@ public class AttemptController : ControllerBase
     {
         var userId = GetUserId();
         
-        var quiz = await _context.Quizzes.FirstOrDefaultAsync(q => q.Id == quizId && q.CreatorId == userId);
+        var quiz = await _context.Quizzes.AsNoTracking().FirstOrDefaultAsync(q => q.Id == quizId && q.CreatorId == userId);
         if (quiz == null) return Forbid();
 
         var attempts = await _context.QuizAttempts
+            .AsNoTracking()
             .Where(a => a.QuizId == quizId)
             .OrderByDescending(a => a.StartedAt)
             .Select(a => new
@@ -230,6 +237,60 @@ public class AttemptController : ControllerBase
             .ToListAsync();
 
         return Ok(attempts);
+    }
+
+    [HttpGet("{id}/explain/{questionId}")]
+    public async Task<IActionResult> ExplainAnswer(Guid id, Guid questionId)
+    {
+        var userId = GetUserId();
+
+        var attempt = await _context.QuizAttempts
+            .AsNoTracking()
+            .Include(a => a.Quiz)
+            .FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
+
+        if (attempt == null) return NotFound(new { message = "Attempt not found" });
+
+        var answer = await _context.AttemptAnswers
+            .AsNoTracking()
+            .Include(a => a.Question)
+                .ThenInclude(q => q.Options)
+            .Include(a => a.SelectedOption)
+            .FirstOrDefaultAsync(a => a.AttemptId == id && a.QuestionId == questionId);
+
+        if (answer == null) return NotFound(new { message = "Answer not found in this attempt" });
+
+        var sourceDocumentId = attempt.Quiz.SourceDocumentId;
+        if (sourceDocumentId == null) 
+            return BadRequest(new { message = "This quiz is not linked to any source document, so AI cannot extract explanations from context." });
+
+        var correctOption = answer.Question.Options.FirstOrDefault(o => o.IsCorrect)?.Content;
+        var studentOption = answer.SelectedOption?.Content ?? answer.AnswerText;
+        var prompt = answer.Question.Prompt;
+
+        if (answer.Question.Type == "fill_blank" || answer.Question.Type == "essay" || answer.Question.Type == "short_answer" || answer.Question.Type == "long_answer")
+        {
+            correctOption = answer.Question.RubricJson;
+        }
+
+        var queryContext = $"Question: {prompt}. Correct answer is: {correctOption}.";
+        
+        var chunks = await _embeddingService.GetTopKChunksAsync(sourceDocumentId.Value, queryContext, 3);
+        
+        if (!chunks.Any())
+            return NotFound(new { message = "Could not find relevant context in the source document." });
+
+        var contextText = string.Join("\n\n", chunks.Select(c => c.Content));
+
+        try
+        {
+            var explanationJson = await _openAIService.ExplainAnswerAsync(prompt, studentOption, correctOption, contextText);
+            return Content(explanationJson, "application/json");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(502, new { message = "Failed to generate explanation from AI", detail = ex.Message });
+        }
     }
 
     private Guid GetUserId()

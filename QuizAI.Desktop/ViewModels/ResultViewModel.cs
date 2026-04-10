@@ -18,10 +18,13 @@ public partial class ResultViewModel : ObservableObject
     [ObservableProperty] private string _scorePercentage = string.Empty;
     [ObservableProperty] private ObservableCollection<AnswerResultViewModel> _answers = new();
 
+    public Guid AttemptId { get; }
+
     public ResultViewModel(ApiClient api, MainWindowViewModel main, Guid attemptId)
     {
         _api = api;
         _main = main;
+        AttemptId = attemptId;
         _ = LoadResultAsync(attemptId);
     }
 
@@ -47,7 +50,7 @@ public partial class ResultViewModel : ObservableObject
             ScorePercentage = $"{pct:F1}%";
 
             Answers = new ObservableCollection<AnswerResultViewModel>(
-                result.Answers.Select(a => new AnswerResultViewModel(a))
+                result.Answers.Select(a => new AnswerResultViewModel(a, this))
             );
             StatusMessage = string.Empty;
         }
@@ -72,10 +75,32 @@ public partial class ResultViewModel : ObservableObject
     {
         _main.NavigateToCreateQuiz();
     }
+
+    public async Task ExplainAnswerLocalAsync(AnswerResultViewModel answerVm)
+    {
+        answerVm.IsBusyExplain = true;
+        answerVm.AiExplanation = string.Empty;
+        try
+        {
+            var res = await _api.ExplainAnswerAsync(AttemptId, answerVm.QuestionId);
+            if (res != null) {
+                answerVm.AiExplanation = $"{res.Explanation}\n\n📝 Trích dẫn: \"{res.ExtractedText}\"";
+            }
+        }
+        catch (Exception ex)
+        {
+            answerVm.AiExplanation = $"Failed to explain: {ex.Message}";
+        }
+        finally
+        {
+            answerVm.IsBusyExplain = false;
+        }
+    }
 }
 
-public class AnswerResultViewModel
+public partial class AnswerResultViewModel : ObservableObject
 {
+    public Guid QuestionId { get; }
     public string QuestionPrompt { get; }
     public string QuestionType { get; }
     public string AnswerText { get; }
@@ -88,8 +113,15 @@ public class AnswerResultViewModel
     public string ScoreColor => IsCorrect ? "#27ae60" : "#e74c3c";
     public string ResultLabel => IsCorrect ? "✓ Correct" : "✗ Incorrect";
 
-    public AnswerResultViewModel(AnswerResultDto dto)
+    [ObservableProperty] private bool _isBusyExplain;
+    [ObservableProperty] private string _aiExplanation = string.Empty;
+
+    private readonly ResultViewModel _parent;
+
+    public AnswerResultViewModel(AnswerResultDto dto, ResultViewModel parent)
     {
+        _parent = parent;
+        QuestionId = dto.QuestionId;
         QuestionPrompt = dto.QuestionPrompt;
         QuestionType = dto.QuestionType;
         AnswerText = dto.AnswerText ?? string.Empty;
@@ -119,5 +151,11 @@ public class AnswerResultViewModel
         {
             FeedbackText = string.Empty;
         }
+    }
+
+    [RelayCommand]
+    private async Task Explain()
+    {
+        await _parent.ExplainAnswerLocalAsync(this);
     }
 }
