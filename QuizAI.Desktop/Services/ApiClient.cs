@@ -64,10 +64,27 @@ public class ApiClient
 
     // ─── DOCUMENTS ───────────────────────────────────────────────────────────
 
+    // Helper DTO for paginated responses
+    private class PaginatedResponse<T>
+    {
+        public List<T> Items { get; set; } = new();
+    }
+
     public async Task<List<DocumentDto>> GetDocumentsAsync()
     {
-        var res = await _http.GetFromJsonAsync<List<DocumentDto>>("documents", JsonOptions);
-        return res ?? new();
+        var res = await _http.GetAsync("documents");
+        res.EnsureSuccessStatusCode();
+        var json = await res.Content.ReadFromJsonAsync<JsonElement>();
+        
+        // API returns paginated format: { items: [...], totalCount: 0, ... }
+        // or plain array: [...]
+        if (json.ValueKind == JsonValueKind.Array)
+        {
+            return json.Deserialize<List<DocumentDto>>(JsonOptions) ?? new();
+        }
+        
+        var items = json.GetProperty("items");
+        return items.Deserialize<List<DocumentDto>>(JsonOptions) ?? new();
     }
 
     public async Task<DocumentDto?> UploadDocumentAsync(string filePath)
@@ -119,8 +136,17 @@ public class ApiClient
 
     public async Task<List<QuizDto>> GetQuizzesAsync()
     {
-        var res = await _http.GetFromJsonAsync<List<QuizDto>>("quizzes", JsonOptions);
-        return res ?? new();
+        var res = await _http.GetAsync("quizzes");
+        res.EnsureSuccessStatusCode();
+        var json = await res.Content.ReadFromJsonAsync<JsonElement>();
+        
+        if (json.ValueKind == JsonValueKind.Array)
+        {
+            return json.Deserialize<List<QuizDto>>(JsonOptions) ?? new();
+        }
+        
+        var items = json.GetProperty("items");
+        return items.Deserialize<List<QuizDto>>(JsonOptions) ?? new();
     }
 
     public async Task<QuizDetailDto?> GetQuizAsync(Guid id)
@@ -202,8 +228,17 @@ public class ApiClient
 
     public async Task<List<AdminDocumentDto>> GetAdminDocumentsAsync()
     {
-        var res = await _http.GetFromJsonAsync<List<AdminDocumentDto>>("admin/documents", JsonOptions);
-        return res ?? new();
+        var res = await _http.GetAsync("admin/documents");
+        res.EnsureSuccessStatusCode();
+        var json = await res.Content.ReadFromJsonAsync<JsonElement>();
+        
+        if (json.ValueKind == JsonValueKind.Array)
+        {
+            return json.Deserialize<List<AdminDocumentDto>>(JsonOptions) ?? new();
+        }
+        
+        var items = json.TryGetProperty("items", out var prop) ? prop : json;
+        return items.Deserialize<List<AdminDocumentDto>>(JsonOptions) ?? new();
     }
 
     public async Task AdminDeleteDocumentAsync(Guid docId)
@@ -214,8 +249,17 @@ public class ApiClient
 
     public async Task<List<AdminUserDto>> GetAdminUsersAsync()
     {
-        var res = await _http.GetFromJsonAsync<List<AdminUserDto>>("admin/users", JsonOptions);
-        return res ?? new();
+        var res = await _http.GetAsync("admin/users");
+        res.EnsureSuccessStatusCode();
+        var json = await res.Content.ReadFromJsonAsync<JsonElement>();
+        
+        if (json.ValueKind == JsonValueKind.Array)
+        {
+            return json.Deserialize<List<AdminUserDto>>(JsonOptions) ?? new();
+        }
+        
+        var items = json.GetProperty("items");
+        return items.Deserialize<List<AdminUserDto>>(JsonOptions) ?? new();
     }
 
     public async Task<List<AdminUserHistoryDto>> GetUserHistoryAsync(Guid userId)
@@ -226,8 +270,17 @@ public class ApiClient
 
     public async Task<List<AdminQuizDto>> GetAdminQuizzesAsync()
     {
-        var res = await _http.GetFromJsonAsync<List<AdminQuizDto>>("admin/quizzes", JsonOptions);
-        return res ?? new();
+        var res = await _http.GetAsync("admin/quizzes");
+        res.EnsureSuccessStatusCode();
+        var json = await res.Content.ReadFromJsonAsync<JsonElement>();
+        
+        if (json.ValueKind == JsonValueKind.Array)
+        {
+            return json.Deserialize<List<AdminQuizDto>>(JsonOptions) ?? new();
+        }
+        
+        var items = json.GetProperty("items");
+        return items.Deserialize<List<AdminQuizDto>>(JsonOptions) ?? new();
     }
 
     public async Task<bool> ToggleUserBanAsync(Guid userId)
