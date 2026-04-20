@@ -1,82 +1,39 @@
 name: quizai
-base: core22
-version: '1.0.0'
-summary: AI-powered quiz generator from your documents
+title: QuizAI
+summary: AI-powered quiz generation app
 description: |
-  QuizAI lets you upload documents (PDF, DOCX, TXT) or paste text,
-  then automatically generates quizzes using OpenAI.
-  Supports multiple choice, true/false, and fill-in-the-blank questions.
-  Includes automatic grading and detailed result feedback.
+  QuizAI is a desktop application that uses AI to generate quizzes from documents.
+  Simply paste text, upload a file, or import from URL - QuizAI creates quizzes instantly.
+  
+  Features:
+  - Generate quizzes from any text or document
+  - Import from URLs (Wikipedia, articles, etc.)
+  - Multiple choice questions with instant grading
+  - Track your quiz history and scores
+  - Modern, intuitive interface
 
+version: "1.0.1"
 grade: stable
 confinement: strict
+base: core22
+contact: thangenz0507@gmail.com
+license: MIT
+adopt-info: quizai
 
-architectures:
-  - build-on: amd64
+parts:
+  quizai:
+    plugin: dump
+    source: ./publish/desktop-linux-x64/
+    override-build: |
+      cp -r $SNAPCRAFT_PART_SRC/* $SNAPCRAFT_PART_INSTALL/ || true
+      chmod +x $SNAPCRAFT_PART_INSTALL/QuizAI.Desktop 2>/dev/null || true
+    stage:
+      - -*.pdb
 
 apps:
   quizai:
-    command: bin/QuizAI.Desktop
-    extensions: [gnome]
-    environment:
-      DOTNET_ROOT: $SNAP/usr/share/dotnet
-      PATH: $SNAP/usr/share/dotnet:$PATH
+    command: QuizAI.Desktop
     plugs:
       - network
       - home
-      - desktop
-      - desktop-legacy
-      - wayland
-      - x11
-      - opengl
-      - audio-playback
-
-parts:
-  quizai-desktop:
-    plugin: nil
-    source: .
-    build-packages:
-      - wget
-      - ca-certificates
-    override-build: |
-      set -e
-
-      # Install .NET 8 SDK
-      wget -q https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
-      chmod +x dotnet-install.sh
-      ./dotnet-install.sh --channel 8.0 --install-dir /tmp/dotnet
-
-      # Publish self-contained
-      /tmp/dotnet/dotnet publish QuizAI.Desktop/QuizAI.Desktop.csproj \
-        -c Release \
-        -r linux-x64 \
-        --self-contained true \
-        -p:PublishSingleFile=true \
-        -p:PublishTrimmed=false \
-        -o $SNAPCRAFT_PART_INSTALL/bin
-
-    stage-packages:
-      - libfontconfig1
-      - libfreetype6
-      - libx11-6
-      - libxext6
-      - libxrender1
-      - libxrandr2
-      - libxi6
-      - libxcursor1
-      - libxdamage1
-      - libxcomposite1
-      - libxfixes3
-      - libc6
-      - libstdc++6
-      - libgcc-s1
-      - zlib1g
-      - libssl3
-      - libicu70
-
-  desktop-file:
-    plugin: dump
-    source: snap/local
-    organize:
-      quizai.desktop: usr/share/applications/quizai.desktop
-      quizai.png: usr/share/icons/hicolor/256x256/apps/quizai.png
+      - removable-media

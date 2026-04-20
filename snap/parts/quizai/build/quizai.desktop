@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=QuizAI
+Comment=AI-powered quiz generation app
+Exec=QuizAI.Desktop
+Icon=/snap/quizai/current/quizai.png
+Terminal=false
+Type=Application
+Categories=Education;Utility;
+Keywords=quiz;test;education;AI;study;
+StartupWMClass=QuizAI.Desktop

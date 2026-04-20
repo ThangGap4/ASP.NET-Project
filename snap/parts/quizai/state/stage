@@ -1,0 +1,62 @@
+backstage_directories: !!set {}
+backstage_files: !!set {}
+directories: !!set {}
+files: !!set
+  QuizAI.Desktop: null
+  quizai.desktop: null
+  quizai.png: null
+overlay_hash: 6554e32fa718d54160d0511b36f81458e4cb2357
+part_properties:
+  after: []
+  build-attributes: []
+  build-environment: []
+  build-packages: []
+  build-snaps: []
+  disable-parallel: false
+  organize: {}
+  overlay:
+  - '*'
+  overlay-packages: []
+  overlay-script: null
+  override-build: 'cp -r $SNAPCRAFT_PART_SRC/* $SNAPCRAFT_PART_INSTALL/ || true
+
+    chmod +x $SNAPCRAFT_PART_INSTALL/QuizAI.Desktop 2>/dev/null || true
+
+    '
+  override-prime: null
+  override-pull: null
+  override-stage: null
+  permissions: []
+  plugin: dump
+  prime:
+  - '*'
+  source: ./publish/desktop-linux-x64/
+  source-branch: ''
+  source-channel: null
+  source-checksum: ''
+  source-commit: ''
+  source-depth: 0
+  source-subdir: ''
+  source-submodules: null
+  source-tag: ''
+  source-type: ''
+  stage:
+  - -*.pdb
+  stage-packages: []
+  stage-snaps: []
+partition: default
+partitions_contents: {}
+project_options:
+  application_name: snapcraft
+  arch_triplet: x86_64-linux-gnu
+  project_vars:
+    grade:
+      part_name: quizai
+      updated: false
+      value: stable
+    version:
+      part_name: quizai
+      updated: false
+      value: 1.0.0
+  project_vars_part_name: null
+  target_arch: amd64

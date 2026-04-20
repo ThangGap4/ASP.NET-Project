@@ -1,0 +1,33 @@
+name: quizai
+title: QuizAI
+version: 1.0.1
+summary: AI-powered quiz generation app
+description: |
+  QuizAI is a desktop application that uses AI to generate quizzes from documents.
+  Simply paste text, upload a file, or import from URL - QuizAI creates quizzes instantly.
+
+  Features:
+  - Generate quizzes from any text or document
+  - Import from URLs (Wikipedia, articles, etc.)
+  - Multiple choice questions with instant grading
+  - Track your quiz history and scores
+  - Modern, intuitive interface
+license: MIT
+architectures:
+- amd64
+base: core22
+apps:
+  quizai:
+    command: QuizAI.Desktop
+    plugs:
+    - network
+    - home
+    - removable-media
+confinement: strict
+grade: stable
+environment:
+  LD_LIBRARY_PATH: ${SNAP_LIBRARY_PATH}${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+  PATH: $SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH
+links:
+  contact:
+  - thangenz0507@gmail.com
