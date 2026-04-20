@@ -1,89 +1,16 @@
-# QuizAI Project - Development Context Summary
-*Session: April 20, 2026*
+# QuizAI - Dev Context (Apr 20, 2026)
 
-## Project Overview
-- **Project**: QuizAI - Quiz generation app
-- **Stack**: ASP.NET Core API + Avalonia Desktop App
-- **API running**: http://localhost:5127
-
----
-
-## Issues Fixed
-
-### 1. JSON Deserialization Error (Desktop App)
-**Problem**: API returns paginated format `{ items: [...], totalCount: 0 }` but Desktop app expected plain array `[...]`
-
-**Fixed files**: `QuizAI.Desktop/Services/ApiClient.cs`
-
-**Methods updated**:
-- `GetDocumentsAsync()` - handle pagination
-- `GetQuizzesAsync()` - handle pagination
-- `GetAdminUsersAsync()` - handle pagination
-- `GetAdminQuizzesAsync()` - handle pagination
-- `GetAdminDocumentsAsync()` - handle pagination
+## Stack
+- ASP.NET Core API + Avalonia Desktop App
+- API: http://localhost:5127
+- DB: PostgreSQL (Render)
+- AI: OpenAI GPT-4o-mini
+- Storage: Cloudinary
+- Packaging: Snap (Linux)
 
 ---
 
-## Sample Data Created
-
-### Account: admin@gmail.com
-**Password**: Admin@123
-
-#### Documents (4):
-| FileName | Type | Processed |
-|----------|------|-----------|
-| Machine Learning Basics.txt | TEXT | ✅ |
-| Python Wikipedia | URL | ✅ |
-| history_sample.txt | FILE | ✅ |
-| AI Basics.txt | TEXT | ✅ |
-
-#### Quizzes (4):
-| Title | Questions | Published |
-|-------|-----------|-----------|
-| Machine Learning Quiz | 5 | ✅ |
-| Python Programming Quiz | 5 | ✅ |
-| World War II Quiz | 5 | ✅ |
-| AI Basics Quiz | 3 | ✅ |
-
----
-
-### Account: thangenz0507@gmail.com
-**Password**: 123123
-
-#### Documents (10):
-| FileName | Type | Processed |
-|----------|------|-----------|
-| Python Programming.txt | TEXT | ✅ |
-| Vietnam History.txt | TEXT | ✅ |
-| Cell Biology.txt | TEXT | ✅ |
-| Physics Laws.txt | TEXT | ✅ |
-| Economics Basics.txt | TEXT | ✅ |
-| programming.txt | FILE | ✅ |
-| vietnam_history.txt | FILE | ✅ |
-| biology.txt | FILE | ✅ |
-| Git Wikipedia | URL | ✅ |
-| Docker Wikipedia | URL | ✅ |
-
-#### Quizzes (5) - all published:
-| Title | Score |
-|-------|-------|
-| Python Quiz by Thang | 5/5 |
-| Vietnam History Quiz | 4/5 |
-| Cell Biology Quiz | 5/5 |
-| Physics Laws Quiz | 5/5 |
-| Economics Quiz | 5/5 |
-
-#### User Profile:
-- **Display Name**: Thắng
-- **Total Documents**: 10
-- **Total Quizzes**: 5
-- **Total Attempts**: 7
-- **Average Score**: 96%
-
----
-
-## Test Credentials
-
+## Credentials
 | Email | Password | Role |
 |-------|----------|------|
 | admin@gmail.com | Admin@123 | Admin |
@@ -93,17 +20,30 @@
 
 ---
 
-## API Endpoints Summary
+## Sample Data
+
+### admin@gmail.com (4 quizzes, 2 attempts)
+- **Documents**: Machine Learning Basics (TEXT), Python Wikipedia (URL), history_sample (FILE), AI Basics (TEXT)
+- **Quizzes**: ML Quiz (5q), Python Quiz (5q), WWII Quiz (5q), AI Basics Quiz (3q) — all published
+
+### thangenz0507@gmail.com
+- **Documents** (10): Python, Vietnam History, Cell Biology, Physics Laws, Economics, programming file, vietnam_history file, biology file, Git Wikipedia (URL), Docker Wikipedia (URL)
+- **Quizzes** (5): Python Quiz (5/5), Vietnam History (4/5), Cell Biology (5/5), Physics Laws (5/5), Economics (5/5)
+- **Stats**: 7 attempts, avg 96%
+
+---
+
+## API Endpoints
 
 ### Documents
-- `GET /api/documents` - returns paginated `{ items: [], totalCount, page, ... }`
-- `POST /api/documents/upload-text` - paste text
-- `POST /api/documents/upload-url` - import from URL
-- `POST /api/documents/upload` - file upload (.txt, .pdf, .docx)
+- `GET /api/documents` → paginated `{ items, totalCount, page }`
+- `POST /api/documents/upload-text` — paste text
+- `POST /api/documents/upload-url` — import from URL
+- `POST /api/documents/upload` — file upload (.txt, .pdf, .docx)
 
 ### Quizzes
-- `GET /api/quizzes` - returns paginated
-- `POST /api/quizzes/generate` - AI generates quiz from document
+- `GET /api/quizzes` — paginated
+- `POST /api/quizzes/generate` — AI generates from document
 - `PATCH /api/quizzes/{id}/publish`
 
 ### Attempts
@@ -114,39 +54,47 @@
 
 ### Admin
 - `GET /api/admin/stats`
-- `GET /api/admin/users` - paginated
-- `GET /api/admin/documents` - paginated
-- `GET /api/admin/quizzes` - paginated
+- `GET /api/admin/users` — paginated
+- `GET /api/admin/documents` — paginated
+- `GET /api/admin/quizzes` — paginated
+
+---
+
+## Fixed Issues
+
+### 1. JSON Deserialization Error (Desktop App)
+**Problem**: API returns paginated `{ items: [...], totalCount }` but Desktop expected plain array `[]`
+
+**Fixed**: `QuizAI.Desktop/Services/ApiClient.cs`
+- `GetDocumentsAsync()` — handle pagination
+- `GetQuizzesAsync()` — handle pagination
+- `GetAdminUsersAsync()` — handle pagination
+- `GetAdminQuizzesAsync()` — handle pagination
+- `GetAdminDocumentsAsync()` — handle pagination
+
+---
+
+## Snap Release
+- **Revision 3** (v1.0.1) uploaded to Snap Store
+- Channel: `stable`
+- `snapcraft release quizai 3 stable` — pending execution
+- Snapcraft metadata warnings: donation, issues, source-code, website (optional, not blocking)
 
 ---
 
 ## Key Files
-
-### API
-- `QuizAI.Api/Controllers/DocumentController.cs`
-- `QuizAI.Api/Controllers/QuizController.cs`
-- `QuizAI.Api/Controllers/AttemptController.cs`
-- `QuizAI.Api/Controllers/AdminController.cs`
-- `QuizAI.Api/Models/PaginationModels.cs`
-
-### Desktop App
-- `QuizAI.Desktop/Services/ApiClient.cs` - fixed pagination handling
-- `QuizAI.Desktop/ViewModels/LibraryViewModel.cs`
-- `QuizAI.Desktop/Views/LibraryView.axaml`
+| File | Purpose |
+|------|---------|
+| `QuizAI.Api/Program.cs` | seed admin, DI setup |
+| `QuizAI.Api/Models/PaginationModels.cs` | pagination DTOs |
+| `QuizAI.Desktop/Services/ApiClient.cs` | API client, pagination fix |
+| `QuizAI.Desktop/ViewModels/LibraryViewModel.cs` | library VM |
+| `snap/snapcraft.yaml` | snap config |
 
 ---
 
-## Interaction Pattern (AI Testing)
-
-When user asks to "test flow", "add sample data", "verify API", or "test full flow":
-1. Use `curl` with Shell tool to call API at http://localhost:5127
-2. Login first, extract token, use `Authorization: Bearer $TOKEN`
-3. Test flows: login → upload → generate → publish → take quiz → submit
-4. Use `-s` flag for silent output, `jq` for JSON parsing
-5. For complex JSON, use `cat > /tmp/data.json` to avoid escaping issues
-
-See skill: `/home/thang/.cursor/skills-cursor/api-testing/SKILL.md`
-
-## Current Issues / TODOs
-- [ ] In-progress attempts in history (Vietnam History Quiz - need cleanup)
-- [ ] Test Desktop app UI with new pagination fix
+## Testing Flow
+1. `curl` login → extract JWT token
+2. Use `Authorization: Bearer $TOKEN`
+3. Test: login → upload → generate → publish → take quiz → submit
+4. Use `-s` flag, `jq` for JSON parsing
