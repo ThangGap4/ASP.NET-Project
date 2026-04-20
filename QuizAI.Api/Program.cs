@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -8,7 +8,7 @@ using QuizAI.Api.Services;
 // Render injects ASPNETCORE_URLS or PORT — let ASP.NET Core handle it automatically
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(opt =>
@@ -35,7 +35,9 @@ builder.Services.AddScoped<EmbeddingService>();
 builder.Services.AddScoped<DocumentProcessorService>();
 builder.Services.AddScoped<CloudinaryService>();
 
-var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "dev-secret-change-in-production";
+var jwtSecret = builder.Configuration["Jwt:Secret"];
+if (string.IsNullOrEmpty(jwtSecret))
+    throw new InvalidOperationException("Jwt:Secret is required. Set it in appsettings.json, appsettings.Local.json, or environment variable.");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -60,24 +62,28 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// Seed Default Admin Account
-using (var scope = app.Services.CreateScope())
+// Seed Default Admin Account (from environment variables)
+var adminEmail = builder.Configuration["Admin:Email"];
+var adminPassword = builder.Configuration["Admin:Password"];
+if (!string.IsNullOrEmpty(adminEmail) && !string.IsNullOrEmpty(adminPassword))
 {
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    // Make sure database is created
-    context.Database.Migrate();
-
-    if (!context.Users.Any(u => u.Role == "Admin"))
+    using (var scope = app.Services.CreateScope())
     {
-        var adminUser = new QuizAI.Api.Models.AppUser
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        context.Database.Migrate();
+
+        if (!context.Users.Any(u => u.Role == "Admin"))
         {
-            Email = "admin@gmail.com",
-            DisplayName = "Admin System",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
-            Role = "Admin"
-        };
-        context.Users.Add(adminUser);
-        context.SaveChanges();
+            var adminUser = new QuizAI.Api.Models.AppUser
+            {
+                Email = adminEmail.ToLower().Trim(),
+                DisplayName = "Admin System",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(adminPassword),
+                Role = "Admin"
+            };
+            context.Users.Add(adminUser);
+            context.SaveChanges();
+        }
     }
 }
 

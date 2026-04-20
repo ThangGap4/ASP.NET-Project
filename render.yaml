@@ -8,11 +8,21 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__DefaultConnection
-        sync: false          # set manually in Render dashboard
+        sync: false
       - key: OpenAI__ApiKey
-        sync: false          # set manually in Render dashboard
+        sync: false
+      - key: Cloudinary__CloudName
+        sync: false
+      - key: Cloudinary__ApiKey
+        sync: false
+      - key: Cloudinary__ApiSecret
+        sync: false
       - key: Jwt__Secret
-        sync: false          # set manually in Render dashboard
+        sync: false
+      - key: Admin__Email
+        sync: false
+      - key: Admin__Password
+        sync: false
       - key: OpenAI__Model
         value: gpt-4o-mini
       - key: Jwt__ExpireMinutes

@@ -32,10 +32,10 @@ public class DocumentController : ControllerBase
 
     // GET /api/documents – Lấy danh sách documents của user hiện tại
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<object>>> GetDocuments()
+    public async Task<ActionResult<IEnumerable<object>>> GetDocuments([FromQuery] PaginationParams pagination)
     {
         var userId = GetUserId();
-        var docs = await _context.Documents
+        var query = _context.Documents
             .Where(d => d.OwnerId == userId)
             .Select(d => new
             {
@@ -47,9 +47,10 @@ public class DocumentController : ControllerBase
                 d.UploadedAt,
                 ChunkCount = d.Chunks.Count
             })
-            .OrderByDescending(d => d.UploadedAt)
-            .ToListAsync();
-        return Ok(docs);
+            .OrderByDescending(d => d.UploadedAt);
+
+        var result = await PaginatedResult<object>.CreateAsync(query, pagination);
+        return Ok(result);
     }
 
     // GET /api/documents/{id}

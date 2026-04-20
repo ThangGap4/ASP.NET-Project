@@ -27,10 +27,10 @@ public class QuizController : ControllerBase
 
     // GET /api/quizzes – Lấy danh sách quiz của user (chỉ lấy quiz của TÔI, không lấy của người khác)
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<object>>> GetQuizzes()
+    public async Task<ActionResult<IEnumerable<object>>> GetQuizzes([FromQuery] PaginationParams pagination)
     {
         var userId = GetUserId();
-        var quizzes = await _context.Quizzes
+        var query = _context.Quizzes
             .Where(q => q.CreatorId == userId)
             .Select(q => new
             {
@@ -43,9 +43,10 @@ public class QuizController : ControllerBase
                 QuestionCount = q.Questions.Count,
                 IsOwner = true
             })
-            .OrderByDescending(q => q.CreatedAt)
-            .ToListAsync();
-        return Ok(quizzes);
+            .OrderByDescending(q => q.CreatedAt);
+
+        var result = await PaginatedResult<object>.CreateAsync(query, pagination);
+        return Ok(result);
     }
 
     // GET /api/quizzes/{id} – Chi tiết quiz (ẩn is_correct)

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuizAI.Api.Data;
+using QuizAI.Api.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,9 +23,9 @@ namespace QuizAI.Api.Controllers
         // GET: api/admin/users
         // Quản lý người dùng: Lấy danh sách tất cả người dùng kèm số lượng quiz đã tạo
         [HttpGet("users")]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromQuery] PaginationParams pagination)
         {
-            var users = await _context.Users
+            var query = _context.Users
                 .Select(u => new 
                 {
                     u.Id,
@@ -37,19 +38,19 @@ namespace QuizAI.Api.Controllers
                     QuizCount = u.CreatedQuizzes.Count,
                     AttemptCount = u.QuizAttempts.Count
                 })
-                .OrderByDescending(u => u.CreatedAt)
-                .ToListAsync();
+                .OrderByDescending(u => u.CreatedAt);
 
-            return Ok(users);
+            var result = await PaginatedResult<object>.CreateAsync(query, pagination);
+            return Ok(result);
         }
 
         // GET: api/admin/quizzes
         // Quản lý quiz: Lấy danh sách các bài quiz đã được published (chỉ Admin và tác giả mới được thấy theo luồng)
         [HttpGet("quizzes")]
-        public async Task<IActionResult> GetPublishedQuizzes()
+        public async Task<IActionResult> GetPublishedQuizzes([FromQuery] PaginationParams pagination)
         {
-            var quizzes = await _context.Quizzes
-                .Where(q => q.Published) // Chỉ lấy Published Quizzes
+            var query = _context.Quizzes
+                .Where(q => q.Published)
                 .Select(q => new
                 {
                     q.Id,
@@ -62,10 +63,10 @@ namespace QuizAI.Api.Controllers
                     QuestionCount = q.Questions.Count,
                     AttemptCount = q.Attempts.Count
                 })
-                .OrderByDescending(q => q.CreatedAt)
-                .ToListAsync();
+                .OrderByDescending(q => q.CreatedAt);
 
-            return Ok(quizzes);
+            var result = await PaginatedResult<object>.CreateAsync(query, pagination);
+            return Ok(result);
         }
         
         
@@ -187,9 +188,9 @@ namespace QuizAI.Api.Controllers
 
         // GET: api/admin/documents
         [HttpGet("documents")]
-        public async Task<IActionResult> GetSystemDocuments()
+        public async Task<IActionResult> GetSystemDocuments([FromQuery] PaginationParams pagination)
         {
-            var docs = await _context.Documents
+            var query = _context.Documents
                 .Select(d => new
                 {
                     d.Id,
@@ -200,10 +201,10 @@ namespace QuizAI.Api.Controllers
                     Tokens = d.FileSize,
                     FileType = d.MimeType
                 })
-                .OrderByDescending(d => d.UploadedAt)
-                .ToListAsync();
+                .OrderByDescending(d => d.UploadedAt);
 
-            return Ok(docs);
+            var result = await PaginatedResult<object>.CreateAsync(query, pagination);
+            return Ok(result);
         }
 
         // DELETE: api/admin/documents/{id}
