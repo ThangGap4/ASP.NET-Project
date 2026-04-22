@@ -273,7 +273,7 @@ public class AttemptController : ControllerBase
             correctOption = answer.Question.RubricJson;
         }
 
-        var queryContext = $"Question: {prompt}. Correct answer is: {correctOption}.";
+        var queryContext = $"{prompt}\n{correctOption}";
         
         var chunks = await _embeddingService.GetTopKChunksAsync(sourceDocumentId.Value, queryContext, 3);
         

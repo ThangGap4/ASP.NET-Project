@@ -6,6 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <LangVersion>latest</LangVersion>
+    <!-- Prevent Avalonia's optional telemetry build task from failing when local telemetry log access is blocked. -->
+    <UsedAvaloniaProducts></UsedAvaloniaProducts>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
   </PropertyGroup>
 
   <ItemGroup>
