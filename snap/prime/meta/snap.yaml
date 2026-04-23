@@ -1,6 +1,6 @@
 name: quizai
 title: QuizAI
-version: 1.0.1
+version: 1.0.2
 summary: AI-powered quiz generation app
 description: |
   QuizAI is a desktop application that uses AI to generate quizzes from documents.
@@ -15,7 +15,7 @@ description: |
 license: MIT
 architectures:
 - amd64
-base: core22
+base: core24
 apps:
   quizai:
     command: QuizAI.Desktop
@@ -23,6 +23,8 @@ apps:
     - network
     - home
     - removable-media
+    environment:
+      DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: '1'
 confinement: strict
 grade: stable
 environment:
@@ -31,3 +33,5 @@ environment:
 links:
   contact:
   - thangenz0507@gmail.com
+  website:
+  - https://github.com/thangenz/QuizAI

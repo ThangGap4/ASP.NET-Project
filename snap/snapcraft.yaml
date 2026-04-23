@@ -25,14 +25,27 @@ parts:
     plugin: dump
     source: ./publish/desktop-linux-x64/
     override-build: |
-      cp -r $SNAPCRAFT_PART_SRC/* $SNAPCRAFT_PART_INSTALL/ || true
-      chmod +x $SNAPCRAFT_PART_INSTALL/QuizAI.Desktop 2>/dev/null || true
+      cp -r "$SNAPCRAFT_PART_SRC/"* "$SNAPCRAFT_PART_INSTALL/" || true
+      mkdir -p "$SNAPCRAFT_PART_INSTALL/snaplibs"
+      cp /lib/x86_64-linux-gnu/libfontconfig.so.1 "$SNAPCRAFT_PART_INSTALL/snaplibs/" || true
+      cp /lib/x86_64-linux-gnu/libfreetype.so.6 "$SNAPCRAFT_PART_INSTALL/snaplibs/" || true
+      cp /lib/x86_64-linux-gnu/libfontconfig.so.1.12.1 "$SNAPCRAFT_PART_INSTALL/snaplibs/" || true
+      cp /lib/x86_64-linux-gnu/libfreetype.so.6.20.1 "$SNAPCRAFT_PART_INSTALL/snaplibs/" || true
+      cp /lib/x86_64-linux-gnu/libicuuc.so.74 "$SNAPCRAFT_PART_INSTALL/snaplibs/" || true
+      cp /lib/x86_64-linux-gnu/libicui18n.so.74 "$SNAPCRAFT_PART_INSTALL/snaplibs/" || true
+      cp /lib/x86_64-linux-gnu/libicudata.so.74 "$SNAPCRAFT_PART_INSTALL/snaplibs/" || true
+      cp /lib/x86_64-linux-gnu/libicuio.so.74 "$SNAPCRAFT_PART_INSTALL/snaplibs/" || true
+      printf '#!/bin/bash\nSCRIPT_DIR="$(dirname "$(readlink -f "$0")")"\nexport LD_LIBRARY_PATH="$SCRIPT_DIR/snaplibs:$LD_LIBRARY_PATH"\nexec "$SCRIPT_DIR/QuizAI.Desktop" "$@"\n' > "$SNAPCRAFT_PART_INSTALL/quizai-wrapper"
+      chmod +x "$SNAPCRAFT_PART_INSTALL/quizai-wrapper"
+      chmod +x "$SNAPCRAFT_PART_INSTALL/QuizAI.Desktop" 2>/dev/null || true
     stage:
       - -*.pdb
 
 apps:
   quizai:
-    command: QuizAI.Desktop
+    command: quizai-wrapper
+    environment:
+      DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "1"
     plugs:
       - network
       - home

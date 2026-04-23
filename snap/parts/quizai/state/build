@@ -179,6 +179,7 @@ assets:
   - evince=46.3.1-0ubuntu1
   - evolution-data-server-common=3.52.3-0ubuntu1.2
   - evolution-data-server=3.52.3-0ubuntu1.2
+  - expect=5.45.4-3
   - fakeroot=1.33-1
   - fcitx-config-common=0.4.10-3build3
   - fcitx-config-gtk=0.4.10-3build3
@@ -605,8 +606,8 @@ assets:
   - libcanberra-pulse=0.30-10ubuntu10
   - libcanberra0t64=0.30-10ubuntu10
   - libcap-ng0=0.8.4-2build2
-  - libcap2-bin=1:2.66-5ubuntu2.2
-  - libcap2=1:2.66-5ubuntu2.2
+  - libcap2-bin=1:2.66-5ubuntu2.4
+  - libcap2=1:2.66-5ubuntu2.4
   - libcares2=1.27.0-1.0ubuntu1
   - libcbor0.10=0.10.2-1.2ubuntu2
   - libcc1-0=14.2.0-4ubuntu2~24.04.1
@@ -1204,7 +1205,7 @@ assets:
   - libnss-systemd=255.4-1ubuntu8.14
   - libnss3-tools=2:3.98-1ubuntu0.1
   - libnss3=2:3.98-1ubuntu0.1
-  - libntfs-3g89t64=1:2022.10.3-1.2ubuntu3
+  - libntfs-3g89t64=1:2022.10.3-1.2ubuntu3.1
   - libnuma1=2.0.18-1build1
   - libnvidia-cfg1-570=570.211.01-0ubuntu0.24.04.2
   - libnvidia-common-570=570.211.01-0ubuntu0.24.04.2
@@ -1237,7 +1238,7 @@ assets:
   - libp11-kit0=0.25.3-4ubuntu2.1
   - libpackagekit-glib2-18=1.2.8-2ubuntu1.2
   - libpagemaker-0.0-0=0.0.4-1build4
-  - libpam-cap=1:2.66-5ubuntu2.2
+  - libpam-cap=1:2.66-5ubuntu2.4
   - libpam-fprintd=1.94.3-1
   - libpam-gnome-keyring=46.1-2build1
   - libpam-modules-bin=1.5.3-5ubuntu5.5
@@ -1328,10 +1329,10 @@ assets:
   - libpython3.11-minimal=3.11.13-1+noble1
   - libpython3.11-stdlib=3.11.13-1+noble1
   - libpython3.11=3.11.13-1+noble1
-  - libpython3.12-dev=3.12.3-1ubuntu0.12
-  - libpython3.12-minimal=3.12.3-1ubuntu0.12
-  - libpython3.12-stdlib=3.12.3-1ubuntu0.12
-  - libpython3.12t64=3.12.3-1ubuntu0.12
+  - libpython3.12-dev=3.12.3-1ubuntu0.13
+  - libpython3.12-minimal=3.12.3-1ubuntu0.13
+  - libpython3.12-stdlib=3.12.3-1ubuntu0.13
+  - libpython3.12t64=3.12.3-1ubuntu0.13
   - libpython3.8-dev=3.8.20-1+noble1
   - libpython3.8-minimal=3.8.20-1+noble1
   - libpython3.8-stdlib=3.8.20-1+noble1
@@ -1754,37 +1755,37 @@ assets:
   - libzvbi0t64=0.2.42-2
   - linux-base=4.5ubuntu9+24.04.1
   - linux-firmware=20240318.git3b128b60-0ubuntu2.26
-  - linux-generic-hwe-24.04=6.17.0-20.20~24.04.1
+  - linux-generic-hwe-24.04=6.17.0-22.22~24.04.1
   - linux-headers-6.14.0-36-generic=6.14.0-36.36~24.04.1
-  - linux-headers-6.17.0-19-generic=6.17.0-19.19~24.04.2
   - linux-headers-6.17.0-20-generic=6.17.0-20.20~24.04.1
-  - linux-headers-generic-hwe-24.04=6.17.0-20.20~24.04.1
+  - linux-headers-6.17.0-22-generic=6.17.0-22.22~24.04.1
+  - linux-headers-generic-hwe-24.04=6.17.0-22.22~24.04.1
   - linux-hwe-6.14-headers-6.14.0-36=6.14.0-36.36~24.04.1
-  - linux-hwe-6.17-headers-6.17.0-19=6.17.0-19.19~24.04.2
   - linux-hwe-6.17-headers-6.17.0-20=6.17.0-20.20~24.04.1
-  - linux-hwe-6.17-tools-6.17.0-19=6.17.0-19.19~24.04.2
+  - linux-hwe-6.17-headers-6.17.0-22=6.17.0-22.22~24.04.1
   - linux-hwe-6.17-tools-6.17.0-20=6.17.0-20.20~24.04.1
+  - linux-hwe-6.17-tools-6.17.0-22=6.17.0-22.22~24.04.1
   - linux-image-6.14.0-36-generic=6.14.0-36.36~24.04.1
-  - linux-image-6.17.0-19-generic=6.17.0-19.19~24.04.2
   - linux-image-6.17.0-20-generic=6.17.0-20.20~24.04.1
-  - linux-image-generic-hwe-24.04=6.17.0-20.20~24.04.1
+  - linux-image-6.17.0-22-generic=6.17.0-22.22~24.04.1
+  - linux-image-generic-hwe-24.04=6.17.0-22.22~24.04.1
   - linux-libc-dev=6.8.0-110.110
   - linux-modules-6.14.0-36-generic=6.14.0-36.36~24.04.1
-  - linux-modules-6.17.0-19-generic=6.17.0-19.19~24.04.2
   - linux-modules-6.17.0-20-generic=6.17.0-20.20~24.04.1
+  - linux-modules-6.17.0-22-generic=6.17.0-22.22~24.04.1
   - linux-modules-extra-6.14.0-36-generic=6.14.0-36.36~24.04.1
-  - linux-modules-extra-6.17.0-19-generic=6.17.0-19.19~24.04.2
   - linux-modules-extra-6.17.0-20-generic=6.17.0-20.20~24.04.1
-  - linux-modules-nvidia-570-6.17.0-19-generic=6.17.0-19.19~24.04.2
+  - linux-modules-extra-6.17.0-22-generic=6.17.0-22.22~24.04.1
   - linux-modules-nvidia-570-6.17.0-20-generic=6.17.0-20.20~24.04.1
-  - linux-modules-nvidia-570-generic-hwe-24.04=6.17.0-20.20~24.04.1
-  - linux-objects-nvidia-570-6.17.0-19-generic=6.17.0-19.19~24.04.2
+  - linux-modules-nvidia-570-6.17.0-22-generic=6.17.0-22.22~24.04.1
+  - linux-modules-nvidia-570-generic-hwe-24.04=6.17.0-22.22~24.04.1
   - linux-objects-nvidia-570-6.17.0-20-generic=6.17.0-20.20~24.04.1
-  - linux-signatures-nvidia-6.17.0-19-generic=6.17.0-19.19~24.04.2
+  - linux-objects-nvidia-570-6.17.0-22-generic=6.17.0-22.22~24.04.1
   - linux-signatures-nvidia-6.17.0-20-generic=6.17.0-20.20~24.04.1
+  - linux-signatures-nvidia-6.17.0-22-generic=6.17.0-22.22~24.04.1
   - linux-sound-base=1.0.25+dfsg-0ubuntu7
-  - linux-tools-6.17.0-19-generic=6.17.0-19.19~24.04.2
   - linux-tools-6.17.0-20-generic=6.17.0-20.20~24.04.1
+  - linux-tools-6.17.0-22-generic=6.17.0-22.22~24.04.1
   - linux-tools-common=6.8.0-110.110
   - locales=2.39-0ubuntu8.7
   - login=1:4.13+dfsg1-4ubuntu3.2
@@ -1847,7 +1848,7 @@ assets:
   - network-manager=1.46.0-1ubuntu2.2
   - networkd-dispatcher=2.2.4-1
   - nftables=1.0.9-1build1
-  - ntfs-3g=1:2022.10.3-1.2ubuntu3
+  - ntfs-3g=1:2022.10.3-1.2ubuntu3.1
   - numactl=2.0.18-1build1
   - nvidia-compute-utils-570=570.211.01-0ubuntu0.24.04.2
   - nvidia-driver-570=570.211.01-0ubuntu0.24.04.2
@@ -2038,10 +2039,10 @@ assets:
   - python3.11-minimal=3.11.13-1+noble1
   - python3.11-venv=3.11.13-1+noble1
   - python3.11=3.11.13-1+noble1
-  - python3.12-dev=3.12.3-1ubuntu0.12
-  - python3.12-minimal=3.12.3-1ubuntu0.12
-  - python3.12-venv=3.12.3-1ubuntu0.12
-  - python3.12=3.12.3-1ubuntu0.12
+  - python3.12-dev=3.12.3-1ubuntu0.13
+  - python3.12-minimal=3.12.3-1ubuntu0.13
+  - python3.12-venv=3.12.3-1ubuntu0.13
+  - python3.12=3.12.3-1ubuntu0.13
   - python3.8-dev=3.8.20-1+noble1
   - python3.8-distutils=3.8.20-1+noble1
   - python3.8-lib2to3=3.8.20-1+noble1
@@ -2121,6 +2122,7 @@ assets:
   - systemd=255.4-1ubuntu8.14
   - sysvinit-utils=3.08-6ubuntu3
   - tar=1.35+dfsg-3build1
+  - tcl-expect=5.45.4-3
   - tcl8.6=8.6.14+dfsg-1build1
   - tcl=8.6.14build1
   - tcpdump=4.99.4-3ubuntu4
@@ -2281,10 +2283,11 @@ assets:
   - core20=2769
   - core22=2411
   - core24=1587
-  - discord=276
+  - discord=277
   - firmware-updater=224
   - gnome-3-28-1804=198
   - gnome-3-38-2004=143
+  - gnome-42-2204-sdk=352
   - gnome-42-2204=247
   - gnome-46-2404=153
   - gtk-common-themes=1535
@@ -2292,14 +2295,14 @@ assets:
   - mesa-2404=1165
   - multipass=16926
   - postman=360
-  - quizai=x1
+  - quizai=x3
   - snap-store=1338
   - snapcraft=17634
   - snapd-desktop-integration=361
-  - snapd=26382
+  - snapd=26865
   - telegram-desktop=6950
-  uname: 'Linux 6.17.0-20-generic #20~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Mar 19
-    01:28:37 UTC 2 x86_64 x86_64 x86_64 GNU/Linux'
+  uname: 'Linux 6.17.0-22-generic #22~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Mar 26
+    15:25:54 UTC 2 x86_64 x86_64 x86_64 GNU/Linux'
 directories: !!set {}
 files: !!set {}
 overlay_hash: 6554e32fa718d54160d0511b36f81458e4cb2357
@@ -2315,9 +2318,9 @@ part_properties:
   - '*'
   overlay-packages: []
   overlay-script: null
-  override-build: 'cp -r $SNAPCRAFT_PART_SRC/* $SNAPCRAFT_PART_INSTALL/ || true
+  override-build: 'cp -r "$SNAPCRAFT_PART_SRC/"* "$SNAPCRAFT_PART_INSTALL/" || true
 
-    chmod +x $SNAPCRAFT_PART_INSTALL/QuizAI.Desktop 2>/dev/null || true
+    chmod +x "$SNAPCRAFT_PART_INSTALL/QuizAI.Desktop" 2>/dev/null || true
 
     '
   override-prime: null
@@ -2354,6 +2357,6 @@ project_options:
     version:
       part_name: quizai
       updated: false
-      value: 1.0.0
+      value: 1.0.2
   project_vars_part_name: null
   target_arch: amd64

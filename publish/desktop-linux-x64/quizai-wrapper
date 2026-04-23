@@ -1,0 +1,4 @@
+#!/bin/bash
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+export LD_LIBRARY_PATH="$SCRIPT_DIR/libicu:$LD_LIBRARY_PATH"
+exec "$SCRIPT_DIR/QuizAI.Desktop" "$@"

@@ -16,9 +16,9 @@ part_properties:
   - '*'
   overlay-packages: []
   overlay-script: null
-  override-build: 'cp -r $SNAPCRAFT_PART_SRC/* $SNAPCRAFT_PART_INSTALL/ || true
+  override-build: 'cp -r "$SNAPCRAFT_PART_SRC/"* "$SNAPCRAFT_PART_INSTALL/" || true
 
-    chmod +x $SNAPCRAFT_PART_INSTALL/QuizAI.Desktop 2>/dev/null || true
+    chmod +x "$SNAPCRAFT_PART_INSTALL/QuizAI.Desktop" 2>/dev/null || true
 
     '
   override-prime: null
@@ -56,6 +56,6 @@ project_options:
     version:
       part_name: quizai
       updated: false
-      value: 1.0.0
+      value: 1.0.2
   project_vars_part_name: null
   target_arch: amd64
