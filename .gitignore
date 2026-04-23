@@ -13,7 +13,8 @@ obj/
 # Local settings (API keys, secrets)
 appsettings.Local.json
 appsettings.Development.json
+QuizAI.Api/appsettings.json
 *.local.json
-
+artifacts/verify-api/appsettings.json
 # Git
 .git/

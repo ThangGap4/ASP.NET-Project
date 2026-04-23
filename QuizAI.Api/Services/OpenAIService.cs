@@ -108,11 +108,23 @@ public class OpenAIService
 
     public async Task<string> ExplainAnswerAsync(string question, string? studentAnswer, string? correctAnswer, string contextText)
     {
+        var responseLanguage = DetectResponseLanguage(question, studentAnswer, correctAnswer, contextText);
+        var localizedMissingAnswer = responseLanguage == "Vietnamese" ? "Không có câu trả lời" : "No answer provided";
+        var localizedStudentAnswer = string.IsNullOrWhiteSpace(studentAnswer) ? localizedMissingAnswer : studentAnswer!;
+        var localizedCorrectAnswer = string.IsNullOrWhiteSpace(correctAnswer) ? localizedMissingAnswer : correctAnswer!;
+
         var prompt = $$"""
-        You are an AI tutor. A student has answered a quiz question.
-        Based ONLY on the provided context, explain why the correct answer is correct and why the student's answer (if provided) is wrong.
+        You are an AI tutor.
+        The required output language is: {{responseLanguage}}.
+
+        STRICT LANGUAGE RULES:
+        - Write the "explanation" field entirely in {{responseLanguage}}.
+        - Do not answer in English unless the required output language is English.
+        - If the question and answer content are in Vietnamese, the explanation must be in Vietnamese.
+        - Keep "extractedText" exactly as quoted from the provided context, without translating it.
+
+        Based ONLY on the provided context, explain why the correct answer is correct and why the student's answer is wrong or missing.
         You MUST extract the exact quoting passage from the context that supports your explanation.
-        Please provide your response in the same language as the context.
 
         Return ONLY valid JSON (no markdown, no extra text) with this exact structure:
         {
@@ -121,8 +133,8 @@ public class OpenAIService
         }
 
         Question: {{question}}
-        Student Answer: {{(string.IsNullOrWhiteSpace(studentAnswer) ? "None" : studentAnswer)}}
-        Correct Answer: {{(string.IsNullOrWhiteSpace(correctAnswer) ? "None" : correctAnswer)}}
+        Student Answer: {{localizedStudentAnswer}}
+        Correct Answer: {{localizedCorrectAnswer}}
 
         Context:
         {{contextText}}
@@ -140,5 +152,29 @@ public class OpenAIService
 
         var response = await _chatClient.CompleteChatAsync(messages, options);
         return response.Value.Content[0].Text;
+    }
+
+    private static string DetectResponseLanguage(params string?[] texts)
+    {
+        foreach (var text in texts)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                continue;
+            }
+
+            if (LooksVietnamese(text))
+            {
+                return "Vietnamese";
+            }
+        }
+
+        return "English";
+    }
+
+    private static bool LooksVietnamese(string text)
+    {
+        const string vietnameseChars = "ăâđêôơưáàảãạắằẳẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵĂÂĐÊÔƠƯÁÀẢÃẠẮẰẲẴẶẤẦẨẪẬÉÈẺẼẸẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌỐỒỔỖỘỚỜỞỠỢÚÙỦŨỤỨỪỬỮỰÝỲỶỸỴ";
+        return text.IndexOfAny(vietnameseChars.ToCharArray()) >= 0;
     }
 }

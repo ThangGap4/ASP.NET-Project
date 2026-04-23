@@ -18,7 +18,7 @@ public partial class QuizStatisticsViewModel : ObservableObject
     [ObservableProperty] private int _totalParticipants;
     [ObservableProperty] private string _averageScoreText = string.Empty;
     
-    [ObservableProperty] private ObservableCollection<QuestionStatisticsDto> _questions = new();
+    [ObservableProperty] private ObservableCollection<QuestionStatisticsViewModel> _questions = new();
 
     public QuizStatisticsViewModel(ApiClient api, MainWindowViewModel main, Guid quizId, string quizTitle)
     {
@@ -45,7 +45,9 @@ public partial class QuizStatisticsViewModel : ObservableObject
 
             TotalParticipants = data.TotalParticipants;
             AverageScoreText = $"{data.AverageScorePercent:F1}%";
-            Questions = new ObservableCollection<QuestionStatisticsDto>(data.Questions);
+            
+            var questionVms = data.Questions.Select(q => new QuestionStatisticsViewModel(q, _api, QuizId));
+            Questions = new ObservableCollection<QuestionStatisticsViewModel>(questionVms);
             
             if (TotalParticipants == 0)
                 StatusMessage = "Chưa có ai tham gia làm bài này.";
@@ -66,5 +68,43 @@ public partial class QuizStatisticsViewModel : ObservableObject
     private void GoBack()
     {
         _main.CurrentView = new QuizParticipantsViewModel(_api, _main, QuizId, QuizTitle);
+    }
+}
+
+public partial class QuestionStatisticsViewModel : ObservableObject
+{
+    public QuestionStatisticsDto Data { get; }
+    private readonly ApiClient _api;
+    private readonly Guid _quizId;
+
+    [ObservableProperty] private bool _isBusyExplain;
+    [ObservableProperty] private string _aiExplanation = string.Empty;
+
+    public QuestionStatisticsViewModel(QuestionStatisticsDto data, ApiClient api, Guid quizId)
+    {
+        Data = data;
+        _api = api;
+        _quizId = quizId;
+    }
+
+    [RelayCommand]
+    private async Task ExplainAsync()
+    {
+        if (IsBusyExplain) return;
+        IsBusyExplain = true;
+        try
+        {
+            var res = await _api.ExplainQuestionAsync(_quizId, Data.QuestionId);
+            if (res != null)
+                AiExplanation = $"{res.Explanation}\n\n*Trích xuất: {res.ExtractedText}*";
+        }
+        catch (Exception ex)
+        {
+            AiExplanation = $"Lỗi: {ex.Message}";
+        }
+        finally
+        {
+            IsBusyExplain = false;
+        }
     }
 }

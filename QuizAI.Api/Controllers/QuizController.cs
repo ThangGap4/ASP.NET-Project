@@ -304,6 +304,55 @@ public class QuizController : ControllerBase
         ));
     }
 
+    [HttpGet("{id}/explain-question/{questionId}")]
+    public async Task<IActionResult> ExplainQuestion(Guid id, Guid questionId)
+    {
+        var userId = GetUserId();
+        
+        var quiz = await _context.Quizzes
+            .AsNoTracking()
+            .FirstOrDefaultAsync(q => q.Id == id && (q.CreatorId == userId || q.Published));
+            
+        if (quiz == null) return NotFound(new { message = "Quiz not found or unauthorized" });
+        
+        var question = await _context.Questions
+            .Include(q => q.Options)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(q => q.Id == questionId && q.QuizId == id);
+            
+        if (question == null) return NotFound(new { message = "Question not found" });
+
+        var sourceDocumentId = quiz.SourceDocumentId;
+        if (sourceDocumentId == null) 
+            return BadRequest(new { message = "This quiz is not linked to any source document, so AI cannot extract explanations from context." });
+
+        var correctOption = question.Options.FirstOrDefault(o => o.IsCorrect)?.Content;
+        if (question.Type == "fill_blank" || question.Type == "essay" || question.Type == "short_answer" || question.Type == "long_answer")
+        {
+            correctOption = question.RubricJson;
+        }
+
+        var prompt = question.Prompt;
+        var queryContext = $"{prompt}\n{correctOption}";
+        
+        var chunks = await _embeddingService.GetTopKChunksAsync(sourceDocumentId.Value, queryContext, 3);
+        
+        if (!chunks.Any())
+            return NotFound(new { message = "Could not find relevant context in the source document." });
+
+        var contextText = string.Join("\n\n", chunks.Select(c => c.Content));
+
+        try
+        {
+            var explanationJson = await _openAIService.ExplainAnswerAsync(prompt, null, correctOption, contextText);
+            return Content(explanationJson, "application/json");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(502, new { message = "Failed to generate explanation from AI", detail = ex.Message });
+        }
+    }
+
     private Guid GetUserId()
     {
         var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

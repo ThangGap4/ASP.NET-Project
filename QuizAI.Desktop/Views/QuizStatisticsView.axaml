@@ -49,23 +49,23 @@
     <ScrollViewer IsVisible="{Binding !IsBusy}">
       <ItemsControl ItemsSource="{Binding Questions}">
         <ItemsControl.ItemTemplate>
-          <DataTemplate x:DataType="svc:QuestionStatisticsDto">
+          <DataTemplate x:DataType="vm:QuestionStatisticsViewModel">
             <Border Background="White" CornerRadius="8" Padding="20" Margin="0,0,0,16"
                     BoxShadow="0 1 5 0 #15000000">
               <StackPanel Spacing="12">
                 <!-- Question Header -->
                 <Grid ColumnDefinitions="*,Auto">
-                  <TextBlock Grid.Column="0" Text="{Binding Prompt}" FontSize="16" FontWeight="SemiBold" Foreground="#2c3e50" TextWrapping="Wrap"/>
+                  <TextBlock Grid.Column="0" Text="{Binding Data.Prompt}" FontSize="16" FontWeight="SemiBold" Foreground="#2c3e50" TextWrapping="Wrap"/>
                   <Border Grid.Column="1" Background="#e8f8f5" CornerRadius="12" Padding="12,6" Margin="16,0,0,0">
                     <StackPanel Orientation="Horizontal" Spacing="4">
                       <TextBlock Text="{DynamicResource Stats_CorrectRate}" FontSize="13" Foreground="#1abc9c"/>
-                      <TextBlock Text="{Binding CorrectRatePercent, StringFormat='{}{0:F1}%'}" FontSize="13" FontWeight="Bold" Foreground="#16a085"/>
+                      <TextBlock Text="{Binding Data.CorrectRatePercent, StringFormat='{}{0:F1}%'}" FontSize="13" FontWeight="Bold" Foreground="#16a085"/>
                     </StackPanel>
                   </Border>
                 </Grid>
 
                 <!-- Options Iteration -->
-                <ItemsControl ItemsSource="{Binding Options}">
+                <ItemsControl ItemsSource="{Binding Data.Options}">
                   <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="svc:OptionStatisticsDto">
                       <Grid Margin="0,6,0,6" RowDefinitions="Auto,Auto">
@@ -78,10 +78,10 @@
                             </Border>
                           </StackPanel>
                           <!-- Stats Value -->
-                          <TextBlock Grid.Column="1" FontSize="13" Foreground="#7f8c8d">
-                            <Run Text="{Binding SelectionCount}"/>
-                            <Run Text=" ({Binding SelectionRatePercent, StringFormat='{}{0:F1}%'})"/>
-                          </TextBlock>
+                          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding SelectionCount}" FontSize="13" Foreground="#7f8c8d"/>
+                            <TextBlock Text="{Binding SelectionRatePercent, StringFormat='({0:F1}%)'}" FontSize="13" Foreground="#7f8c8d"/>
+                          </StackPanel>
                         </Grid>
                         
                         <!-- Progress Bar (Chart) -->
@@ -104,6 +104,27 @@
                     </DataTemplate>
                   </ItemsControl.ItemTemplate>
                 </ItemsControl>
+
+                <!-- AI Explanations -->
+                <StackPanel Spacing="8" Margin="0,8,0,0">
+                  <Button Command="{Binding ExplainCommand}"
+                          Content="{DynamicResource Result_ExplanationBtn}"
+                          Background="#f39c12" Foreground="White"
+                          Padding="10,6" CornerRadius="4"
+                          IsVisible="{Binding !IsBusyExplain}"
+                          HorizontalAlignment="Left"
+                          Cursor="Hand"/>
+                  <StackPanel IsVisible="{Binding IsBusyExplain}" Orientation="Horizontal" Spacing="8">
+                    <ProgressBar IsIndeterminate="True" Width="80"/>
+                    <TextBlock Text="{DynamicResource Msg_Loading}" FontSize="12" Foreground="#f39c12" VerticalAlignment="Center"/>
+                  </StackPanel>
+                  <Border IsVisible="{Binding AiExplanation, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                          Background="#fff8e1" CornerRadius="6" Padding="12"
+                          BorderBrush="#ffe082" BorderThickness="1">
+                    <TextBlock Text="{Binding AiExplanation}"
+                               TextWrapping="Wrap" FontSize="13" Foreground="#e67e22"/>
+                  </Border>
+                </StackPanel>
 
               </StackPanel>
             </Border>

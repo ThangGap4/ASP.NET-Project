@@ -194,6 +194,17 @@ public class ApiClient
         return await _http.GetFromJsonAsync<QuizStatisticsDto>($"quizzes/{id}/statistics", JsonOptions);
     }
 
+    public async Task<ExplainResponseDto?> ExplainQuestionAsync(Guid quizId, Guid questionId)
+    {
+        var res = await _http.GetAsync($"quizzes/{quizId}/explain-question/{questionId}");
+        if (!res.IsSuccessStatusCode)
+        {
+            var error = await res.Content.ReadAsStringAsync();
+            throw new Exception($"API Error ({res.StatusCode}): {error}");
+        }
+        return await res.Content.ReadFromJsonAsync<ExplainResponseDto>(JsonOptions);
+    }
+
     // ─── ATTEMPTS ────────────────────────────────────────────────────────────
 
     public async Task<AttemptStartDto?> StartAttemptAsync(Guid quizId)
